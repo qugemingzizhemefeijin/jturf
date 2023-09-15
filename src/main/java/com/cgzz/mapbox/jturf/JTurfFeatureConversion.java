@@ -88,4 +88,60 @@ public final class JTurfFeatureConversion {
         return points;
     }
 
+    /**
+     * 结合<br><br>
+     * <p>
+     * 将包含点、线和多边形 合并为 MultiPoint、MultiString 或 MultiPolygon。
+     *
+     * @param geometryList 多边形集合
+     * @return 返回只包含 MultiPoint、MultiString、MultiPolygon的集合
+     */
+    public static List<Geometry> combine(List<Geometry> geometryList) {
+        if (geometryList == null || geometryList.isEmpty()) {
+            return null;
+        }
+
+        List<Point> multiPointList = new ArrayList<>();
+        List<List<Point>> linePointList = new ArrayList<>();
+        List<List<Point>> polygonPointList = new ArrayList<>();
+
+        for (Geometry geometry : geometryList) {
+            switch (geometry.type()) {
+                case POINT:
+                    multiPointList.add(Point.point(geometry));
+                    break;
+                case MULTI_POINT:
+                    multiPointList.addAll(MultiPoint.multiPoint(geometry).coordinates());
+                    break;
+                case LINE:
+                    linePointList.add(Line.line(geometry).coordinates());
+                    break;
+                case MULTI_LINE:
+                    linePointList.addAll(MultiLine.multiLine(geometry).coordinates());
+                    break;
+                case POLYGON:
+                    polygonPointList.add(Polygon.polygon(geometry).coordinates());
+                    break;
+                case MULTI_POLYGON:
+                    polygonPointList.addAll(MultiPolygon.multiPolygon(geometry).coordinates());
+                    break;
+                default: // other type not support
+                    break;
+            }
+        }
+
+        List<Geometry> combineList = new ArrayList<>(3);
+        if (!multiPointList.isEmpty()) {
+            combineList.add(MultiPoint.fromLngLats(multiPointList));
+        }
+        if (!linePointList.isEmpty()) {
+            combineList.add(MultiLine.fromLngLats(linePointList));
+        }
+        if (!polygonPointList.isEmpty()) {
+            combineList.add(MultiPolygon.fromLngLats(polygonPointList));
+        }
+
+        return combineList;
+    }
+
 }
