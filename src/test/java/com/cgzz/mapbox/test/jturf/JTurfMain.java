@@ -1,9 +1,7 @@
 package com.cgzz.mapbox.test.jturf;
 
-import com.cgzz.mapbox.jturf.JTurfTransformation;
-import com.cgzz.mapbox.jturf.enums.Units;
-import com.cgzz.mapbox.jturf.shape.Geometry;
-import com.cgzz.mapbox.jturf.shape.Point;
+import com.cgzz.mapbox.jturf.JTurfFeatureConversion;
+import com.cgzz.mapbox.jturf.shape.Polygon;
 
 public class JTurfMain {
 
@@ -12,9 +10,26 @@ public class JTurfMain {
         // 0, 1, 2, 3
         // [0, 1], [2, 1], [e, n], [x, n]
 
-        Point point = Point.fromLngLat(-90.548630, 14.616599);
-        Geometry g = JTurfTransformation.buffer(point, 500, Units.MILES);
-        System.out.println(g.toViewCoordsString());
+        Polygon polygon = Polygon.fromLngLats(new double[]{-81, 41, -88, 36, -84, 31, -80, 33, -77, 39, -81, 41});
+        System.out.println(JTurfFeatureConversion.explode(polygon));
+
+//        MultiPolygon multiPolygon = MultiPolygon.fromLngLats(new double[][][]{
+//                new double[][] {
+//                        new double[]{102.0, 2.0}, new double[]{103.0, 2.0}, new double[]{103.0, 3.0}, new double[]{102.0, 3.0}, new double[]{102.0, 2.0}
+//                },
+//                new double[][] {
+//                        new double[]{100.0, 0.0}, new double[]{101.0, 0.0}, new double[]{101.0, 1.0}, new double[]{100.0, 1.0}, new double[]{100.0, 0.0}
+//                }
+//        });
+//
+//        List<Geometry> geometryList = JTurfFeatureConversion.flatten(multiPolygon);
+//        for (Geometry g : geometryList) {
+//            System.out.println(g);
+//        }
+
+//        Point point = Point.fromLngLat(-90.548630, 14.616599);
+//        Geometry g = JTurfTransformation.buffer(point, 500, Units.MILES);
+//        System.out.println(g.toViewCoordsString());
 
 //        Polygon poly1 = Polygon.fromLngLats(new double[]{-122.801742, 45.48565, -122.801742, 45.60491, -122.584762, 45.60491, -122.584762, 45.48565, -122.801742, 45.48565});
 //        Polygon poly2 = Polygon.fromLngLats(new double[]{-122.520217, 45.535693, -122.64038, 45.553967, -122.720031, 45.526554, -122.669906, 45.507309, -122.723464, 45.446643, -122.532577, 45.408574, -122.487258, 45.477466, -122.520217, 45.535693});

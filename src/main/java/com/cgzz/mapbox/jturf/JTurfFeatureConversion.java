@@ -1,10 +1,7 @@
 package com.cgzz.mapbox.jturf;
 
 import com.cgzz.mapbox.jturf.exception.JTurfException;
-import com.cgzz.mapbox.jturf.shape.Line;
-import com.cgzz.mapbox.jturf.shape.MultiPolygon;
-import com.cgzz.mapbox.jturf.shape.Point;
-import com.cgzz.mapbox.jturf.shape.Polygon;
+import com.cgzz.mapbox.jturf.shape.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +32,7 @@ public final class JTurfFeatureConversion {
      * <p>
      * 将多边形转换为(多)线段或将多面体转换为包含(多)线段
      *
-     * @param multiPolygon 自核多边形
+     * @param multiPolygon 组合多边形
      * @return List<Line>
      */
     public static List<Line> polygonToLine(MultiPolygon multiPolygon) {
@@ -50,6 +47,45 @@ public final class JTurfFeatureConversion {
         }
 
         return lines;
+    }
+
+    /**
+     * 减少嵌套层级<br><br>
+     * <p>
+     * 扁平化任何 Geometry 为 List
+     *
+     * @param geometry 多边形
+     * @return 所有多几何对象都被展平为单一要素
+     */
+    public static List<Geometry> flatten(Geometry geometry) {
+        List<Geometry> geometryList = new ArrayList<>();
+
+        JTurfMeta.flattenEach(geometry, (g, multiIndex) -> {
+            geometryList.add(g);
+
+            return true;
+        });
+
+        return geometryList;
+    }
+
+    /**
+     * 拆分多边形为点<br><br>
+     * <p>
+     * 从图形组件返回所有位置作为点。
+     *
+     * @param geometry 图形组件
+     * @return 返回分解的点
+     */
+    public static List<Point> explode(Geometry geometry) {
+        List<Point> points = new ArrayList<>();
+
+        JTurfMeta.coordEach(geometry, (g, point, index, multiIndex, geomIndex) -> {
+            points.add(point);
+            return true;
+        });
+
+        return points;
     }
 
 }
