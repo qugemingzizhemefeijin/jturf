@@ -5,7 +5,7 @@ import com.cgzz.mapbox.jturf.exception.JTurfException;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class MultiPoint implements CoordinateContainer<List<Point>, MultiPoint> {
+public final class MultiPoint extends GeometryProperties implements CoordinateContainer<List<Point>, MultiPoint> {
 
     private List<Point> coordinates;
 

@@ -5,7 +5,7 @@ import com.cgzz.mapbox.jturf.exception.JTurfException;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class GeometryCollection implements CollectionContainer {
+public final class GeometryCollection extends GeometryProperties implements CollectionContainer {
 
     private final List<Geometry> geometries;
 

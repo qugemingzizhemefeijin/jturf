@@ -2,7 +2,7 @@ package com.cgzz.mapbox.jturf.shape;
 
 import com.cgzz.mapbox.jturf.exception.JTurfException;
 
-public final class Point implements CoordinateContainer<Point, Point>, Comparable<Point> {
+public final class Point extends GeometryProperties implements CoordinateContainer<Point, Point>, Comparable<Point> {
 
     private double longitude;
 

@@ -1,9 +1,11 @@
 package com.cgzz.mapbox.jturf;
 
 import com.cgzz.mapbox.jturf.enums.Units;
+import com.cgzz.mapbox.jturf.exception.JTurfException;
 import com.cgzz.mapbox.jturf.shape.*;
 import com.cgzz.mapbox.jturf.util.GreatCircle;
 import com.cgzz.mapbox.jturf.util.JTurfHelper;
+import com.cgzz.mapbox.jturf.util.PolygonTangentsHelper;
 import org.omg.CORBA.DoubleHolder;
 import org.omg.CORBA.IntHolder;
 
@@ -731,6 +733,46 @@ public final class JTurfMeasurement {
      */
     public static Polygon envelope(MultiPoint multiPoint) {
         return bboxPolygon(bbox(multiPoint));
+    }
+
+    /**
+     * 计算多边形切点<br><br>
+     * <p>
+     * 从一个点找到多边形的切线
+     *
+     * @param point   计算切点
+     * @param polygon 多边形
+     * @return 包含两个切点的点集合
+     */
+    public static List<Point> polygonTangents(Point point, Polygon polygon) {
+        if (point == null) {
+            throw new JTurfException("point is required");
+        }
+        if (polygon == null) {
+            throw new JTurfException("polygon is required");
+        }
+
+        return PolygonTangentsHelper.polygonTangents(point, polygon);
+    }
+
+    /**
+     * 计算多边形切点<br><br>
+     * <p>
+     * 从一个点找到多边形的切线
+     *
+     * @param point        计算切点
+     * @param multiPolygon 组合多边形
+     * @return 包含两个切点的点集合
+     */
+    public static List<Point> polygonTangents(Point point, MultiPolygon multiPolygon) {
+        if (point == null) {
+            throw new JTurfException("point is required");
+        }
+        if (multiPolygon == null) {
+            throw new JTurfException("multiPolygon is required");
+        }
+
+        return PolygonTangentsHelper.polygonTangents(point, multiPolygon);
     }
 
 }

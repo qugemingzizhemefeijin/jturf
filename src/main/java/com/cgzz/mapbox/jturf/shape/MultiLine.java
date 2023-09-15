@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public final class MultiLine implements CoordinateContainer<List<List<Point>>, MultiLine> {
+public final class MultiLine extends GeometryProperties implements CoordinateContainer<List<List<Point>>, MultiLine> {
 
     private List<List<Point>> coordinates;
 

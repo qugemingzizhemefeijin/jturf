@@ -22,16 +22,20 @@ public final class JTurfClassification {
         if (points == null || points.isEmpty()) {
             return targetPoint;
         }
-        Point nearestPoint = points.get(0);
+
+        int bestFeatureIndex = 0;
         double minDist = Double.POSITIVE_INFINITY;
         for (Point point : points) {
             double distanceToPoint = JTurfMeasurement.distance(targetPoint, point);
             if (distanceToPoint < minDist) {
-                nearestPoint = point;
                 minDist = distanceToPoint;
             }
         }
-        return nearestPoint;
+        Point nearest = JTurfTransformation.clone(points.get(bestFeatureIndex));
+        nearest.addProperty("featureIndex", 0);
+        nearest.addProperty("distanceToPoint", minDist);
+
+        return nearest;
     }
 
     /**

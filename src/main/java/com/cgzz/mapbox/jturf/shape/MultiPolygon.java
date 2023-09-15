@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public final class MultiPolygon implements CoordinateContainer<List<List<Point>>, MultiPolygon> {
+public final class MultiPolygon extends GeometryProperties implements CoordinateContainer<List<List<Point>>, MultiPolygon> {
 
     private List<List<Point>> coordinates;
 

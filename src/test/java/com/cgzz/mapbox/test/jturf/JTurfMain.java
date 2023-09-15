@@ -5,6 +5,7 @@ import com.cgzz.mapbox.jturf.JTurfMeasurement;
 import com.cgzz.mapbox.jturf.shape.Geometry;
 import com.cgzz.mapbox.jturf.shape.MultiPoint;
 import com.cgzz.mapbox.jturf.shape.Point;
+import com.cgzz.mapbox.jturf.shape.Polygon;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,8 +17,13 @@ public class JTurfMain {
         // 0, 1, 2, 3
         // [0, 1], [2, 1], [e, n], [x, n]
 
-        MultiPoint multiPoint = MultiPoint.fromLngLats(new double[]{-75.343, 39.984, -75.833, 39.284, -75.534, 39.123});
-        System.out.println(JTurfMeasurement.envelope(multiPoint).toViewCoordsString());
+        Polygon polygon = Polygon.fromLngLats(new double[]{11, 0, 22, 4, 31, 0, 31, 11, 21, 15, 11, 11, 11, 0});
+        Point point = Point.fromLngLat(61, 5);
+
+        System.out.println(JTurfMeasurement.polygonTangents(point, polygon));
+
+//        MultiPoint multiPoint = MultiPoint.fromLngLats(new double[]{-75.343, 39.984, -75.833, 39.284, -75.534, 39.123});
+//        System.out.println(JTurfMeasurement.envelope(multiPoint).toViewCoordsString());
 
 //        Point point1 = Point.fromLngLat(19.026432, 47.49134);
 //        Point point2 = Point.fromLngLat(19.074497, 47.509548);

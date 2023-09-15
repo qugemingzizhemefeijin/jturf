@@ -6,7 +6,7 @@ import com.cgzz.mapbox.jturf.util.JTurfHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class Polygon implements CoordinateContainer<List<Point>, Polygon> {
+public final class Polygon extends GeometryProperties implements CoordinateContainer<List<Point>, Polygon> {
 
     private List<Point> coordinates;
 

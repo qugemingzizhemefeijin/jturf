@@ -5,7 +5,7 @@ import com.cgzz.mapbox.jturf.exception.JTurfException;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class Line implements CoordinateContainer<List<Point>, Line> {
+public final class Line extends GeometryProperties implements CoordinateContainer<List<Point>, Line> {
 
     private List<Point> coordinates;
 
