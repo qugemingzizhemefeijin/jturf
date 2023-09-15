@@ -1,7 +1,9 @@
 package com.cgzz.mapbox.test.jturf;
 
 import com.cgzz.mapbox.jturf.JTurfFeatureConversion;
+import com.cgzz.mapbox.jturf.JTurfMeasurement;
 import com.cgzz.mapbox.jturf.shape.Geometry;
+import com.cgzz.mapbox.jturf.shape.MultiPoint;
 import com.cgzz.mapbox.jturf.shape.Point;
 
 import java.util.ArrayList;
@@ -14,14 +16,17 @@ public class JTurfMain {
         // 0, 1, 2, 3
         // [0, 1], [2, 1], [e, n], [x, n]
 
-        Point point1 = Point.fromLngLat(19.026432, 47.49134);
-        Point point2 = Point.fromLngLat(19.074497, 47.509548);
+        MultiPoint multiPoint = MultiPoint.fromLngLats(new double[]{-75.343, 39.984, -75.833, 39.284, -75.534, 39.123});
+        System.out.println(JTurfMeasurement.envelope(multiPoint).toViewCoordsString());
 
-        List<Geometry> pointList = new ArrayList<>();
-        pointList.add(point1);
-        pointList.add(point2);
-
-        System.out.println(JTurfFeatureConversion.combine(pointList));
+//        Point point1 = Point.fromLngLat(19.026432, 47.49134);
+//        Point point2 = Point.fromLngLat(19.074497, 47.509548);
+//
+//        List<Geometry> pointList = new ArrayList<>();
+//        pointList.add(point1);
+//        pointList.add(point2);
+//
+//        System.out.println(JTurfFeatureConversion.combine(pointList));
 
 //        Polygon polygon = Polygon.fromLngLats(new double[]{-81, 41, -88, 36, -84, 31, -80, 33, -77, 39, -81, 41});
 //        System.out.println(JTurfFeatureConversion.explode(polygon));

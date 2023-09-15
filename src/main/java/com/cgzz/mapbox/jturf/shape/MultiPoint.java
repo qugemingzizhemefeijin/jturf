@@ -1,5 +1,7 @@
 package com.cgzz.mapbox.jturf.shape;
 
+import com.cgzz.mapbox.jturf.exception.JTurfException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,11 +20,52 @@ public final class MultiPoint implements CoordinateContainer<List<Point>, MultiP
         return new MultiPoint(points);
     }
 
+    public static MultiPoint fromLngLats(Point p1, Point ...p2) {
+        if (p2 == null && p1 == null) {
+            throw new JTurfException("point can not be null");
+        }
+
+        List<Point> points;
+        if (p2 == null) {
+            points = new ArrayList<>(1);
+            points.add(p1);
+        } else {
+            points = new ArrayList<>();
+            points.add(p1);
+            for (Point p : p2) {
+                points.add(p);
+            }
+        }
+        return new MultiPoint(points);
+    }
+
     public static MultiPoint fromLngLats(double[][] coordinates) {
         List<Point> points = new ArrayList<>(coordinates.length);
 
         for (double[] p : coordinates) {
             points.add(Point.fromLngLat(p));
+        }
+
+        return fromLngLats(points);
+    }
+
+    public static MultiPoint fromLngLats(double[] coordinates) {
+        if (coordinates == null) {
+            throw new JTurfException("coordinates can not be null");
+        }
+        int len = coordinates.length;
+        if (len < 2) {
+            throw new JTurfException("coordinates length at least 2");
+        }
+
+        // 则必须为2个倍数
+        if (coordinates.length % 2 == 1) {
+            throw new JTurfException("coordinates length must be a multiple of 2");
+        }
+
+        List<Point> points = new ArrayList<>(len / 2);
+        for (int i = 0; i < len; i = i + 2) {
+            points.add(Point.fromLngLat(coordinates[i], coordinates[i + 1]));
         }
 
         return fromLngLats(points);

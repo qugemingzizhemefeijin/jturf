@@ -8,6 +8,7 @@ import org.omg.CORBA.DoubleHolder;
 import org.omg.CORBA.IntHolder;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 public final class JTurfMeasurement {
@@ -718,6 +719,18 @@ public final class JTurfMeasurement {
                 (((lambda2 * 180) / Math.PI + 540) % 360) - 180,
                 (phi2 * 180) / Math.PI,
         }; // normalise to −180..+180°
+    }
+
+    /**
+     * 计算多点范围<br><br>
+     * <p>
+     * 接受任意数量的点 ，并返回一个包含所有顶点的矩形多边形。
+     *
+     * @param multiPoint 多点集合
+     * @return 边界框的多边形表示形式
+     */
+    public static Polygon envelope(MultiPoint multiPoint) {
+        return bboxPolygon(bbox(multiPoint));
     }
 
 }
