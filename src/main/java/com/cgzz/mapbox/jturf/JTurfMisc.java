@@ -14,6 +14,7 @@ import org.omg.CORBA.DoubleHolder;
 import rx.Observable;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 public final class JTurfMisc {
 
@@ -696,6 +697,116 @@ public final class JTurfMisc {
 
         Point last = coords.get(origCoordsLength - 1);
         return Line.fromLngLats(last, last);
+    }
+
+    /**
+     * 分割多线段<br>
+     * <p>
+     * 将一个Line分割成指定长度的块。如果Line比分隔段长度短，则返回原始Line
+     *
+     * @param geometry      线段，支持 Line、MultiLine
+     * @param segmentLength 每个段的长度，默认距离单位 KILOMETERS
+     * @return 线段集合
+     */
+    public static List<Line> lineChunk(Geometry geometry, double segmentLength) {
+        return lineChunk(geometry, segmentLength, null, false);
+    }
+
+    /**
+     * 分割多线段<br>
+     * <p>
+     * 将一个Line分割成指定长度的块。如果Line比分隔段长度短，则返回原始Line
+     *
+     * @param geometry      线段，支持 Line、MultiLine
+     * @param segmentLength 每个段的长度
+     * @param units         距离单位，支持 KILOMETERS、MILES、DEGREES、RADIANS，不传入默认为 KILOMETERS
+     * @return 线段集合
+     */
+    public static List<Line> lineChunk(Geometry geometry, double segmentLength, Units units) {
+        return lineChunk(geometry, segmentLength, units, false);
+    }
+
+    /**
+     * 分割多线段<br>
+     * <p>
+     * 将一个Line分割成指定长度的块。如果Line比分隔段长度短，则返回原始Line
+     *
+     * @param geometry      线段，支持 Line、MultiLine
+     * @param segmentLength 每个段的长度
+     * @param units         距离单位，支持 KILOMETERS、MILES、DEGREES、RADIANS，不传入默认为 KILOMETERS
+     * @param reverse       反转坐标以在末尾开始第一个分块段
+     * @return 线段集合
+     */
+    public static List<Line> lineChunk(Geometry geometry, double segmentLength, Units units, boolean reverse) {
+        if (geometry == null) {
+            throw new JTurfException("geometry is required");
+        }
+        if (geometry.type() != GeometryType.LINE && geometry.type() != GeometryType.MULTI_LINE) {
+            throw new JTurfException("geometry type must support Line or MultiLine");
+        }
+        if (segmentLength <= 0) {
+            throw new JTurfException("segmentLength must be greater than 0");
+        }
+
+        Units u;
+        if (units == null) {
+            u = Units.KILOMETERS;
+        } else {
+            u = units;
+        }
+
+        List<Line> results = new ArrayList<>();
+
+        // Flatten each feature to simple Line
+        JTurfMeta.flattenEach(geometry, (g, multiIndex) -> {
+            Line line = Line.line(g);
+
+            // reverses coordinates to start the first chunked segment at the end
+            List<Point> pointList;
+            if (reverse) {
+                List<Point> temp = new ArrayList<>(line.coordinates());
+                Collections.reverse(temp);
+                pointList = temp;
+            } else {
+                pointList = line.coordinates();
+            }
+
+            sliceLineSegments(Line.fromLngLats(pointList), segmentLength, u, results::add);
+
+            return true;
+        });
+
+        return results;
+    }
+
+    /**
+     * 对线段进行切片
+     *
+     * @param line          要分片的线段
+     * @param segmentLength 每个段的长度
+     * @param units         距离单位
+     * @param callback      回调函数
+     */
+    private static void sliceLineSegments(Line line, double segmentLength, Units units, Consumer<Line> callback) {
+        double lineLength = JTurfMeasurement.length(line, units);
+
+        // If the line is shorter than the segment length then the orginal line is returned.
+        if (lineLength <= segmentLength) {
+            callback.accept(line);
+            return;
+        }
+
+        double numberOfSegments = lineLength / segmentLength;
+
+        // If numberOfSegments is integer, no need to plus 1
+        if (numberOfSegments != Math.floor(numberOfSegments)) {
+            numberOfSegments = Math.floor(numberOfSegments) + 1;
+        }
+
+        for (double i = 0; i < numberOfSegments; i++) {
+            Line outline = lineSliceAlong(line, segmentLength * i, segmentLength * (i + 1), units);
+            callback.accept(outline);
+        }
     }
 
 }

@@ -1,9 +1,10 @@
 package com.cgzz.mapbox.test.jturf;
 
-import com.cgzz.mapbox.jturf.JTurfMeasurement;
 import com.cgzz.mapbox.jturf.JTurfMisc;
 import com.cgzz.mapbox.jturf.enums.Units;
 import com.cgzz.mapbox.jturf.shape.Line;
+
+import java.util.List;
 
 public class JTurfMain {
 
@@ -12,11 +13,18 @@ public class JTurfMain {
         // 0, 1, 2, 3
         // [0, 1], [2, 1], [e, n], [x, n]
 
-        Line line = Line.fromLngLats(new double[]{7, 45, 9, 45, 14, 40, 14, 41});
-        double start = 12.5;
-        double stop = 25;
-        Line slice = JTurfMisc.lineSliceAlong(line, start, stop, Units.MILES);
-        System.out.println(slice.toViewCoordsString());
+        Line line = Line.fromLngLats(new double[]{-95, 40, -93, 45, -85, 50});
+        List<Line> segmentLine = JTurfMisc.lineChunk(line, 15, Units.MILES, false);
+        System.out.println(segmentLine.size());
+        for (Line segment : segmentLine) {
+            System.out.println(segment.toViewCoordsString());
+        }
+
+//        Line line = Line.fromLngLats(new double[]{7, 45, 9, 45, 14, 40, 14, 41});
+//        double start = 12.5;
+//        double stop = 25;
+//        Line slice = JTurfMisc.lineSliceAlong(line, start, stop, Units.MILES);
+//        System.out.println(slice.toViewCoordsString());
 
 //        Point center = Point.fromLngLat(-75, 40);
 //        double radius = 5;
