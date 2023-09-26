@@ -553,4 +553,68 @@ public final class JTurfMisc {
         return closePt.value;
     }
 
+    /**
+     * 创建圆弧<br>
+     * <p>
+     * 在bearing1和bearing2之间创建给定半径和圆心点的圆弧；0方位为中心点以北，顺时针正。
+     * <p>
+     * 默认步长为64，距离单位 KILOMETERS
+     *
+     * @param coord    中心点
+     * @param radius   圆的半径
+     * @param bearing1 方位角1 圆弧第一半径的角度
+     * @param bearing2 方位角2 圆弧第二半径的角度
+     * @return 返回弧度的线条
+     */
+    public static Line lineArc(Point coord, double radius, double bearing1, double bearing2) {
+        return lineArc(coord, radius, bearing1, bearing2, null, null);
+    }
+
+    /**
+     * 创建圆弧<br>
+     * <p>
+     * 在bearing1和bearing2之间创建给定半径和圆心点的圆弧；0方位为中心点以北，顺时针正。
+     *
+     * @param coord    中心点
+     * @param radius   圆的半径
+     * @param bearing1 方位角1 圆弧第一半径的角度
+     * @param bearing2 方位角2 圆弧第二半径的角度
+     * @param steps    步长，不传入则默认为64
+     * @param units    单位，支持 KILOMETERS、MILES、DEGREES、RADIANS，不传入默认为 KILOMETERS
+     * @return 返回弧度的线条
+     */
+    public static Line lineArc(Point coord, double radius, double bearing1, double bearing2, Integer steps, Units units) {
+        if (steps == null) {
+            steps = 64;
+        }
+        if (units == null) {
+            units = Units.KILOMETERS;
+        }
+
+        double angle1 = JTurfHelper.convertAngleTo360(bearing1);
+        double angle2 = JTurfHelper.convertAngleTo360(bearing2);
+
+        // handle angle parameters
+        if (angle1 == angle2) {
+            Polygon circle = JTurfTransformation.circle(coord, radius, steps, units);
+            return Line.fromLngLats(circle.coordinates());
+        }
+
+        double arcStartDegree = angle1;
+        double arcEndDegree = angle1 < angle2 ? angle2 : angle2 + 360;
+
+        double alfa = arcStartDegree;
+        List<Point> coordinates = new ArrayList<>();
+        int i = 0;
+        while (alfa < arcEndDegree) {
+            coordinates.add(JTurfMeasurement.destination(coord, radius, alfa, units));
+            i++;
+            alfa = arcStartDegree + (i * 360D) / steps;
+        }
+        if (alfa > arcEndDegree) {
+            coordinates.add(JTurfMeasurement.destination(coord, radius, arcEndDegree, units));
+        }
+        return Line.fromLngLats(coordinates);
+    }
+
 }

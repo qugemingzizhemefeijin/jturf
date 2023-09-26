@@ -168,6 +168,20 @@ public final class JTurfHelper {
     }
 
     /**
+     * 采用任何角度（以度为单位），并返回介于 0-360 度之间的有效角度
+     *
+     * @param alfa -180-180度之间的角度
+     * @return 0-360度之间的角度
+     */
+    public static double convertAngleTo360(double alfa) {
+        double beta = alfa % 360;
+        if (beta < 0) {
+            beta += 360;
+        }
+        return beta;
+    }
+
+    /**
      * 四舍五入小数
      *
      * @param number 数值
