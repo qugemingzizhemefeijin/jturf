@@ -617,4 +617,85 @@ public final class JTurfMisc {
         return Line.fromLngLats(coordinates);
     }
 
+    /**
+     * 根据距离截取多线段
+     * <p>
+     * 取一条线，沿该线到起始点的指定距离，以及沿该线到终止点的指定距离，并返回这些点之间的该线的分段。
+     *
+     * @param line      线段
+     * @param startDist 沿线到起点的起始距离（默认 KILOMETERS）
+     * @param stopDist  沿线到终点的停靠点距离（默认 KILOMETERS）
+     * @return 切片线段
+     */
+    public static Line lineSliceAlong(Line line, double startDist, double stopDist) {
+        return lineSliceAlong(line, startDist, stopDist, null);
+    }
+
+    /**
+     * 根据距离截取多线段
+     * <p>
+     * 取一条线，沿该线到起始点的指定距离，以及沿该线到终止点的指定距离，并返回这些点之间的该线的分段。
+     *
+     * @param line      线段
+     * @param startDist 沿线到起点的起始距离
+     * @param stopDist  沿线到终点的停靠点距离
+     * @param units     距离单位，支持 KILOMETERS、MILES、DEGREES、RADIANS，不传入默认为 KILOMETERS
+     * @return 切片线段
+     */
+    public static Line lineSliceAlong(Line line, double startDist, double stopDist, Units units) {
+        if (units == null) {
+            units = Units.KILOMETERS;
+        }
+
+        List<Point> slice = new ArrayList<>();
+        List<Point> coords = line.coordinates();
+        int origCoordsLength = coords.size();
+        double travelled = 0;
+        double overshot, direction;
+        Point interpolated;
+        for (int i = 0; i < origCoordsLength; i++) {
+            if (startDist >= travelled && i == origCoordsLength - 1) {
+                break;
+            } else if (travelled > startDist && slice.size() == 0) {
+                overshot = startDist - travelled;
+                if (overshot == 0) {
+                    slice.add(coords.get(i));
+                    return Line.fromLngLats(slice);
+                }
+                direction = JTurfMeasurement.bearing(coords.get(i), coords.get(i - 1)) - 180;
+                interpolated = JTurfMeasurement.destination(coords.get(i), overshot, direction, units);
+                slice.add(interpolated);
+            }
+
+            if (travelled >= stopDist) {
+                overshot = stopDist - travelled;
+                if (overshot == 0) {
+                    slice.add(coords.get(i));
+                    return Line.fromLngLats(slice);
+                }
+                direction = JTurfMeasurement.bearing(coords.get(i), coords.get(i - 1)) - 180;
+                interpolated = JTurfMeasurement.destination(coords.get(i), overshot, direction, units);
+                slice.add(interpolated);
+                return Line.fromLngLats(slice);
+            }
+
+            if (travelled >= startDist) {
+                slice.add(coords.get(i));
+            }
+
+            if (i == origCoordsLength - 1) {
+                return Line.fromLngLats(slice);
+            }
+
+            travelled += JTurfMeasurement.distance(coords.get(i), coords.get(i + 1), units);
+        }
+
+        if (travelled < startDist) {
+            throw new JTurfException("Start position is beyond line");
+        }
+
+        Point last = coords.get(origCoordsLength - 1);
+        return Line.fromLngLats(last, last);
+    }
+
 }

@@ -1,12 +1,9 @@
 package com.cgzz.mapbox.test.jturf;
 
-import com.cgzz.mapbox.jturf.JTurfFeatureConversion;
 import com.cgzz.mapbox.jturf.JTurfMeasurement;
 import com.cgzz.mapbox.jturf.JTurfMisc;
-import com.cgzz.mapbox.jturf.shape.*;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.cgzz.mapbox.jturf.enums.Units;
+import com.cgzz.mapbox.jturf.shape.Line;
 
 public class JTurfMain {
 
@@ -15,12 +12,18 @@ public class JTurfMain {
         // 0, 1, 2, 3
         // [0, 1], [2, 1], [e, n], [x, n]
 
-        Point center = Point.fromLngLat(-75, 40);
-        double radius = 5;
-        double bearing1 = 25;
-        double bearing2 = 47;
-        Line line = JTurfMisc.lineArc(center, radius, bearing1, bearing2);
-        System.out.println(line.toViewCoordsString());
+        Line line = Line.fromLngLats(new double[]{7, 45, 9, 45, 14, 40, 14, 41});
+        double start = 12.5;
+        double stop = 25;
+        Line slice = JTurfMisc.lineSliceAlong(line, start, stop, Units.MILES);
+        System.out.println(slice.toViewCoordsString());
+
+//        Point center = Point.fromLngLat(-75, 40);
+//        double radius = 5;
+//        double bearing1 = 25;
+//        double bearing2 = 47;
+//        Line line = JTurfMisc.lineArc(center, radius, bearing1, bearing2);
+//        System.out.println(line.toViewCoordsString());
 
 //        Polygon polygon = Polygon.fromLngLats(new double[]{11, 0, 22, 4, 31, 0, 31, 11, 21, 15, 11, 11, 11, 0});
 //        Point point = Point.fromLngLat(61, 5);
