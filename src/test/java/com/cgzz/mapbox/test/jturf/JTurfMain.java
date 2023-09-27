@@ -1,8 +1,8 @@
 package com.cgzz.mapbox.test.jturf;
 
 import com.cgzz.mapbox.jturf.JTurfMisc;
-import com.cgzz.mapbox.jturf.shape.Line;
 import com.cgzz.mapbox.jturf.shape.Point;
+import com.cgzz.mapbox.jturf.shape.Polygon;
 
 public class JTurfMain {
 
@@ -11,11 +11,19 @@ public class JTurfMain {
         // 0, 1, 2, 3
         // [0, 1], [2, 1], [e, n], [x, n]
 
-        Line line = Line.fromLngLats(new double[]{-77.031669, 38.878605, -77.029609, 38.881946, -77.020339, 38.884084, -77.025661, 38.885821, -77.021884, 38.889563, -77.019824, 38.892368});
-        Point start = Point.fromLngLat(-77.029609, 38.881946);
-        Point stop = Point.fromLngLat(-77.021884, 38.889563);
+        Point center = Point.fromLngLat(-75, 40);
+        int radius = 5;
+        double bearing1 = 25;
+        double bearing2 = 45;
 
-        System.out.println(JTurfMisc.lineSlice(start, stop, line).toViewCoordsString());
+        Polygon sector = JTurfMisc.sector(center, radius, bearing1, bearing2);
+        System.out.println(sector.toViewCoordsString());
+
+//        Line line = Line.fromLngLats(new double[]{-77.031669, 38.878605, -77.029609, 38.881946, -77.020339, 38.884084, -77.025661, 38.885821, -77.021884, 38.889563, -77.019824, 38.892368});
+//        Point start = Point.fromLngLat(-77.029609, 38.881946);
+//        Point stop = Point.fromLngLat(-77.021884, 38.889563);
+//
+//        System.out.println(JTurfMisc.lineSlice(start, stop, line).toViewCoordsString());
 
 //        Line line = Line.fromLngLats(new double[]{-95, 40, -93, 45, -85, 50});
 //        List<Line> segmentLine = JTurfMisc.lineChunk(line, 15, Units.MILES, false);

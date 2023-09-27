@@ -863,4 +863,78 @@ public final class JTurfMisc {
         return Line.fromLngLats(clipCoords);
     }
 
+    /**
+     * 计算扇形多边形<br>
+     * <p>
+     * 创建给定半径和中心点的圆的一个扇形，位于(顺时针)bearing1和bearing2之间;0方位为中心点以北，顺时针正。默认步长64，默认距离为 KILOMETERS。
+     *
+     * @param center   中心点
+     * @param radius   圆的半径，默认距离为 KILOMETERS
+     * @param bearing1 扇区第一半径的角度
+     * @param bearing2 扇区第二半径的角度
+     * @return 扇区多边形
+     */
+    public static Polygon sector(Point center, int radius, double bearing1, double bearing2) {
+        return sector(center, radius, bearing1, bearing2, null, null);
+    }
+
+    /**
+     * 计算扇形多边形<br>
+     * <p>
+     * 创建给定半径和中心点的圆的一个扇形，位于(顺时针)bearing1和bearing2之间;0方位为中心点以北，顺时针正。默认距离为 KILOMETERS。
+     *
+     * @param center   中心点
+     * @param radius   圆的半径
+     * @param bearing1 扇区第一半径的角度
+     * @param bearing2 扇区第二半径的角度
+     * @param steps    步长，不传入则默认为64
+     * @return 扇区多边形
+     */
+    public static Polygon sector(Point center, int radius, double bearing1, double bearing2, Integer steps) {
+        return sector(center, radius, bearing1, bearing2, steps, null);
+    }
+
+    /**
+     * 计算扇形多边形<br>
+     * <p>
+     * 创建给定半径和中心点的圆的一个扇形，位于(顺时针)bearing1和bearing2之间;0方位为中心点以北，顺时针正。
+     *
+     * @param center   中心点
+     * @param radius   圆的半径
+     * @param bearing1 扇区第一半径的角度
+     * @param bearing2 扇区第二半径的角度
+     * @param steps    步长，不传入则默认为64
+     * @param units    距离单位，支持 KILOMETERS、MILES、DEGREES、RADIANS，不传入默认为 KILOMETERS
+     * @return 扇区多边形
+     */
+    public static Polygon sector(Point center, int radius, double bearing1, double bearing2, Integer steps, Units units) {
+        if (center == null) {
+            throw new JTurfException("center is required");
+        }
+        if (units == null) {
+            units = Units.KILOMETERS;
+        }
+        if (steps == null) {
+            steps = 64;
+        }
+
+        if (JTurfHelper.convertAngleTo360(bearing1) == JTurfHelper.convertAngleTo360(bearing2)) {
+            return JTurfTransformation.circle(center, radius, steps, units);
+        }
+
+        Line arc = lineArc(center, radius, bearing1, bearing2);
+
+        List<Point> sliceCoords = new ArrayList<>();
+        sliceCoords.add(center);
+
+        JTurfMeta.coordEach(arc, (geometry, point, index, multiIndex, geomIndex) -> {
+            sliceCoords.add(point);
+
+            return true;
+        });
+        sliceCoords.add(center);
+
+        return Polygon.fromLngLats(sliceCoords);
+    }
+
 }
