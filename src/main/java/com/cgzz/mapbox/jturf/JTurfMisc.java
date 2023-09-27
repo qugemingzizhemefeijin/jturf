@@ -11,6 +11,7 @@ import com.github.davidmoten.rtree.RTree;
 import com.github.davidmoten.rtree.geometry.Geometries;
 import com.github.davidmoten.rtree.geometry.Rectangle;
 import org.omg.CORBA.DoubleHolder;
+import org.omg.CORBA.IntHolder;
 import rx.Observable;
 
 import java.util.*;
@@ -503,11 +504,15 @@ public final class JTurfMisc {
             throw new JTurfException("units can be degrees, radians, miles, or kilometers");
         }
 
-        ObjectHolder<Point> closePt = new ObjectHolder<>();
-        DoubleHolder closeDist = new DoubleHolder(Double.POSITIVE_INFINITY);
+        ObjectHolder<Point> closestPt = new ObjectHolder<>(Point.fromLngLat(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY));
+        DoubleHolder closestDist = new DoubleHolder(Double.POSITIVE_INFINITY);
+        IntHolder closestIndex = new IntHolder();
+        DoubleHolder closestLocation = new DoubleHolder();
 
-        JTurfMeta.flattenEach(lines, ((line, multiIndex) -> {
-            List<Point> coords = ((Line) line).coordinates();
+        DoubleHolder length = new DoubleHolder();
+
+        JTurfMeta.flattenEach(lines, ((g, multiIndex) -> {
+            List<Point> coords = Line.line(g).coordinates();
 
             for (int i = 0, size = coords.size(); i < size - 1; i++) {
                 Point start = coords.get(i);
@@ -516,7 +521,8 @@ public final class JTurfMisc {
                 Point stop = coords.get(i + 1);
                 double stopDist = JTurfMeasurement.distance(pt, stop, units);
 
-                // double sectionLength = TaleMeasurement.distance(start, stop, units);
+                double sectionLength = JTurfMeasurement.distance(start, stop, units);
+
                 double heightDistance = Math.max(startDist, stopDist);
                 // 计算方位角
                 double direction = JTurfMeasurement.bearing(start, stop);
@@ -528,30 +534,45 @@ public final class JTurfMisc {
                 List<Point> intersect = lineIntersect(Line.fromLngLats(perpendicularPt1, perpendicularPt2), Line.fromLngLats(start, stop));
 
                 Point intersectPt = null;
-                double intersectDist = 0;
+                double intersectDist = 0, intersectLocation = 0;
                 if (intersect != null && intersect.size() > 0) {
                     intersectPt = intersect.get(0);
                     intersectDist = JTurfMeasurement.distance(pt, intersectPt, units);
+                    intersectLocation = length.value + JTurfMeasurement.distance(start, intersectPt, units);
                 }
 
-                if (startDist < closeDist.value) {
-                    closePt.value = start;
-                    closeDist.value = startDist;
+                if (startDist < closestDist.value) {
+                    closestPt.value = start;
+                    closestDist.value = startDist;
+                    closestIndex.value = i;
+                    closestLocation.value = length.value;
                 }
-                if (stopDist < closeDist.value) {
-                    closePt.value = stop;
-                    closeDist.value = stopDist;
+                if (stopDist < closestDist.value) {
+                    closestPt.value = stop;
+                    closestDist.value = stopDist;
+                    closestIndex.value = i + 1;
+                    closestLocation.value = length.value + sectionLength;
                 }
-                if (intersectPt != null && intersectDist < closeDist.value) {
-                    closePt.value = intersectPt;
-                    closeDist.value = intersectDist;
+                if (intersectPt != null && intersectDist < closestDist.value) {
+                    closestPt.value = intersectPt;
+                    closestDist.value = intersectDist;
+                    closestIndex.value = i;
+                    closestLocation.value = intersectLocation;
                 }
+
+                // update length
+                length.value += sectionLength;
             }
 
             return true;
         }));
 
-        return closePt.value;
+        Point p = Point.fromLngLat(closestPt.value);
+        p.addProperty("dist", closestDist.value);
+        p.addProperty("index", closestIndex.value);
+        p.addProperty("location", closestLocation.value);
+
+        return p;
     }
 
     /**
@@ -807,6 +828,39 @@ public final class JTurfMisc {
             Line outline = lineSliceAlong(line, segmentLength * i, segmentLength * (i + 1), units);
             callback.accept(outline);
         }
+    }
+
+    /**
+     * 根据点截取多线段<br>
+     * <p>
+     * 获取一条线、起点和终点，并返回这些点之间的线段。起止点不需要正好落在直线上
+     *
+     * @param startPt 起点
+     * @param stopPt  终点
+     * @param line    被截取的线段
+     * @return 切片线
+     */
+    public static Line lineSlice(Point startPt, Point stopPt, Line line) {
+        List<Point> coords = line.coordinates();
+
+        Point startVertex = nearestPointOnLine(line, startPt);
+        Point stopVertex = nearestPointOnLine(line, stopPt);
+
+        Point[] ends;
+        if (startVertex.getAsNumber("index").intValue() <= stopVertex.getAsNumber("index").intValue()) {
+            ends = new Point[]{startVertex, stopVertex};
+        } else {
+            ends = new Point[]{stopVertex, startVertex};
+        }
+
+        List<Point> clipCoords = new ArrayList<>();
+        clipCoords.add(ends[0]);
+        for (int i = ends[0].getAsNumber("index").intValue() + 1; i < ends[1].getAsNumber("index").intValue(); i++) {
+            clipCoords.add(coords.get(i));
+        }
+        clipCoords.add(ends[1]);
+
+        return Line.fromLngLats(clipCoords);
     }
 
 }

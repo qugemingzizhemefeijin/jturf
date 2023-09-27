@@ -1,10 +1,8 @@
 package com.cgzz.mapbox.test.jturf;
 
 import com.cgzz.mapbox.jturf.JTurfMisc;
-import com.cgzz.mapbox.jturf.enums.Units;
 import com.cgzz.mapbox.jturf.shape.Line;
-
-import java.util.List;
+import com.cgzz.mapbox.jturf.shape.Point;
 
 public class JTurfMain {
 
@@ -13,12 +11,18 @@ public class JTurfMain {
         // 0, 1, 2, 3
         // [0, 1], [2, 1], [e, n], [x, n]
 
-        Line line = Line.fromLngLats(new double[]{-95, 40, -93, 45, -85, 50});
-        List<Line> segmentLine = JTurfMisc.lineChunk(line, 15, Units.MILES, false);
-        System.out.println(segmentLine.size());
-        for (Line segment : segmentLine) {
-            System.out.println(segment.toViewCoordsString());
-        }
+        Line line = Line.fromLngLats(new double[]{-77.031669, 38.878605, -77.029609, 38.881946, -77.020339, 38.884084, -77.025661, 38.885821, -77.021884, 38.889563, -77.019824, 38.892368});
+        Point start = Point.fromLngLat(-77.029609, 38.881946);
+        Point stop = Point.fromLngLat(-77.021884, 38.889563);
+
+        System.out.println(JTurfMisc.lineSlice(start, stop, line).toViewCoordsString());
+
+//        Line line = Line.fromLngLats(new double[]{-95, 40, -93, 45, -85, 50});
+//        List<Line> segmentLine = JTurfMisc.lineChunk(line, 15, Units.MILES, false);
+//        System.out.println(segmentLine.size());
+//        for (Line segment : segmentLine) {
+//            System.out.println(segment.toViewCoordsString());
+//        }
 
 //        Line line = Line.fromLngLats(new double[]{7, 45, 9, 45, 14, 40, 14, 41});
 //        double start = 12.5;
@@ -203,7 +207,7 @@ public class JTurfMain {
 //
 //        System.out.println(TaleMisc.lineOverlap(polygon, line2, null));
 
-//        MultiLine line = MultiLine.fromLngLats(new double[][]{new double[]{-77.031669, 38.878605},
+//        MultiLine line2 = MultiLine.fromLngLats(new double[][]{new double[]{-77.031669, 38.878605},
 //                new double[]{-77.029609, 38.881946},
 //                new double[]{-77.020339, 38.884084},
 //                new double[]{-77.025661, 38.885821},
@@ -211,7 +215,9 @@ public class JTurfMain {
 //                new double[]{-77.019824, 38.892368}});
 //        Point pt = Point.fromLngLat(-77.037076, 38.884017);
 //
-//        System.out.println(TaleMisc.nearestPointOnLine(line, pt));
+//        Point p = JTurfMisc.nearestPointOnLine(line2, pt, Units.MILES);
+//        System.out.println(p.toViewCoordsString());
+//        System.out.println(p.properties());
 
 //        Polygon polygon = Polygon.fromLngLats(new double[][]{new double[]{-50, 5},
 //                new double[]{-40, -10},

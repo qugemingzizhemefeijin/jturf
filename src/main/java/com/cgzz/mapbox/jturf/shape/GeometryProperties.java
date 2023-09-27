@@ -12,6 +12,13 @@ public abstract class GeometryProperties {
         return properties;
     }
 
+    public boolean hasProperty(String property) {
+        if (properties == null) {
+            properties = new JsonObject();
+        }
+        return properties.has(property);
+    }
+
     public void addProperty(String property, Number value) {
         if (properties == null) {
             properties = new JsonObject();
