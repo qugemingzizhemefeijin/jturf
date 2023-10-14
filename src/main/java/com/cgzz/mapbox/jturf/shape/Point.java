@@ -61,7 +61,7 @@ public final class Point extends GeometryProperties implements CoordinateContain
         return "Point{" +
                 "longitude=" + longitude +
                 ", latitude=" + latitude +
-                '}';
+                "}, properties=" + properties;
     }
 
     @Override
@@ -91,7 +91,10 @@ public final class Point extends GeometryProperties implements CoordinateContain
 
     @Override
     public Point deepClone() {
-        return fromLngLat(this.longitude, this.latitude);
+        Point p = fromLngLat(this.longitude, this.latitude);
+        p.properties = cloneProperties();
+
+        return p;
     }
 
     @Override

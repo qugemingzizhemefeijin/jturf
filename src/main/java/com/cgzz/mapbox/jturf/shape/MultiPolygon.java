@@ -79,7 +79,10 @@ public final class MultiPolygon extends GeometryProperties implements Coordinate
             }
             newList.add(newCoordinate);
         }
-        return fromLngLats(newList);
+        MultiPolygon mp = fromLngLats(newList);
+        mp.properties = cloneProperties();
+
+        return mp;
     }
 
     @Override

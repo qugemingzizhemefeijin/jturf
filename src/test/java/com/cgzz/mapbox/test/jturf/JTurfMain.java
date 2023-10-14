@@ -1,11 +1,11 @@
 package com.cgzz.mapbox.test.jturf;
 
 import com.cgzz.mapbox.jturf.JTurfJoins;
-import com.cgzz.mapbox.jturf.JTurfMisc;
-import com.cgzz.mapbox.jturf.shape.MultiPoint;
+import com.cgzz.mapbox.jturf.shape.Geometry;
 import com.cgzz.mapbox.jturf.shape.Point;
 import com.cgzz.mapbox.jturf.shape.Polygon;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class JTurfMain {
@@ -15,11 +15,31 @@ public class JTurfMain {
         // 0, 1, 2, 3
         // [0, 1], [2, 1], [e, n], [x, n]
 
-        MultiPoint points = MultiPoint.fromLngLats(new double[]{-46.6318, -23.5523, -46.6246, -23.5325, -46.6062, -23.5513, -46.663, -23.554, -46.643, -23.557});
-        Polygon polygon = Polygon.fromLngLats(new double[]{-46.653, -23.543, -46.634, -23.5346, -46.613, -23.543, -46.614, -23.559, -46.631, -23.567, -46.653, -23.560, -46.653, -23.543});
+        Point pt1 = Point.fromLngLat(-77, 44);
+        Point pt2 = Point.fromLngLat(-77, 38);
 
-        List<Point> p = JTurfJoins.pointsWithinPolygon(points, polygon);
-        System.out.println(p);
+        List<Point> points = new ArrayList<>();
+        points.add(pt1);
+        points.add(pt2);
+
+        Polygon poly1 = Polygon.fromLngLats(new double[]{-81, 41, -81, 47, -72, 47, -72, 41, -81, 41});
+        poly1.addProperty("pop", 3000);
+
+        Polygon poly2 = Polygon.fromLngLats(new double[]{-81, 35, -81, 41, -72, 41, -72, 35, -81, 35});
+        poly2.addProperty("pop", 1000);
+
+        List<Geometry> polygons = new ArrayList<>();
+        polygons.add(poly1);
+        polygons.add(poly2);
+
+        List<Point> newPoints = JTurfJoins.tag(points, polygons, "pop", "population");
+        System.out.println(newPoints);
+
+//        MultiPoint points = MultiPoint.fromLngLats(new double[]{-46.6318, -23.5523, -46.6246, -23.5325, -46.6062, -23.5513, -46.663, -23.554, -46.643, -23.557});
+//        Polygon polygon = Polygon.fromLngLats(new double[]{-46.653, -23.543, -46.634, -23.5346, -46.613, -23.543, -46.614, -23.559, -46.631, -23.567, -46.653, -23.560, -46.653, -23.543});
+//
+//        List<Point> p = JTurfJoins.pointsWithinPolygon(points, polygon);
+//        System.out.println(p);
 
 //        Point center = Point.fromLngLat(-75, 40);
 //        int radius = 5;

@@ -78,7 +78,10 @@ public final class MultiLine extends GeometryProperties implements CoordinateCon
             }
             newList.add(newCoordinate);
         }
-        return fromLngLats(newList);
+        MultiLine m = fromLngLats(newList);
+        m.properties = cloneProperties();
+
+        return m;
     }
 
     @Override

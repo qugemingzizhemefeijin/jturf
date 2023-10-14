@@ -5,7 +5,7 @@ import com.cgzz.mapbox.jturf.exception.JTurfException;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class GeometryCollection extends GeometryProperties implements CollectionContainer {
+public final class GeometryCollection extends GeometryProperties implements CollectionContainer<GeometryCollection> {
 
     private final List<Geometry> geometries;
 
@@ -31,6 +31,7 @@ public final class GeometryCollection extends GeometryProperties implements Coll
         return geometries;
     }
 
+    @Override
     public GeometryCollection deepClone() {
         List<Geometry> newList = new ArrayList<>(geometries.size());
         for (Geometry geometry : geometries) {
@@ -43,7 +44,10 @@ public final class GeometryCollection extends GeometryProperties implements Coll
                 throw new JTurfException("geometry not support deepClone");
             }
         }
-        return fromGeometries(newList);
+        GeometryCollection gc = fromGeometries(newList);
+        gc.properties = cloneProperties();
+
+        return gc;
     }
 
     @Override

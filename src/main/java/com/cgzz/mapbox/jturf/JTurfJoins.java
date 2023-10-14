@@ -4,6 +4,7 @@ import com.cgzz.mapbox.jturf.exception.JTurfException;
 import com.cgzz.mapbox.jturf.shape.Geometry;
 import com.cgzz.mapbox.jturf.shape.MultiPoint;
 import com.cgzz.mapbox.jturf.shape.Point;
+import com.cgzz.mapbox.jturf.util.JTurfHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +59,36 @@ public final class JTurfJoins {
             throw new JTurfException("points is required");
         }
         return pointsWithinPolygon(points.coordinates(), polygon);
+    }
+
+    /**
+     * 空间连接<br>
+     * <p>
+     * 取一组点和一组多边形，并执行空间连接。<br>
+     * 如果点在多边形为，并且点的 [outField] 不存在，则将多边形的 [field] 属性赋值给点的 [outField] 属性
+     *
+     * @param points   点集合
+     * @param polygons 多边形集合
+     * @param field    要添加到连接点元素的 Polygon 中的字段属性
+     * @param outField 点中的 outField 属性，用于存储来自 Polygon 的连接属性
+     * @return 返回点集合，注意：此集合是克隆自points
+     */
+    public static List<Point> tag(List<Point> points, List<Geometry> polygons, String field, String outField) {
+        // deep clone
+        points = JTurfHelper.deepCloneList(points);
+        polygons = JTurfHelper.deepCloneList(polygons);
+
+        for (Point pt : points) {
+            for (Geometry poly : polygons) {
+                if (!pt.hasProperty(outField)) {
+                    if (JTurfBooleans.booleanPointInPolygon(pt, poly)) {
+                        pt.addProperty(outField, poly.getProperty(field));
+                    }
+                }
+            }
+        }
+
+        return points;
     }
 
 }

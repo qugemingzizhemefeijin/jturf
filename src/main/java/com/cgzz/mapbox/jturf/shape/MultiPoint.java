@@ -109,7 +109,10 @@ public final class MultiPoint extends GeometryProperties implements CoordinateCo
         for (Point point : coordinates) {
             list.add(point.deepClone());
         }
-        return fromLngLats(list);
+        MultiPoint mp = fromLngLats(list);
+        mp.properties = cloneProperties();
+
+        return mp;
     }
 
     @Override

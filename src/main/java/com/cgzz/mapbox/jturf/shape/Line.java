@@ -130,7 +130,10 @@ public final class Line extends GeometryProperties implements CoordinateContaine
         for (Point point : coordinates) {
             list.add(point.deepClone());
         }
-        return fromLngLats(list);
+        Line l = fromLngLats(list);
+        l.properties = cloneProperties();
+
+        return l;
     }
 
     @Override

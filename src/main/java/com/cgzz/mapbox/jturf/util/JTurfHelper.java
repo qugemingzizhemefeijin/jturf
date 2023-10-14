@@ -2,6 +2,7 @@ package com.cgzz.mapbox.jturf.util;
 
 import com.cgzz.mapbox.jturf.JTurfBooleans;
 import com.cgzz.mapbox.jturf.JTurfMeasurement;
+import com.cgzz.mapbox.jturf.JTurfTransformation;
 import com.cgzz.mapbox.jturf.enums.Units;
 import com.cgzz.mapbox.jturf.exception.JTurfException;
 import com.cgzz.mapbox.jturf.shape.*;
@@ -699,15 +700,15 @@ public final class JTurfHelper {
     }
 
     /**
-     * 深度克隆点集合
+     * 深度克隆图形集合
      *
-     * @param pointList 要被克隆的点集合
-     * @return 新的点集合
+     * @param geometryList 被克隆的图形集合
+     * @return 新的图形集合
      */
-    public static List<Point> deepCloneList(List<Point> pointList) {
-        List<Point> list = new ArrayList<>(pointList.size());
-        for (Point point : pointList) {
-            list.add(point.deepClone());
+    public static <T extends Geometry> List<T> deepCloneList(List<T> geometryList) {
+        List<T> list = new ArrayList<>(geometryList.size());
+        for (T o : geometryList) {
+            list.add(JTurfTransformation.clone(o));
         }
         return list;
     }

@@ -140,7 +140,10 @@ public final class Polygon extends GeometryProperties implements CoordinateConta
         for (Point point : coordinates) {
             list.add(point.deepClone());
         }
-        return fromLngLats(list);
+        Polygon p = fromLngLats(list);
+        p.properties = cloneProperties();
+
+        return p;
     }
 
     @Override
