@@ -1,8 +1,12 @@
 package com.cgzz.mapbox.test.jturf;
 
+import com.cgzz.mapbox.jturf.JTurfJoins;
 import com.cgzz.mapbox.jturf.JTurfMisc;
+import com.cgzz.mapbox.jturf.shape.MultiPoint;
 import com.cgzz.mapbox.jturf.shape.Point;
 import com.cgzz.mapbox.jturf.shape.Polygon;
+
+import java.util.List;
 
 public class JTurfMain {
 
@@ -11,13 +15,19 @@ public class JTurfMain {
         // 0, 1, 2, 3
         // [0, 1], [2, 1], [e, n], [x, n]
 
-        Point center = Point.fromLngLat(-75, 40);
-        int radius = 5;
-        double bearing1 = 25;
-        double bearing2 = 45;
+        MultiPoint points = MultiPoint.fromLngLats(new double[]{-46.6318, -23.5523, -46.6246, -23.5325, -46.6062, -23.5513, -46.663, -23.554, -46.643, -23.557});
+        Polygon polygon = Polygon.fromLngLats(new double[]{-46.653, -23.543, -46.634, -23.5346, -46.613, -23.543, -46.614, -23.559, -46.631, -23.567, -46.653, -23.560, -46.653, -23.543});
 
-        Polygon sector = JTurfMisc.sector(center, radius, bearing1, bearing2);
-        System.out.println(sector.toViewCoordsString());
+        List<Point> p = JTurfJoins.pointsWithinPolygon(points, polygon);
+        System.out.println(p);
+
+//        Point center = Point.fromLngLat(-75, 40);
+//        int radius = 5;
+//        double bearing1 = 25;
+//        double bearing2 = 45;
+//
+//        Polygon sector = JTurfMisc.sector(center, radius, bearing1, bearing2);
+//        System.out.println(sector.toViewCoordsString());
 
 //        Line line = Line.fromLngLats(new double[]{-77.031669, 38.878605, -77.029609, 38.881946, -77.020339, 38.884084, -77.025661, 38.885821, -77.021884, 38.889563, -77.019824, 38.892368});
 //        Point start = Point.fromLngLat(-77.029609, 38.881946);
