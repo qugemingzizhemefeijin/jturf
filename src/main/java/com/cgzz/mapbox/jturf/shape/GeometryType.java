@@ -9,6 +9,8 @@ public enum GeometryType {
     LINE,
     MULTI_LINE,
     GEOMETRY_COLLECTION,
+    FEATURE,
+    FEATURE_COLLECTION,
     ;
 
 }

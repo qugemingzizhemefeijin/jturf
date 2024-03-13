@@ -145,6 +145,7 @@ public final class Equality {
      * @param direction 如果图形集合中存在多边形，则多边形的方向是否要一致
      * @return 一致返回true
      */
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private static boolean compareGeometryCollection(GeometryCollection g1, GeometryCollection g2, int precision, boolean direction) {
         List<Geometry> l1 = ((CollectionContainer) g1).geometries();
         List<Geometry> l2 = ((CollectionContainer) g2).geometries();
