@@ -188,7 +188,7 @@ public class RingOut {
                     /* Found a completed loop. Cut that off and make a ring */
                     if (indexLE != null) {
                         IntersectionPoint intersectionLE = intersectionLEs.remove(indexLE.intValue());
-                        List<SweepEvent> ringEvents = events.subList(0, intersectionLE.index);
+                        List<SweepEvent> ringEvents = new ArrayList<>(events.subList(0, intersectionLE.index));
                         ringEvents.add(0, ringEvents.get(0).otherSE);
 
                         Collections.reverse(ringEvents);

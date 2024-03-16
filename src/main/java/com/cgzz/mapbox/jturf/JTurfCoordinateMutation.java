@@ -1,13 +1,12 @@
 package com.cgzz.mapbox.jturf;
 
 import com.cgzz.mapbox.jturf.exception.JTurfException;
-import com.cgzz.mapbox.jturf.shape.CoordinateContainer;
-import com.cgzz.mapbox.jturf.shape.Geometry;
-import com.cgzz.mapbox.jturf.shape.GeometryType;
-import com.cgzz.mapbox.jturf.shape.Point;
+import com.cgzz.mapbox.jturf.shape.*;
 import com.cgzz.mapbox.jturf.util.JTurfHelper;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public final class JTurfCoordinateMutation {
 
@@ -102,9 +101,8 @@ public final class JTurfCoordinateMutation {
         JTurfMeta.coordEach(geometry, (geo, p, index, multiIndex, geomIndex) -> {
             double latitude = p.getLatitude(), longitude = p.getLongitude();
 
-            // 翻转
-            p.setLongitude(Math.round(latitude * factor) / factor);
-            p.setLatitude(Math.round(longitude * factor) / factor);
+            p.setLongitude(Math.round(longitude * factor) / factor);
+            p.setLatitude(Math.round(latitude * factor) / factor);
 
             return true;
         });
@@ -114,6 +112,7 @@ public final class JTurfCoordinateMutation {
 
     /**
      * 清除重复坐标点，默认情况不影响原图形
+     *
      * @param geometry 图形组件
      * @return 返回处理后的图形组件
      */
@@ -130,7 +129,8 @@ public final class JTurfCoordinateMutation {
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static <T extends Geometry> T cleanCoords(T geometry, boolean mutate) {
-        if (geometry.type() == GeometryType.POINT) {
+        GeometryType type = geometry.type();
+        if (type == GeometryType.POINT) {
             return geometry;
         }
 
@@ -142,55 +142,73 @@ public final class JTurfCoordinateMutation {
             newGeometry = geometry;
         }
 
-        JTurfMeta.coordsEach(newGeometry, (geo, pointList, multiIndex, geomIndex) -> {
-            if (geo.type() == GeometryType.POINT) {
-                return true;
+        switch (type) {
+            case LINE: {
+                List<Point> pointList = cleanLine(Line.line(geometry).coordinates(), type);
+                if (pointList == null) {
+                    return null;
+                }
+
+                Line.line(newGeometry).setCoordinates(pointList);
+
+                return newGeometry;
             }
+            case MULTI_LINE: {
+                List<List<Point>> newPoints = new ArrayList<>();
+                for (List<Point> points : MultiLine.multiLine(geometry).coordinates()) {
+                    List<Point> temp = cleanLine(points, type);
+                    if (temp == null) {
+                        continue;
+                    }
+                    newPoints.add(temp);
+                }
+                if (newPoints.isEmpty()) {
+                    return null;
+                }
+                MultiLine.multiLine(newGeometry).setCoordinates(newPoints);
 
-            List<Point> newPointList;
-            if (geo.type() == GeometryType.MULTI_POINT) {
-                newPointList = cleanPoint(pointList);
-            } else {
-                newPointList = cleanLine(pointList);
+                return newGeometry;
             }
+            case POLYGON: {
+                List<Point> pointList = cleanLine(Polygon.polygon(geometry).coordinates(), type);
+                if (pointList == null) {
+                    return null;
+                }
 
-            ((CoordinateContainer)geo).setCoordinates(newPointList);
+                Polygon.polygon(newGeometry).setCoordinates(pointList);
 
-            return true;
-        });
+                return newGeometry;
+            }
+            case MULTI_POLYGON: {
+                List<List<Point>> newPoints = new ArrayList<>();
+                for (List<Point> points : MultiPolygon.multiPolygon(geometry).coordinates()) {
+                    List<Point> temp = cleanLine(points, type);
+                    if (temp == null) {
+                        continue;
+                    }
+                    newPoints.add(temp);
+                }
+                if (newPoints.isEmpty()) {
+                    return null;
+                }
 
-        return newGeometry;
-    }
+                MultiPolygon.multiPolygon(newGeometry).setCoordinates(newPoints);
 
-    /**
-     * 处理点性质的重复点集合
-     * @param points 点集合
-     * @return 处理完的新的集合
-     */
-    private static List<Point> cleanPoint(List<Point> points) {
-        int size = points.size();
-        if (size == 2 && !JTurfHelper.equals(points.get(0), points.get(1))) {
-            return points;
+                return newGeometry;
+            }
+            default:
+                throw new JTurfException(type + " geometry not supported");
         }
-
-        Set<String> existing = new HashSet<>();
-        List<Point> newPoints = new ArrayList<>();
-        for (Point point : points) {
-            String key = point.getLongitude()+"-"+point.getLatitude();
-            if (existing.add(key)) {
-                newPoints.add(point);
-            }
-        }
-
-        return newPoints;
     }
 
     /**
      * 处理带有线条性质的重复点集合
+     *
      * @param points 点集合
+     * @param type   当前处理的多边形类型
      * @return 处理完的新的集合
      */
-    private static List<Point> cleanLine(List<Point> points) {
+    private static List<Point> cleanLine(List<Point> points, GeometryType type) {
         int size = points.size();
         if (size == 2 && !JTurfHelper.equals(points.get(0), points.get(1))) {
             return points;
@@ -206,7 +224,7 @@ public final class JTurfCoordinateMutation {
             Point currPoint = points.get(i);
 
             // 如果当前点与前一个点相同，则直接返回
-            if (currPoint.getLongitude() == prevAddedPoint.getLatitude()
+            if (currPoint.getLongitude() == prevAddedPoint.getLongitude()
                     && currPoint.getLatitude() == prevAddedPoint.getLatitude()) {
                 continue;
             }
@@ -229,8 +247,13 @@ public final class JTurfCoordinateMutation {
         newPointsLength = newPoints.size();
 
         // 如果第一个点与最后一个点相同，但是点却小于4个，则是一个错误的Polygon图形
-        if (JTurfHelper.equals(points.get(0), lastPoint) && newPointsLength < 4) {
-            throw new JTurfException("invalid polygon");
+        if ((type == GeometryType.POLYGON || type == GeometryType.MULTI_POLYGON) && JTurfHelper.equals(points.get(0), lastPoint) && newPointsLength < 4) {
+            return null;
+        }
+
+        // 如果是线条类型，则直接返回
+        if (type == GeometryType.LINE && newPointsLength < 3) {
+            return newPoints;
         }
 
         // 如果最后第二个元素在最后第三个元素与最后一个元素的线上，则直接将其删除掉
@@ -296,6 +319,7 @@ public final class JTurfCoordinateMutation {
 
     /**
      * Rewind Line、MultiLine、Polygon、MultiPolygon、GeometryCollection true顺时针和false逆时针
+     *
      * @param geometry 图形组件
      * @param reverse  true顺时针和false逆时针
      * @return 返回处理后的图形组件
@@ -329,6 +353,7 @@ public final class JTurfCoordinateMutation {
 
     /**
      * Rewind - true顺时针和false逆时针
+     *
      * @param coords  点集合
      * @param reverse true顺时针和false逆时针
      */
