@@ -69,9 +69,9 @@ public class TurfTest {
         double intersectArea = interAreaHolder.value;
         double unionArea = JTurfMeasurement.area(ccc);
 
-        System.out.println("所有区域总面积和：" + BigDecimal.valueOf(totalArea / 1000000).setScale(2, RoundingMode.HALF_UP).toString() + "平方米");
-        System.out.println("交集区域总面积和：" + BigDecimal.valueOf(intersectArea / 1000000).setScale(2, RoundingMode.HALF_UP).toString() + "平方米");
-        System.out.println("合并区域的总面积：" + BigDecimal.valueOf(unionArea / 1000000).setScale(2, RoundingMode.HALF_UP).toString() + "平方米");
+        System.out.println("所有区域总面积和：" + BigDecimal.valueOf(totalArea / 1000000).setScale(2, RoundingMode.HALF_UP).toString() + "平方公里");
+        System.out.println("交集区域总面积和：" + BigDecimal.valueOf(intersectArea / 1000000).setScale(2, RoundingMode.HALF_UP).toString() + "平方公里");
+        System.out.println("合并区域的总面积：" + BigDecimal.valueOf(unionArea / 1000000).setScale(2, RoundingMode.HALF_UP).toString() + "平方公里");
         System.out.println("空白区域的总面积：" + BigDecimal.valueOf((unionArea - (totalArea - intersectArea)) / 1000000).setScale(2, RoundingMode.HALF_UP).toString() + "平方米");
 
         System.out.println("====" + ccc.coordinates().size());
@@ -285,6 +285,28 @@ public class TurfTest {
         }
 
         return pointList;
+    }
+
+    /**
+     * 修复坐标
+     *
+     * @param pointList 要修复的坐标点
+     * @return Polygon
+     */
+    private static Polygon repairCoords(List<Point> pointList) {
+        if (pointList.size() < 3) {
+            return Polygon.fromLngLats(pointList);
+        }
+
+        try {
+            // 1.修复并创建区块对象
+            Polygon polygon = createPolygonAfterRepair(pointList);
+            // 2.清除多边形不相交的面积较小的区块
+            return clearNoIntersectPolygon(polygon);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Polygon.fromLngLats(pointList);
+        }
     }
 
     /**
@@ -530,6 +552,46 @@ public class TurfTest {
     }
 
     /**
+     * 清除一个多边形不相交的面积小的区块，因为推送给饿百和美团这种被切割有问题的区块是不会成功的
+     *
+     * @param polygon 要修复的多边形
+     * @return Polygon
+     */
+    private static Polygon clearNoIntersectPolygon(Polygon polygon) {
+        // 1.切割多边形图形
+        List<Polygon> pieces = splitPolygon(polygon);
+        // 未切割出来的，则直接返回
+        if (pieces == null || pieces.isEmpty()) {
+            return null;
+        }
+        // 2. 将面积最大的模块与其他模块合并并排除掉其他不相邻的模块
+        return unionAndReturnMaxPolygon(pieces);
+    }
+
+    /**
+     * 计算出面积最大的模块并其相交的模块合并，这样就能将不相交的排除掉了
+     *
+     * @param polygons 合并多块多边形区域并返回最大的一块
+     * @return Polygon
+     */
+    private static Polygon unionAndReturnMaxPolygon(List<Polygon> polygons) {
+        Polygon maxAreaPolygon = getMaxAreaPolygon(polygons);
+        Polygon unionPolygon = maxAreaPolygon;
+
+        // 两两判断是否相交
+        for(Polygon polygon : polygons) {
+            if(polygon == maxAreaPolygon) {
+                continue;
+            }
+            Geometry newPolyGon = JTurfTransformation.union(unionPolygon, polygon);
+            if (newPolyGon.type() == GeometryType.POLYGON) {
+                unionPolygon = Polygon.polygon(newPolyGon);
+            }
+        }
+        return unionPolygon;
+    }
+
+    /**
      * 计算多个区块面积最大的区块
      *
      * @param polygons 要计算的多边形集合
@@ -599,6 +661,19 @@ public class TurfTest {
         }
 
         return a;
+    }
+
+    /**
+     * 检查多边形是否自相交
+     *
+     * @param polygon 多边形
+     * @return 如果自相交则返回true，否则返回false
+     */
+    private static boolean isKinds(Polygon polygon) {
+        // 获取自相交点
+        List<Point> kinksPoints = JTurfMisc.kinks(polygon);
+        // 没有自相交点，则返回
+        return kinksPoints != null && kinksPoints.size() > 0;
     }
 
     private static void printPoints(Polygon polygon) {
