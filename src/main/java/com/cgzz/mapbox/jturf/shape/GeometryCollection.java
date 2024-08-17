@@ -1,11 +1,11 @@
 package com.cgzz.mapbox.jturf.shape;
 
-import com.cgzz.mapbox.jturf.exception.JTurfException;
+import com.cgzz.mapbox.jturf.geojson.GeoJsonUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public final class GeometryCollection extends GeometryProperties implements CollectionContainer<GeometryCollection> {
+public class GeometryCollection implements Geometry {
 
     private final List<Geometry> geometries;
 
@@ -27,42 +27,32 @@ public final class GeometryCollection extends GeometryProperties implements Coll
         return new GeometryCollection(geometries);
     }
 
+    public static GeometryCollection fromJson(String json) {
+        return GeoJsonUtils.getGson().fromJson(json, GeometryCollection.class);
+    }
+
     public List<Geometry> geometries() {
         return geometries;
     }
 
     @Override
-    public GeometryCollection deepClone() {
-        List<Geometry> newList = new ArrayList<>(geometries.size());
-        for (Geometry geometry : geometries) {
-            if (geometry instanceof CoordinateContainer) {
-                CoordinateContainer<?, ? extends Geometry> coordinateContainer = (CoordinateContainer<?, ? extends Geometry>) geometry;
-                newList.add(coordinateContainer.deepClone());
-            } else if (geometry instanceof GeometryCollection) {
-                newList.add(((GeometryCollection) geometry).deepClone());
-            } else {
-                throw new JTurfException("geometry not support deepClone");
-            }
-        }
-        GeometryCollection gc = fromGeometries(newList);
-        gc.properties = cloneProperties();
-
-        return gc;
-    }
-
-    @Override
-    public GeometryType type() {
+    public GeometryType geometryType() {
         return GeometryType.GEOMETRY_COLLECTION;
     }
 
     @Override
     public String toViewCoordsString() {
         StringBuilder buf = new StringBuilder();
-        buf.append("├───── ").append(type()).append("─────┤").append("\n");
+        buf.append("├───── ").append(geometryType()).append("─────┤").append("\n");
         for (Geometry geometry : geometries) {
             buf.append(geometry.toViewCoordsString()).append("\n");
         }
         return buf.toString();
+    }
+
+    @Override
+    public String toJson() {
+        return GeoJsonUtils.getGson().toJson(this);
     }
 
     @Override
@@ -71,4 +61,25 @@ public final class GeometryCollection extends GeometryProperties implements Coll
                 "geometries=" + geometries +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof GeometryCollection) {
+            GeometryCollection that = (GeometryCollection) obj;
+            return this.geometries.equals(that.geometries());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hashCode = 1;
+        hashCode *= 1000003;
+        hashCode ^= geometries.hashCode();
+        return hashCode;
+    }
+
 }

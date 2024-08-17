@@ -1,51 +1,96 @@
 package com.cgzz.mapbox.jturf.shape;
 
 import com.cgzz.mapbox.jturf.exception.JTurfException;
+import com.cgzz.mapbox.jturf.geojson.GeoJsonUtils;
 
-public final class Point extends GeometryProperties implements CoordinateContainer<Point, Point>, Comparable<Point> {
+import java.io.Serializable;
+import java.util.List;
 
-    private double longitude;
+public final class Point implements Geometry, Serializable {
 
-    private double latitude;
+    private final double longitude;
 
-    public Point(double longitude, double latitude) {
+    private final double latitude;
+
+    private final double altitude;
+
+    Point(double longitude, double latitude, double altitude) {
         this.longitude = longitude;
         this.latitude = latitude;
+        this.altitude = altitude;
     }
 
     public static Point fromLngLat(double longitude, double latitude) {
-        return new Point(longitude, latitude);
+        return new Point(longitude, latitude, Double.NaN);
+    }
+
+    public static Point fromLngLat(double longitude, double latitude, double altitude) {
+        return new Point(longitude, latitude, altitude);
     }
 
     public static Point fromLngLat(double[] coords) {
         if (coords.length == 2) {
             return Point.fromLngLat(coords[0], coords[1]);
+        } else if (coords.length > 2) {
+            return Point.fromLngLat(coords[0], coords[1], coords[2]);
+        }
+        throw new JTurfException("point must two number");
+    }
+
+    public static Point fromLngLat(List<Double> coordinates) {
+        if (coordinates.size() == 2) {
+            return Point.fromLngLat(coordinates.get(0), coordinates.get(1));
+        } else if (coordinates.size() > 2) {
+            return Point.fromLngLat(coordinates.get(0), coordinates.get(1), coordinates.get(2));
         }
         throw new JTurfException("point must two number");
     }
 
     public static Point fromLngLat(Point p) {
-        return Point.fromLngLat(p.getLongitude(), p.getLatitude());
+        return Point.fromLngLat(p.longitude, p.latitude, p.altitude);
+    }
+
+    public static Point fromJson(String json) {
+        return GeoJsonUtils.getGson().fromJson(json, Point.class);
     }
 
     public static Point point(Geometry geometry) {
-        return (Point)geometry;
+        return (Point) geometry;
     }
 
-    public double getLongitude() {
+    @Override
+    public GeometryType geometryType() {
+        return GeometryType.POINT;
+    }
+
+    @Override
+    public String toViewCoordsString() {
+        if (hasAltitude()) {
+            return "[" + this.longitude + "," + this.latitude + "," + this.altitude + "]\n";
+        } else {
+            return "[" + this.longitude + "," + this.latitude + "]\n";
+        }
+    }
+
+    @Override
+    public String toJson() {
+        return GeoJsonUtils.getGson().toJson(this);
+    }
+
+    public double longitude() {
         return longitude;
     }
 
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
-    }
-
-    public double getLatitude() {
+    public double latitude() {
         return latitude;
     }
 
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
+    public double altitude() {
+        return altitude;
+    }
+
+    public boolean hasAltitude() {
+        return !Double.isNaN(altitude);
     }
 
     public double getX() {
@@ -56,64 +101,47 @@ public final class Point extends GeometryProperties implements CoordinateContain
         return latitude;
     }
 
+    public double getZ() {
+        return altitude;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof Point) {
+            Point that = (Point) obj;
+            return this.longitude == that.longitude && this.latitude == that.latitude && this.altitude == that.altitude;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hashCode = 1;
+        hashCode *= 1000003;
+        hashCode ^= Double.hashCode(longitude);
+        hashCode *= 1000003;
+        hashCode ^= Double.hashCode(latitude);
+        if (hasAltitude()) {
+            hashCode *= 1000003;
+            hashCode ^= Double.hashCode(altitude);
+        }
+        return hashCode;
+    }
+
     @Override
     public String toString() {
-        return "Point{" +
-                "longitude=" + longitude +
-                ", latitude=" + latitude +
-                "}, properties=" + properties;
-    }
-
-    @Override
-    public Point coordinates() {
-        return this;
-    }
-
-    @Override
-    public void setCoordinates(Point coordinates) {
-        this.longitude = coordinates.longitude;
-        this.latitude = coordinates.latitude;
-    }
-
-    @Override
-    public int coordsSize() {
-        return 1;
-    }
-
-    @Override
-    public String toViewCoordsString() {
-        return "[" + this.longitude + "," + this.latitude + "]\n";
-    }
-
-    public double[] getCoord() {
-        return new double[]{longitude, latitude};
-    }
-
-    @Override
-    public Point deepClone() {
-        Point p = fromLngLat(this.longitude, this.latitude);
-        p.properties = cloneProperties();
-
-        return p;
-    }
-
-    @Override
-    public GeometryType type() {
-        return GeometryType.POINT;
-    }
-
-    @Override
-    public int compareTo(Point o) {
-        if (this.longitude == o.longitude) {
-            if (this.latitude == o.latitude) {
-                return 0;
-            }
-            return this.latitude > o.latitude ? 1 : -1;
-        }
-        if (this.longitude > o.longitude) {
-            return 1;
+        if (hasAltitude()) {
+            return "Point{"
+                    + "coordinates=[" + longitude + ", " + latitude + ", " + altitude + "]"
+                    + "}";
         } else {
-            return -1;
+            return "Point{"
+                    + "coordinates=[" + longitude + ", " + latitude + "]"
+                    + "}";
         }
     }
+
 }

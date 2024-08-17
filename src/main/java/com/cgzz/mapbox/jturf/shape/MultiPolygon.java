@@ -1,14 +1,15 @@
 package com.cgzz.mapbox.jturf.shape;
 
+import com.cgzz.mapbox.jturf.geojson.GeoJsonUtils;
+
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-public final class MultiPolygon extends GeometryProperties implements CoordinateContainer<List<List<Point>>, MultiPolygon> {
+public final class MultiPolygon implements CoordinateContainer<List<List<List<Point>>>> {
 
-    private List<List<Point>> coordinates;
+    private final List<List<List<Point>>> coordinates;
 
-    MultiPolygon(List<List<Point>> coordinates) {
+    MultiPolygon(List<List<List<Point>>> coordinates) {
         if (coordinates == null) {
             throw new NullPointerException("Null coordinates");
         }
@@ -16,7 +17,7 @@ public final class MultiPolygon extends GeometryProperties implements Coordinate
     }
 
     public static MultiPolygon fromPolygons(List<Polygon> polygons) {
-        List<List<Point>> coordinates = new ArrayList<>(polygons.size());
+        List<List<List<Point>>> coordinates = new ArrayList<>(polygons.size());
         for (Polygon polygon : polygons) {
             coordinates.add(polygon.coordinates());
         }
@@ -24,15 +25,33 @@ public final class MultiPolygon extends GeometryProperties implements Coordinate
     }
 
     public static MultiPolygon fromPolygon(Polygon polygon) {
-        List<List<Point>> coordinates = Collections.singletonList(polygon.coordinates());
+        List<List<List<Point>>> coordinates = new ArrayList<>(1);
+        coordinates.add(polygon.coordinates());
+
         return new MultiPolygon(coordinates);
     }
 
-    public static MultiPolygon fromLngLats(List<List<Point>> points) {
+    public static MultiPolygon fromLngLats(List<List<List<Point>>> points) {
         return new MultiPolygon(points);
     }
 
+    public static MultiPolygon fromLngLats(double[][][][] coordinates) {
+        List<List<List<Point>>> converted = new ArrayList<>(coordinates.length);
+        for (double[][][] coordinate : coordinates) {
+            converted.add(toListListPoint(coordinate));
+        }
+
+        return new MultiPolygon(converted);
+    }
+
     public static MultiPolygon fromLngLats(double[][][] coordinates) {
+        List<List<List<Point>>> ppList = new ArrayList<>(1);
+        ppList.add(toListListPoint(coordinates));
+
+        return new MultiPolygon(ppList);
+    }
+
+    private static List<List<Point>> toListListPoint(double[][][] coordinates) {
         List<List<Point>> converted = new ArrayList<>(coordinates.length);
 
         for (double[][] coordinate : coordinates) {
@@ -43,7 +62,11 @@ public final class MultiPolygon extends GeometryProperties implements Coordinate
             converted.add(innerOneList);
         }
 
-        return new MultiPolygon(converted);
+        return converted;
+    }
+
+    public static MultiPolygon fromJson(String json) {
+        return GeoJsonUtils.getGson().fromJson(json, MultiPolygon.class);
     }
 
     public static MultiPolygon multiPolygon(Geometry geometry) {
@@ -51,60 +74,46 @@ public final class MultiPolygon extends GeometryProperties implements Coordinate
     }
 
     public List<Polygon> polygons() {
-        List<List<Point>> coordinates = coordinates();
+        List<List<List<Point>>> coordinates = coordinates();
         List<Polygon> polygons = new ArrayList<>(coordinates.size());
-        for (List<Point> points : coordinates) {
+        for (List<List<Point>> points : coordinates) {
             polygons.add(Polygon.fromLngLats(points));
         }
         return polygons;
     }
 
     @Override
-    public List<List<Point>> coordinates() {
+    public List<List<List<Point>>> coordinates() {
         return coordinates;
     }
 
     @Override
-    public void setCoordinates(List<List<Point>> coordinates) {
-        this.coordinates = coordinates;
-    }
-
-    @Override
-    public MultiPolygon deepClone() {
-        List<List<Point>> newList = new ArrayList<>(coordinates.size());
-        for (List<Point> coordinate : coordinates) {
-            List<Point> newCoordinate = new ArrayList<>(coordinate.size());
-            for (Point p : coordinate) {
-                newCoordinate.add(p.deepClone());
-            }
-            newList.add(newCoordinate);
-        }
-        MultiPolygon mp = fromLngLats(newList);
-        mp.properties = cloneProperties();
-
-        return mp;
-    }
-
-    @Override
-    public GeometryType type() {
+    public GeometryType geometryType() {
         return GeometryType.MULTI_POLYGON;
     }
 
     @Override
     public String toViewCoordsString() {
         StringBuilder buf = new StringBuilder();
-        buf.append("├───── ").append(type()).append("─────┤").append("\n");
-        if (coordinates != null) {
-            for (List<Point> pointList : coordinates) {
+        buf.append("├───── ").append(geometryType()).append("─────┤").append("\n");
+        for (List<List<Point>> coordinate : coordinates) {
+            buf.append("[");
+            for (List<Point> pointList : coordinate) {
                 buf.append("[");
                 for (Point point : pointList) {
-                    buf.append("[").append(point.getX()).append(",").append(point.getY()).append("]").append("\n");
+                    buf.append(point.toViewCoordsString());
                 }
                 buf.append("]");
             }
-            return buf.toString();
+            buf.append("]");
         }
-        return "";
+
+        return buf.toString();
+    }
+
+    @Override
+    public String toJson() {
+        return GeoJsonUtils.getGson().toJson(this);
     }
 
     @Override
@@ -113,4 +122,25 @@ public final class MultiPolygon extends GeometryProperties implements Coordinate
                 "coordinates=" + coordinates +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof MultiPolygon) {
+            MultiPolygon that = (MultiPolygon) obj;
+            return this.coordinates.equals(that.coordinates());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hashCode = 1;
+        hashCode *= 1000003;
+        hashCode ^= coordinates.hashCode();
+        return hashCode;
+    }
+
 }
