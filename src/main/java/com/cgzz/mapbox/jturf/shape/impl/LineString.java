@@ -1,14 +1,17 @@
-package com.cgzz.mapbox.jturf.shape;
+package com.cgzz.mapbox.jturf.shape.impl;
 
 import com.cgzz.mapbox.jturf.exception.JTurfException;
 import com.cgzz.mapbox.jturf.geojson.GeoJsonUtils;
+import com.cgzz.mapbox.jturf.shape.CoordinateContainer;
+import com.cgzz.mapbox.jturf.shape.Geometry;
+import com.cgzz.mapbox.jturf.shape.GeometryType;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public final class LineString implements CoordinateContainer<List<Point>> {
 
-    private final List<Point> coordinates;
+    private List<Point> coordinates;
 
     LineString(List<Point> coordinates) {
         if (coordinates == null) {
@@ -97,13 +100,18 @@ public final class LineString implements CoordinateContainer<List<Point>> {
         return GeoJsonUtils.getGson().fromJson(json, LineString.class);
     }
 
-    public static LineString LineString(Geometry g) {
+    public static LineString lineString(Geometry g) {
         return (LineString) g;
     }
 
     @Override
     public List<Point> coordinates() {
         return coordinates;
+    }
+
+    @Override
+    public void coordinates(List<Point> coordinates) {
+        this.coordinates = coordinates;
     }
 
     @Override

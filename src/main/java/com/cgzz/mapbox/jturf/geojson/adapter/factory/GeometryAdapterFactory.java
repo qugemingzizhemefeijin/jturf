@@ -1,6 +1,7 @@
 package com.cgzz.mapbox.jturf.geojson.adapter.factory;
 
 import com.cgzz.mapbox.jturf.shape.*;
+import com.cgzz.mapbox.jturf.shape.impl.*;
 import com.google.gson.TypeAdapterFactory;
 
 public abstract class GeometryAdapterFactory implements TypeAdapterFactory {

@@ -1,6 +1,6 @@
 package com.cgzz.mapbox.jturf.geojson.adapter.impl;
 
-import com.cgzz.mapbox.jturf.shape.Feature;
+import com.cgzz.mapbox.jturf.shape.impl.Feature;
 import com.cgzz.mapbox.jturf.shape.Geometry;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -38,7 +38,7 @@ public final class FeatureGsonTypeAdapter extends TypeAdapter<Feature> {
                 stringTypeAdapter = gson.getAdapter(String.class);
                 this.stringTypeAdapter = stringTypeAdapter;
             }
-            stringTypeAdapter.write(jsonWriter, object.geometryType().name);
+            stringTypeAdapter.write(jsonWriter, object.geometryType().getName());
         }
         jsonWriter.name("id");
         if (object.id() == null) {

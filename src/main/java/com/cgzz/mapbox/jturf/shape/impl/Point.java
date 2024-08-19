@@ -1,12 +1,15 @@
-package com.cgzz.mapbox.jturf.shape;
+package com.cgzz.mapbox.jturf.shape.impl;
 
 import com.cgzz.mapbox.jturf.exception.JTurfException;
 import com.cgzz.mapbox.jturf.geojson.GeoJsonUtils;
+import com.cgzz.mapbox.jturf.shape.CoordinateContainer;
+import com.cgzz.mapbox.jturf.shape.Geometry;
+import com.cgzz.mapbox.jturf.shape.GeometryType;
 
 import java.io.Serializable;
 import java.util.List;
 
-public final class Point implements Geometry, Serializable {
+public final class Point implements CoordinateContainer<Point>, Serializable {
 
     private final double longitude;
 
@@ -61,6 +64,16 @@ public final class Point implements Geometry, Serializable {
     @Override
     public GeometryType geometryType() {
         return GeometryType.POINT;
+    }
+
+    @Override
+    public Point coordinates() {
+        return this;
+    }
+
+    @Override
+    public void coordinates(Point coordinates) {
+        throw new JTurfException("not support operator");
     }
 
     @Override

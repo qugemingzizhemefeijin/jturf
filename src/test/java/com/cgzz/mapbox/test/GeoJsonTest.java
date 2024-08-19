@@ -1,7 +1,7 @@
 package com.cgzz.mapbox.test;
 
-import com.cgzz.mapbox.jturf.shape.Point;
-import com.cgzz.mapbox.jturf.shape.Polygon;
+import com.cgzz.mapbox.jturf.shape.impl.Point;
+import com.cgzz.mapbox.jturf.shape.impl.Polygon;
 
 public class GeoJsonTest {
 

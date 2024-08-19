@@ -2,8 +2,8 @@ package com.cgzz.mapbox.jturf.geojson.adapter.impl;
 
 import com.cgzz.mapbox.jturf.exception.GeoJsonException;
 import com.cgzz.mapbox.jturf.geojson.GeoJsonUtils;
-import com.cgzz.mapbox.jturf.shape.BoundingBox;
-import com.cgzz.mapbox.jturf.shape.Point;
+import com.cgzz.mapbox.jturf.shape.impl.BoundingBox;
+import com.cgzz.mapbox.jturf.shape.impl.Point;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;

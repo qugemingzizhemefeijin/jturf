@@ -1,13 +1,16 @@
-package com.cgzz.mapbox.jturf.shape;
+package com.cgzz.mapbox.jturf.shape.impl;
 
 import com.cgzz.mapbox.jturf.geojson.GeoJsonUtils;
+import com.cgzz.mapbox.jturf.shape.CoordinateContainer;
+import com.cgzz.mapbox.jturf.shape.Geometry;
+import com.cgzz.mapbox.jturf.shape.GeometryType;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public final class MultiPolygon implements CoordinateContainer<List<List<List<Point>>>> {
 
-    private final List<List<List<Point>>> coordinates;
+    private List<List<List<Point>>> coordinates;
 
     MultiPolygon(List<List<List<Point>>> coordinates) {
         if (coordinates == null) {
@@ -85,6 +88,11 @@ public final class MultiPolygon implements CoordinateContainer<List<List<List<Po
     @Override
     public List<List<List<Point>>> coordinates() {
         return coordinates;
+    }
+
+    @Override
+    public void coordinates(List<List<List<Point>>> coordinates) {
+        this.coordinates = coordinates;
     }
 
     @Override

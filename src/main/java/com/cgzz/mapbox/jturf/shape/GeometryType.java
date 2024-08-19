@@ -31,7 +31,7 @@ public enum GeometryType {
         GeometryType.typeMap = Collections.unmodifiableMap(typeMap);
     }
 
-    public final String name;
+    private final String name;
 
     GeometryType(String name) {
         this.name = name;

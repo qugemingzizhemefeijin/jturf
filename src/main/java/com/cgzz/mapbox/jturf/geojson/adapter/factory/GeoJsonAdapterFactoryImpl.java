@@ -1,7 +1,7 @@
 package com.cgzz.mapbox.jturf.geojson.adapter.factory;
 
 import com.cgzz.mapbox.jturf.geojson.adapter.impl.*;
-import com.cgzz.mapbox.jturf.shape.*;
+import com.cgzz.mapbox.jturf.shape.impl.*;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.reflect.TypeToken;

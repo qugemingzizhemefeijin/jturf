@@ -1,43 +1,53 @@
-package com.cgzz.mapbox.jturf.shape;
+package com.cgzz.mapbox.jturf.shape.impl;
 
+import com.cgzz.mapbox.jturf.exception.JTurfException;
 import com.cgzz.mapbox.jturf.geojson.GeoJsonUtils;
-import com.google.gson.JsonElement;
+import com.cgzz.mapbox.jturf.shape.AbstractGeometryProperties;
+import com.cgzz.mapbox.jturf.shape.Geometry;
+import com.cgzz.mapbox.jturf.shape.GeometryType;
 import com.google.gson.JsonObject;
 
-public final class Feature implements Geometry {
+public final class Feature extends AbstractGeometryProperties implements Geometry {
 
     private final String id;
 
     private final Geometry geometry;
 
-    private final JsonObject properties;
-
     Feature(String id, Geometry geometry, JsonObject properties) {
+        super(properties);
+
         if (geometry == null) {
             throw new NullPointerException("Null geometry");
         }
 
         this.id = id;
         this.geometry = geometry;
-        this.properties = properties;
     }
 
     public static Feature fromGeometry(Geometry geometry) {
-        return new Feature(null, geometry, new JsonObject());
+        return fromGeometry(geometry, new JsonObject(), null);
     }
 
     public static Feature fromGeometry(Geometry geometry, JsonObject properties) {
-        return new Feature(null, geometry, properties == null ? new JsonObject() : properties);
+        return fromGeometry(geometry, properties == null ? new JsonObject() : properties, null);
     }
 
     public static Feature fromGeometry(Geometry geometry, JsonObject properties, String id) {
+        if (geometry instanceof Feature) {
+            throw new JTurfException("feature can not save feature object");
+        }
+
         return new Feature(id, geometry, properties == null ? new JsonObject() : properties);
     }
 
     public static Feature fromJson(String json) {
         Feature feature = GeoJsonUtils.getGson().fromJson(json, Feature.class);
 
-        if (feature.properties() != null) {
+        if (feature.geometry() instanceof Feature) {
+            throw new JTurfException("feature can not save feature object");
+        }
+
+        if (feature.properties != null) {
             return feature;
         }
 
@@ -50,57 +60,6 @@ public final class Feature implements Geometry {
 
     public Geometry geometry() {
         return geometry;
-    }
-
-    public JsonObject properties() {
-        return properties;
-    }
-
-    public void addStringProperty(String key, String value) {
-        properties().addProperty(key, value);
-    }
-
-    public void addNumberProperty(String key, Number value) {
-        properties().addProperty(key, value);
-    }
-
-    public void addBooleanProperty(String key, Boolean value) {
-        properties().addProperty(key, value);
-    }
-
-    public void addProperty(String key, JsonElement value) {
-        properties().add(key, value);
-    }
-
-    public String getStringProperty(String key) {
-        JsonElement propertyKey = properties().get(key);
-        return propertyKey == null ? null : propertyKey.getAsString();
-    }
-
-    public Number getNumberProperty(String key) {
-        JsonElement propertyKey = properties().get(key);
-        return propertyKey == null ? null : propertyKey.getAsNumber();
-    }
-
-    public Boolean getBooleanProperty(String key) {
-        JsonElement propertyKey = properties().get(key);
-        return propertyKey == null ? null : propertyKey.getAsBoolean();
-    }
-
-    public JsonElement getProperty(String key) {
-        return properties().get(key);
-    }
-
-    public JsonElement removeProperty(String key) {
-        return properties().remove(key);
-    }
-
-    public boolean hasProperty(String key) {
-        return properties().has(key);
-    }
-
-    public boolean hasNonNullValueForProperty(String key) {
-        return hasProperty(key) && !getProperty(key).isJsonNull();
     }
 
     @Override

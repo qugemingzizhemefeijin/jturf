@@ -1,7 +1,7 @@
 package com.cgzz.mapbox.jturf.geojson.adapter.impl;
 
 import com.cgzz.mapbox.jturf.geojson.GeoJsonUtils;
-import com.cgzz.mapbox.jturf.shape.Point;
+import com.cgzz.mapbox.jturf.shape.impl.Point;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
@@ -36,7 +36,7 @@ public final class PointGsonTypeAdapter extends TypeAdapter<Point> {
             stringAdapter = gson.getAdapter(String.class);
             this.stringAdapter = stringAdapter;
         }
-        stringAdapter.write(jsonWriter, point.geometryType().name);
+        stringAdapter.write(jsonWriter, point.geometryType().getName());
 
         jsonWriter.name("coordinates");
         jsonWriter.beginArray();

@@ -37,7 +37,7 @@ public abstract class BaseGeometryTypeAdapter<G, T> extends TypeAdapter<G> {
             stringAdapter = gson.getAdapter(String.class);
             this.stringAdapter = stringAdapter;
         }
-        stringAdapter.write(jsonWriter, object.geometryType().name);
+        stringAdapter.write(jsonWriter, object.geometryType().getName());
 
         jsonWriter.name("coordinates");
         if (object.coordinates() == null) {

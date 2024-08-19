@@ -9,4 +9,11 @@ public interface CoordinateContainer<T> extends Geometry {
      */
     T coordinates();
 
+    /**
+     * 重新设置新的坐标信息
+     *
+     * @param coordinates 新坐标信息
+     */
+    void coordinates(T coordinates);
+
 }

@@ -1,7 +1,7 @@
 package com.cgzz.mapbox.jturf.geojson.adapter;
 
 import com.cgzz.mapbox.jturf.exception.GeoJsonException;
-import com.cgzz.mapbox.jturf.shape.Point;
+import com.cgzz.mapbox.jturf.shape.impl.Point;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;

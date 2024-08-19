@@ -1,12 +1,15 @@
-package com.cgzz.mapbox.jturf.shape;
+package com.cgzz.mapbox.jturf.shape.impl;
 
 import com.cgzz.mapbox.jturf.geojson.GeoJsonUtils;
+import com.cgzz.mapbox.jturf.shape.CollectionContainer;
+import com.cgzz.mapbox.jturf.shape.Geometry;
+import com.cgzz.mapbox.jturf.shape.GeometryType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public final class FeatureCollection implements Geometry {
+public final class FeatureCollection implements CollectionContainer<Feature> {
 
     private final List<Feature> features;
 
@@ -33,12 +36,17 @@ public final class FeatureCollection implements Geometry {
         return GeoJsonUtils.getGson().fromJson(json, FeatureCollection.class);
     }
 
+    public static FeatureCollection featureCollection(Geometry geometry) {
+        return (FeatureCollection) geometry;
+    }
+
     @Override
     public GeometryType geometryType() {
         return GeometryType.FEATURE_COLLECTION;
     }
 
-    public List<Feature> features() {
+    @Override
+    public List<Feature> geometries() {
         return features;
     }
 
@@ -72,7 +80,7 @@ public final class FeatureCollection implements Geometry {
         if (obj instanceof FeatureCollection) {
             FeatureCollection that = (FeatureCollection) obj;
             return (this.features == null)
-                    ? (that.features() == null) : this.features.equals(that.features());
+                    ? (that.geometries() == null) : this.features.equals(that.geometries());
         }
         return false;
     }

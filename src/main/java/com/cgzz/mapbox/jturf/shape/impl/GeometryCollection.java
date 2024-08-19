@@ -1,11 +1,14 @@
-package com.cgzz.mapbox.jturf.shape;
+package com.cgzz.mapbox.jturf.shape.impl;
 
 import com.cgzz.mapbox.jturf.geojson.GeoJsonUtils;
+import com.cgzz.mapbox.jturf.shape.CollectionContainer;
+import com.cgzz.mapbox.jturf.shape.Geometry;
+import com.cgzz.mapbox.jturf.shape.GeometryType;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GeometryCollection implements Geometry {
+public class GeometryCollection implements CollectionContainer<Geometry> {
 
     private final List<Geometry> geometries;
 
@@ -29,6 +32,10 @@ public class GeometryCollection implements Geometry {
 
     public static GeometryCollection fromJson(String json) {
         return GeoJsonUtils.getGson().fromJson(json, GeometryCollection.class);
+    }
+
+    public static GeometryCollection geometryCollection(Geometry geometry) {
+        return (GeometryCollection) geometry;
     }
 
     public List<Geometry> geometries() {

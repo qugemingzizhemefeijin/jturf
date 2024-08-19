@@ -1,4 +1,4 @@
-package com.cgzz.mapbox.jturf.shape;
+package com.cgzz.mapbox.jturf.shape.impl;
 
 import com.cgzz.mapbox.jturf.geojson.GeoJson;
 import com.cgzz.mapbox.jturf.geojson.GeoJsonUtils;
