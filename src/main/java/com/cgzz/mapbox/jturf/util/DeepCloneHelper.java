@@ -32,7 +32,7 @@ public final class DeepCloneHelper {
             case MULTI_POLYGON:
                 return deepClone(MultiPolygon.multiPolygon(geometry));
             case FEATURE:
-                return deepClone(Feature.fromGeometry(geometry));
+                return deepClone(Feature.feature(geometry));
             case MULTI_POINT:
                 return deepClone(MultiPoint.multiPoint(geometry));
             case MULTI_LINE_STRING:

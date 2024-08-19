@@ -32,7 +32,7 @@ public final class CoordEachHelper {
         for (int geomIndex = 0; geomIndex < stop; geomIndex++) {
             Geometry g = geometryCollection != null ? geometryCollection.geometries().get(geomIndex) : geometry;
             if (g instanceof Feature) {
-                g = Feature.fromGeometry(g).geometry();
+                g = Feature.feature(g).geometry();
             }
 
             GeometryType gType = g.geometryType();

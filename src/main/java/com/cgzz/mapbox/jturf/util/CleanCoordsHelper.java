@@ -31,7 +31,7 @@ public final class CleanCoordsHelper {
         if (type == GeometryType.POINT) {
             return geometry;
         } else if (type == GeometryType.FEATURE) {
-            Geometry t = cleanCoords(Feature.fromGeometry(geometry).geometry(), mutate);
+            Geometry t = cleanCoords(Feature.feature(geometry).geometry(), mutate);
             if (!mutate) {
                 return (T) Feature.fromGeometry(t);
             } else {

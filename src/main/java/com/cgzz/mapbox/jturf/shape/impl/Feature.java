@@ -54,6 +54,10 @@ public final class Feature extends AbstractGeometryProperties implements Geometr
         return new Feature(feature.id(), feature.geometry(), new JsonObject());
     }
 
+    public static Feature feature(Geometry g) {
+        return (Feature) g;
+    }
+
     public String id() {
         return id;
     }
