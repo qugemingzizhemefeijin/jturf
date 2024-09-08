@@ -1,14 +1,14 @@
 package com.cgzz.mapbox.jturf;
 
 import com.cgzz.mapbox.jturf.enums.Units;
+import com.cgzz.mapbox.jturf.exception.JTurfException;
 import com.cgzz.mapbox.jturf.shape.Geometry;
-import com.cgzz.mapbox.jturf.shape.impl.BoundingBox;
-import com.cgzz.mapbox.jturf.shape.impl.Point;
-import com.cgzz.mapbox.jturf.shape.impl.Polygon;
-import com.cgzz.mapbox.jturf.util.AreaHelper;
-import com.cgzz.mapbox.jturf.util.LengthHelper;
+import com.cgzz.mapbox.jturf.shape.impl.*;
+import com.cgzz.mapbox.jturf.util.*;
 import org.omg.CORBA.DoubleHolder;
 import org.omg.CORBA.IntHolder;
+
+import java.util.List;
 
 public final class JTurfMeasurement {
 
@@ -403,6 +403,199 @@ public final class JTurfMeasurement {
         }, true);
 
         return Point.fromLngLat(sumX.value / len.value, sumY.value / len.value);
+    }
+
+    /**
+     * 获取边框并计算包含输入的最小正方形边框
+     *
+     * @param bbox 边框
+     * @return 正方形边框
+     */
+    public static BoundingBox square(BoundingBox bbox) {
+        double[] b = bbox.bbox();
+
+        double west = b[0],
+                south = b[1],
+                east = b[2],
+                north = b[3];
+
+        double horizontalDistance = distance(bbox.southwest(), bbox.southeast());
+        double verticalDistance = distance(bbox.northeast(), bbox.northwest());
+
+        if (horizontalDistance >= verticalDistance) {
+            double verticalMidpoint = (south + north) / 2;
+
+            return BoundingBox.fromCoordinates(west,
+                    verticalMidpoint - (east - west) / 2,
+                    east,
+                    verticalMidpoint + (east - west) / 2);
+        } else {
+            double horizontalMidpoint = (west + east) / 2;
+
+            return BoundingBox.fromCoordinates(horizontalMidpoint - (north - south) / 2,
+                    south,
+                    horizontalMidpoint + (north - south) / 2,
+                    north);
+        }
+    }
+
+    /**
+     * 返回沿该线指定公里数的点。
+     *
+     * @param lineString 线条图形
+     * @param distance   指定的距离，单位公里
+     * @return Point
+     */
+    public static Point along(LineString lineString, double distance) {
+        return along(lineString, distance, Units.KILOMETERS);
+    }
+
+    /**
+     * 返回沿该线指定距离的点。
+     *
+     * @param lineString  线条图形
+     * @param distance    距离
+     * @param units       距离单位
+     * @return Point
+     */
+    public static Point along(LineString lineString, double distance, Units units) {
+        List<Point> coords = lineString.coordinates();
+        double travelled = 0;
+
+        for (int i = 0, len = coords.size(); i < len; i++) {
+            if (distance >= travelled && i == len - 1) {
+                break;
+            }
+
+            Point currPoint = coords.get(i);
+            if (travelled >= distance) {
+                double overshot = distance - travelled;
+                if (overshot == 0) {
+                    return currPoint;
+                } else {
+                    double direction = bearing(currPoint, coords.get(i - 1)) - 180;
+                    return destination(currPoint, overshot, direction, units);
+                }
+            } else {
+                travelled += distance(currPoint, coords.get(i + 1), units);
+            }
+        }
+
+        return coords.get(coords.size() - 1);
+    }
+
+    /**
+     * 计算两点间的弧线<br>
+     * 将大圆路径计算为 LineString，默认返回100个点
+     *
+     * @param start   起始点
+     * @param end     目标点
+     * @return 返回弧线，可能为空，LineString 或 MultiLineString
+     */
+    public static Geometry greatCircle(Point start, Point end) {
+        return greatCircle(start, end, 100, 0);
+    }
+
+    /**
+     * 计算两点间的弧线<br>
+     * 将大圆路径计算为 Line
+     *
+     * @param start   起始点
+     * @param end     目标点
+     * @param npoints 点的数量，如果小于等于0则默认为100
+     * @param offset  偏移量控制了跨越日期线的线条被分割的概率。数值越高，可能性越大。如果小于等于0则默认为10
+     * @return 返回弧线，可能为空，Line 或 MultiLine
+     */
+    public static Geometry greatCircle(Point start, Point end, int npoints, int offset) {
+        if (npoints <= 0) {
+            npoints = 100;
+        }
+        if (offset <= 0) {
+            offset = 10;
+        }
+
+        return GreatCircle.arc(start, end, npoints, offset);
+    }
+
+    /**
+     * 根据点、距离（默认单位：公里）和角度计算目标点
+     * <p>
+     * 返回从原点出发，沿大圆线行驶给定距离和给定方位角后到达的终点。
+     *
+     * @param origin   开始点
+     * @param distance 从起点的距离，默认单位公里
+     * @param bearing  方位角从北向南的范围在 -180 到 180 度之间
+     * @return 返回目标点
+     */
+    public static Point rhumbDestination(Point origin, double distance, double bearing) {
+        return rhumbDestination(origin, distance, bearing, null);
+    }
+
+    /**
+     * 根据点、距离和角度计算目标点
+     * <p>
+     * 返回从原点出发，沿大圆线行驶给定距离和给定方位角后到达的终点。
+     *
+     * @param origin   开始点
+     * @param distance 从起点的距离
+     * @param bearing  方位角从北向南的范围在 -180 到 180 度之间
+     * @param units    距离单位
+     * @return 返回目标点
+     */
+    public static Point rhumbDestination(Point origin, double distance, double bearing, Units units) {
+        return RhumbDestinationHelper.rhumbDestination(origin, distance, bearing, units);
+    }
+
+    /**
+     * 计算多点范围<br><br>
+     * <p>
+     * 接受任意数量的点 ，并返回一个包含所有顶点的矩形多边形。
+     *
+     * @param multiPoint 多点集合
+     * @return 边界框的多边形表示形式
+     */
+    public static Polygon envelope(MultiPoint multiPoint) {
+        return bboxPolygon(bbox(multiPoint));
+    }
+
+    /**
+     * 计算多边形切点<br><br>
+     * <p>
+     * 从一个点找到多边形的切线
+     *
+     * @param point   计算切点
+     * @param polygon 多边形
+     * @return 包含两个切点的点集合
+     */
+    public static List<Point> polygonTangents(Point point, Polygon polygon) {
+        if (point == null) {
+            throw new JTurfException("point is required");
+        }
+        if (polygon == null) {
+            throw new JTurfException("polygon is required");
+        }
+
+        return PolygonTangentsHelper.polygonTangents(point, polygon);
+    }
+
+    /**
+     * 计算多边形切点<br><br>
+     * <p>
+     * 从一个点找到多边形的切线
+     *
+     * @param point        计算切点
+     * @param multiPolygon 组合多边形
+     * @return 包含两个切点的点集合
+     */
+    public static List<Point> polygonTangents(Point point, MultiPolygon multiPolygon) {
+        if (point == null) {
+            throw new JTurfException("point is required");
+        }
+        if (multiPolygon == null) {
+            throw new JTurfException("multiPolygon is required");
+        }
+
+        return PolygonTangentsHelper.polygonTangents(point, multiPolygon);
     }
 
 }

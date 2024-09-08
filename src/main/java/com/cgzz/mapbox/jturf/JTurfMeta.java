@@ -3,6 +3,8 @@ package com.cgzz.mapbox.jturf;
 import com.cgzz.mapbox.jturf.callback.CoordEachCallback;
 import com.cgzz.mapbox.jturf.callback.CoordsEachCallback;
 import com.cgzz.mapbox.jturf.shape.Geometry;
+import com.cgzz.mapbox.jturf.shape.GeometryType;
+import com.cgzz.mapbox.jturf.shape.impl.Feature;
 import com.cgzz.mapbox.jturf.util.metahelper.CoordEachHelper;
 import com.cgzz.mapbox.jturf.util.metahelper.CoordsEachHelper;
 
@@ -52,6 +54,19 @@ public final class JTurfMeta {
         }
 
         return CoordsEachHelper.coordsEach(geometry, callback);
+    }
+
+    /**
+     * 如果传入的 Geometry 为一个 Feature类型，则获取其内部的对象
+     *
+     * @param geometry GeoJSON Feature or Geometry Object
+     * @return Geometry
+     */
+    public static Geometry getGeom(Geometry geometry) {
+        if (geometry.geometryType() == GeometryType.FEATURE) {
+            return Feature.feature(geometry).geometry();
+        }
+        return geometry;
     }
 
 }

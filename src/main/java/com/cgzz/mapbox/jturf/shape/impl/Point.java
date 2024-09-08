@@ -118,6 +118,10 @@ public final class Point implements CoordinateContainer<Point>, Serializable {
         return altitude;
     }
 
+    public double[] getCoord() {
+        return new double[]{longitude, latitude, altitude};
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == this) {

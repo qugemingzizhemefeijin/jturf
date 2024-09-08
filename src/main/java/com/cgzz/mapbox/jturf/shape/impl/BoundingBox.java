@@ -28,7 +28,7 @@ public final class BoundingBox implements GeoJson, Serializable {
         this.northeast = northeast;
     }
 
-    public static BoundingBox fromPoints(Point southwest, Point northeast) {
+    public static BoundingBox fromLngLats(Point southwest, Point northeast) {
         return new BoundingBox(southwest, northeast);
     }
 
