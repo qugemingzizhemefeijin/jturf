@@ -3,8 +3,8 @@ package com.cgzz.mapbox.jturf;
 import com.cgzz.mapbox.jturf.callback.CoordEachCallback;
 import com.cgzz.mapbox.jturf.callback.CoordsEachCallback;
 import com.cgzz.mapbox.jturf.shape.Geometry;
-import com.cgzz.mapbox.jturf.util.CoordEachHelper;
-import com.cgzz.mapbox.jturf.util.CoordsEachHelper;
+import com.cgzz.mapbox.jturf.util.metahelper.CoordEachHelper;
+import com.cgzz.mapbox.jturf.util.metahelper.CoordsEachHelper;
 
 public final class JTurfMeta {
 

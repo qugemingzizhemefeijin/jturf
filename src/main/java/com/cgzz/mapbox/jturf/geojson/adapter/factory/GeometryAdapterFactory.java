@@ -11,13 +11,13 @@ public abstract class GeometryAdapterFactory implements TypeAdapterFactory {
     public static TypeAdapterFactory create() {
         if (geometryTypeFactory == null) {
             geometryTypeFactory = RuntimeTypeAdapterFactory.of(Geometry.class, "type", true)
-                    .registerSubtype(GeometryCollection.class, GeometryType.GEOMETRY_COLLECTION.name)
-                    .registerSubtype(Point.class, GeometryType.POINT.name)
-                    .registerSubtype(MultiPoint.class, GeometryType.MULTI_POINT.name)
-                    .registerSubtype(LineString.class, GeometryType.LINE_STRING.name)
-                    .registerSubtype(MultiLineString.class, GeometryType.MULTI_LINE_STRING.name)
-                    .registerSubtype(Polygon.class, GeometryType.POLYGON.name)
-                    .registerSubtype(MultiPolygon.class, GeometryType.MULTI_POLYGON.name);
+                    .registerSubtype(GeometryCollection.class, GeometryType.GEOMETRY_COLLECTION.getName())
+                    .registerSubtype(Point.class, GeometryType.POINT.getName())
+                    .registerSubtype(MultiPoint.class, GeometryType.MULTI_POINT.getName())
+                    .registerSubtype(LineString.class, GeometryType.LINE_STRING.getName())
+                    .registerSubtype(MultiLineString.class, GeometryType.MULTI_LINE_STRING.getName())
+                    .registerSubtype(Polygon.class, GeometryType.POLYGON.getName())
+                    .registerSubtype(MultiPolygon.class, GeometryType.MULTI_POLYGON.getName());
         }
         return geometryTypeFactory;
     }

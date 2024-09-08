@@ -42,7 +42,7 @@ public final class FeatureCollectionGsonTypeAdapter extends TypeAdapter<FeatureC
             stringAdapter.write(jsonWriter, object.geometryType().getName());
         }
         jsonWriter.name("features");
-        if (object.features() == null) {
+        if (object.geometries() == null) {
             jsonWriter.nullValue();
         } else {
             TypeAdapter<List<Feature>> listFeatureAdapter = this.listFeatureAdapter;
@@ -51,7 +51,7 @@ public final class FeatureCollectionGsonTypeAdapter extends TypeAdapter<FeatureC
                 listFeatureAdapter = (TypeAdapter<List<Feature>>) gson.getAdapter(typeToken);
                 this.listFeatureAdapter = listFeatureAdapter;
             }
-            listFeatureAdapter.write(jsonWriter, object.features());
+            listFeatureAdapter.write(jsonWriter, object.geometries());
         }
         jsonWriter.endObject();
     }

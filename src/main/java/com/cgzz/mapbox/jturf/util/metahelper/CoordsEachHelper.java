@@ -1,4 +1,4 @@
-package com.cgzz.mapbox.jturf.util;
+package com.cgzz.mapbox.jturf.util.metahelper;
 
 import com.cgzz.mapbox.jturf.callback.CoordsEachCallback;
 import com.cgzz.mapbox.jturf.shape.CollectionContainer;

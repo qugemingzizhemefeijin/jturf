@@ -8,6 +8,7 @@ import com.cgzz.mapbox.jturf.shape.Geometry;
 import com.cgzz.mapbox.jturf.shape.GeometryType;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public final class Polygon implements CoordinateContainer<List<List<Point>>> {
@@ -28,6 +29,18 @@ public final class Polygon implements CoordinateContainer<List<List<Point>>> {
         }
 
         return new Polygon(coordinates);
+    }
+
+    public static Polygon fromLngLats(Point... coordinates) {
+        List<Point> pointList = new ArrayList<>(coordinates.length + 1);
+        pointList.addAll(Arrays.asList(coordinates));
+        // 修正数据
+        corrective(pointList);
+
+        List<List<Point>> singlePointList = new ArrayList<>(4);
+        singlePointList.add(pointList);
+
+        return new Polygon(singlePointList);
     }
 
     public static Polygon fromLngLats(double[][][] coordinates) {
