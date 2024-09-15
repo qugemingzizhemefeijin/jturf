@@ -95,6 +95,19 @@ public final class MultiPolygon implements CoordinateContainer<List<List<List<Po
         this.coordinates = coordinates;
     }
 
+    /**
+     * 减少一个维度展开
+     *
+     * @return 返回与Polygon维度一样的多点集合
+     */
+    public List<List<Point>> decreaseOneCoordinates() {
+        List<List<Point>> p = new ArrayList<>();
+        for (List<List<Point>> coords : coordinates) {
+            p.addAll(coords);
+        }
+        return p;
+    }
+
     @Override
     public GeometryType geometryType() {
         return GeometryType.MULTI_POLYGON;

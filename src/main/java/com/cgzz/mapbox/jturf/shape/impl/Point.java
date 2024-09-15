@@ -9,13 +9,13 @@ import com.cgzz.mapbox.jturf.shape.GeometryType;
 import java.io.Serializable;
 import java.util.List;
 
-public final class Point implements CoordinateContainer<Point>, Serializable {
+public final class Point implements CoordinateContainer<Point>, Serializable, Comparable<Point> {
 
-    private final double longitude;
+    private double longitude;
 
-    private final double latitude;
+    private double latitude;
 
-    private final double altitude;
+    private double altitude;
 
     Point(double longitude, double latitude, double altitude) {
         this.longitude = longitude;
@@ -118,8 +118,25 @@ public final class Point implements CoordinateContainer<Point>, Serializable {
         return altitude;
     }
 
-    public double[] getCoord() {
+    public double[] getCoords() {
         return new double[]{longitude, latitude, altitude};
+    }
+
+    public void setCoords(Point p) {
+        this.longitude = p.longitude;
+        this.latitude = p.latitude;
+        this.altitude = p.altitude;
+    }
+
+    public void setCoords(double longitude, double latitude) {
+        this.longitude = longitude;
+        this.latitude = latitude;
+    }
+
+    public void setCoords(double longitude, double latitude, double altitude) {
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.altitude = altitude;
     }
 
     @Override
@@ -158,6 +175,21 @@ public final class Point implements CoordinateContainer<Point>, Serializable {
             return "Point{"
                     + "coordinates=[" + longitude + ", " + latitude + "]"
                     + "}";
+        }
+    }
+
+    @Override
+    public int compareTo(Point o) {
+        if (this.longitude == o.longitude) {
+            if (this.latitude == o.latitude) {
+                return 0;
+            }
+            return this.latitude > o.latitude ? 1 : -1;
+        }
+        if (this.longitude > o.longitude) {
+            return 1;
+        } else {
+            return -1;
         }
     }
 

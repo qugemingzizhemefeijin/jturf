@@ -33,7 +33,7 @@ public final class RhumbDestinationHelper {
             distanceInMeters = -Math.abs(distanceInMeters);
         }
 
-        double[] coords = origin.getCoord();
+        double[] coords = origin.getCoords();
         double[] destination = calculateRhumbDestination(coords, distanceInMeters, bearing);
 
         // compensate the crossing of the 180th meridian (https://macwright.org/2016/09/26/the-180th-meridian.html)

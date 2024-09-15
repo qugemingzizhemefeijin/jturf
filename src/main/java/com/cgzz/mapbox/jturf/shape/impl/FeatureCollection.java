@@ -7,6 +7,7 @@ import com.cgzz.mapbox.jturf.shape.GeometryType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 public final class FeatureCollection implements CollectionContainer<Feature> {
@@ -14,6 +15,9 @@ public final class FeatureCollection implements CollectionContainer<Feature> {
     private final List<Feature> features;
 
     FeatureCollection(List<Feature> features) {
+        if (features == null) {
+            throw new NullPointerException("Null features");
+        }
         this.features = features;
     }
 
@@ -51,6 +55,26 @@ public final class FeatureCollection implements CollectionContainer<Feature> {
     }
 
     @Override
+    public int size() {
+        return features.size();
+    }
+
+    @Override
+    public Iterator<Feature> iterator() {
+        return features.iterator();
+    }
+
+    @Override
+    public Feature get(int index) {
+        return features.get(index);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return features.isEmpty();
+    }
+
+    @Override
     public String toViewCoordsString() {
         StringBuilder buf = new StringBuilder();
         buf.append("├───── ").append(geometryType()).append("─────┤").append("\n");
@@ -79,8 +103,7 @@ public final class FeatureCollection implements CollectionContainer<Feature> {
         }
         if (obj instanceof FeatureCollection) {
             FeatureCollection that = (FeatureCollection) obj;
-            return (this.features == null)
-                    ? (that.geometries() == null) : this.features.equals(that.geometries());
+            return this.features.equals(that.geometries());
         }
         return false;
     }
@@ -89,7 +112,7 @@ public final class FeatureCollection implements CollectionContainer<Feature> {
     public int hashCode() {
         int hashCode = 1;
         hashCode *= 1000003;
-        hashCode ^= (features == null) ? 0 : features.hashCode();
+        hashCode ^= features.hashCode();
         return hashCode;
     }
 

@@ -402,7 +402,7 @@ public final class JTurfHelper {
                 return false;
             }
             if (!foundInsidePoint) {
-                foundInsidePoint = JTurfBooleans.booleanPointOnLine(p, line, true);
+                foundInsidePoint = JTurfBooleans.booleanPointOnLine(p, lineString, true);
             }
         }
 
@@ -524,7 +524,7 @@ public final class JTurfHelper {
     }
 
     /**
-     * 判断多边形1是否在多边形2中
+     * 判断多边形1是否在多边形2中，<b>注意：这里只会判断polygon1的outer形状是否在polygon2中</b>
      *
      * @param polygon1 要判断的多边形
      * @param polygon2 多边形，支持Polygon、MultiPolygon
@@ -537,7 +537,7 @@ public final class JTurfHelper {
             return false;
         }
 
-        for (Point p : polygon1.coordinates()) {
+        for (Point p : polygon1.coordinates().get(0)) {
             if (!JTurfBooleans.booleanPointInPolygon(p, polygon2)) {
                 return false;
             }
@@ -704,11 +704,10 @@ public final class JTurfHelper {
             return false;
         }
 
-        int size = pointList.size();
-        for (int i = 0; i < size - 1; i++) {
+        for (int i = 0, size = pointList.size(); i < size - 1; i++) {
             Point point = pointList.get(i);
             for (int ii = i + 1; ii < size - 2; ii++) {
-                if (isPointOnLine(point, Line.fromLngLats(pointList.get(ii), pointList.get(ii + 1)))) {
+                if (isPointOnLine(point, LineString.fromLngLats(pointList.get(ii), pointList.get(ii + 1)))) {
                     return true;
                 }
             }
@@ -724,13 +723,13 @@ public final class JTurfHelper {
      * @param index 从geom的哪个位置开始循环
      * @return 如果正常则返回true
      */
-    public static boolean checkPolygonAgainstOthers(List<Point> poly, List<List<Point>> geom, int index) {
+    public static boolean checkPolygonAgainstOthers(List<List<Point>> poly, List<List<List<Point>>> geom, int index) {
         Polygon polyToCheck = Polygon.fromLngLats(poly);
         for (int i = index + 1, size = geom.size(); i < size; i++) {
             // 判断是否不相交
             if (!JTurfBooleans.booleanDisjoint(polyToCheck, Polygon.fromLngLats(geom.get(i)))) {
                 // 判断是否交叉
-                if (JTurfBooleans.booleanCrosses(polyToCheck, Line.fromLngLats(geom.get(i)))) {
+                if (JTurfBooleans.booleanCrosses(polyToCheck, LineString.fromLngLats(geom.get(i).get(0)))) {
                     return false;
                 }
             }
@@ -762,9 +761,34 @@ public final class JTurfHelper {
         int size = pointList.size();
         Point[] array = new Point[size];
         for (int i = 0; i < size; i++) {
-            array[i] = pointList.get(i).deepClone();
+            array[i] = Point.fromLngLat(pointList.get(i));
         }
         return array;
+    }
+
+    /**
+     * 比较两个线条的斜率并返回结果
+     *
+     * @param line1 线段1
+     * @param line2 线段2
+     * @return 如果斜率相等返回true
+     */
+    public static boolean isParallel(LineString line1, LineString line2) {
+        double slope1 = JTurfHelper.bearingToAzimuth(JTurfMeasurement.rhumbBearing(line1.coordinates().get(0), line1.coordinates().get(1)));
+        double slope2 = JTurfHelper.bearingToAzimuth(JTurfMeasurement.rhumbBearing(line2.coordinates().get(0), line2.coordinates().get(1)));
+
+        return slope1 == slope2;
+    }
+
+    /**
+     * 比较两个线条的斜率并返回结果
+     *
+     * @param feature1 线段1
+     * @param feature2 线段2
+     * @return 如果斜率相等返回true
+     */
+    public static boolean isParallel(Feature feature1, Feature feature2) {
+        return isParallel((LineString) feature1.geometry(), (LineString) feature2.geometry());
     }
 
 }

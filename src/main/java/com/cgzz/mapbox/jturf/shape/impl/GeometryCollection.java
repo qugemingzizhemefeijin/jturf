@@ -6,6 +6,7 @@ import com.cgzz.mapbox.jturf.shape.Geometry;
 import com.cgzz.mapbox.jturf.shape.GeometryType;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class GeometryCollection implements CollectionContainer<Geometry> {
@@ -45,6 +46,26 @@ public class GeometryCollection implements CollectionContainer<Geometry> {
     @Override
     public GeometryType geometryType() {
         return GeometryType.GEOMETRY_COLLECTION;
+    }
+
+    @Override
+    public int size() {
+        return geometries.size();
+    }
+
+    @Override
+    public Iterator<Geometry> iterator() {
+        return geometries.iterator();
+    }
+
+    @Override
+    public Geometry get(int index) {
+        return geometries.get(index);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return geometries.isEmpty();
     }
 
     @Override

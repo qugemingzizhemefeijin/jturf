@@ -514,7 +514,7 @@ public final class JTurfMeasurement {
             offset = 10;
         }
 
-        return GreatCircle.arc(start, end, npoints, offset);
+        return GreatCircleHelper.arc(start, end, npoints, offset);
     }
 
     /**

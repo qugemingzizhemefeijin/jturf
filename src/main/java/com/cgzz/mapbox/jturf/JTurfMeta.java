@@ -1,12 +1,10 @@
 package com.cgzz.mapbox.jturf;
 
-import com.cgzz.mapbox.jturf.callback.CoordEachCallback;
-import com.cgzz.mapbox.jturf.callback.CoordsEachCallback;
+import com.cgzz.mapbox.jturf.callback.*;
 import com.cgzz.mapbox.jturf.shape.Geometry;
 import com.cgzz.mapbox.jturf.shape.GeometryType;
 import com.cgzz.mapbox.jturf.shape.impl.Feature;
-import com.cgzz.mapbox.jturf.util.metahelper.CoordEachHelper;
-import com.cgzz.mapbox.jturf.util.metahelper.CoordsEachHelper;
+import com.cgzz.mapbox.jturf.util.metahelper.*;
 
 public final class JTurfMeta {
 
@@ -67,6 +65,37 @@ public final class JTurfMeta {
             return Feature.feature(geometry).geometry();
         }
         return geometry;
+    }
+
+    /**
+     * 迭代任何对象中的扁平特性，类似于Array.forEach，会将Multi(Point|Line|Polygon)拆分成单个图形
+     *
+     * @param geometry 要迭代的元素
+     * @param callback 回调处理函数
+     */
+    public static void flattenEach(Geometry geometry, FlattenEachCallback callback) {
+        FlattenEachHelper.flattenEach(geometry, callback);
+    }
+
+    /**
+     * 迭代对象的线段
+     *
+     * @param geometry 要迭代的图形
+     * @param callback 回调函数
+     */
+    public static void segmentEach(Geometry geometry, SegmentEachCallback callback) {
+        SegmentEachHelper.segmentEach(geometry, callback);
+    }
+
+    /**
+     * 循环处理Geometry对象
+     *
+     * @param geometry 图形组件
+     * @param callback 处理函数
+     * @return 是否所有的对象均处理成功
+     */
+    public static <T extends Geometry> boolean geomEach(T geometry, GeometryEachCallback callback) {
+        return GeomEachHelper.geomEach(geometry, callback);
     }
 
 }

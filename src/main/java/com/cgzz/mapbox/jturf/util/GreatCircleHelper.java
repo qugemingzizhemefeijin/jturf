@@ -9,13 +9,13 @@ import com.cgzz.mapbox.jturf.shape.impl.Point;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class GreatCircle {
+public final class GreatCircleHelper {
 
     private static final double D2R = Math.PI / 180;
     private static final double R2D = 180 / Math.PI;
 
     // http://en.wikipedia.org/wiki/Great-circle_distance
-    private GreatCircle() {
+    private GreatCircleHelper() {
         throw new AssertionError("No Instances.");
     }
 
@@ -40,8 +40,8 @@ public final class GreatCircle {
 
         List<double[]> first_pass = new ArrayList<>();
         if (npoints <= 2) {
-            first_pass.add(start.getCoord());
-            first_pass.add(end.getCoord());
+            first_pass.add(start.getCoords());
+            first_pass.add(end.getCoords());
         } else {
             double delta = 1.0 / (npoints - 1);
             for (int i = 0; i < npoints; ++i) {
