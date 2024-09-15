@@ -4,7 +4,7 @@ import com.cgzz.mapbox.jturf.enums.Units;
 import com.cgzz.mapbox.jturf.exception.JTurfException;
 import com.cgzz.mapbox.jturf.shape.Geometry;
 import com.cgzz.mapbox.jturf.shape.impl.*;
-import com.cgzz.mapbox.jturf.util.*;
+import com.cgzz.mapbox.jturf.util.measurement.*;
 import org.omg.CORBA.DoubleHolder;
 import org.omg.CORBA.IntHolder;
 

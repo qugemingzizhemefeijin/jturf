@@ -4,7 +4,7 @@ import com.cgzz.mapbox.jturf.callback.*;
 import com.cgzz.mapbox.jturf.shape.Geometry;
 import com.cgzz.mapbox.jturf.shape.GeometryType;
 import com.cgzz.mapbox.jturf.shape.impl.Feature;
-import com.cgzz.mapbox.jturf.util.metahelper.*;
+import com.cgzz.mapbox.jturf.util.meta.*;
 
 public final class JTurfMeta {
 

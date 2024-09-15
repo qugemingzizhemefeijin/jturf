@@ -5,7 +5,7 @@ import com.cgzz.mapbox.jturf.exception.JTurfException;
 import com.cgzz.mapbox.jturf.shape.Geometry;
 import com.cgzz.mapbox.jturf.shape.GeometryType;
 import com.cgzz.mapbox.jturf.shape.impl.*;
-import com.cgzz.mapbox.jturf.util.*;
+import com.cgzz.mapbox.jturf.util.misc.*;
 
 import java.util.List;
 

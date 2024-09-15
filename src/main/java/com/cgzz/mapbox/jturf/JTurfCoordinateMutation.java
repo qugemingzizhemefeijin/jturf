@@ -1,7 +1,7 @@
 package com.cgzz.mapbox.jturf;
 
 import com.cgzz.mapbox.jturf.shape.Geometry;
-import com.cgzz.mapbox.jturf.util.CleanCoordsHelper;
+import com.cgzz.mapbox.jturf.util.coordinatemutation.CleanCoordsHelper;
 
 public final class JTurfCoordinateMutation {
 

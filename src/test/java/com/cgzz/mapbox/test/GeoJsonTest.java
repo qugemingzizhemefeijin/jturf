@@ -3,7 +3,7 @@ package com.cgzz.mapbox.test;
 import com.cgzz.mapbox.jturf.JTurfMeasurement;
 import com.cgzz.mapbox.jturf.shape.impl.Point;
 import com.cgzz.mapbox.jturf.shape.impl.Polygon;
-import com.cgzz.mapbox.jturf.util.metahelper.SegmentReduceHelper;
+import com.cgzz.mapbox.jturf.util.meta.SegmentReduceHelper;
 
 import java.util.List;
 

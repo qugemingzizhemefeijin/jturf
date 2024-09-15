@@ -5,7 +5,7 @@ import com.cgzz.mapbox.jturf.shape.Geometry;
 import com.cgzz.mapbox.jturf.shape.impl.FeatureCollection;
 import com.cgzz.mapbox.jturf.shape.impl.LineString;
 import com.cgzz.mapbox.jturf.shape.impl.Point;
-import com.cgzz.mapbox.jturf.util.*;
+import com.cgzz.mapbox.jturf.util.booleans.*;
 import org.omg.CORBA.BooleanHolder;
 
 import java.util.List;

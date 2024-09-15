@@ -3,9 +3,9 @@ package com.cgzz.mapbox.jturf;
 import com.cgzz.mapbox.jturf.exception.JTurfException;
 import com.cgzz.mapbox.jturf.shape.Geometry;
 import com.cgzz.mapbox.jturf.shape.impl.*;
-import com.cgzz.mapbox.jturf.util.CombineHelper;
-import com.cgzz.mapbox.jturf.util.PolygonToLineHelper;
-import com.cgzz.mapbox.jturf.util.metahelper.FlattenEachHelper;
+import com.cgzz.mapbox.jturf.util.featureconversion.CombineHelper;
+import com.cgzz.mapbox.jturf.util.featureconversion.PolygonToLineHelper;
+import com.cgzz.mapbox.jturf.util.meta.FlattenEachHelper;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;

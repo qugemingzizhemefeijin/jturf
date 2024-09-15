@@ -8,10 +8,10 @@ import com.cgzz.mapbox.jturf.shape.impl.BoundingBox;
 import com.cgzz.mapbox.jturf.shape.impl.LineString;
 import com.cgzz.mapbox.jturf.shape.impl.Point;
 import com.cgzz.mapbox.jturf.shape.impl.Polygon;
-import com.cgzz.mapbox.jturf.util.*;
-import com.cgzz.mapbox.jturf.util.clipping.PolygonClippingHelper;
-import com.cgzz.mapbox.jturf.util.clipping.polygonclipping.PolygonClipping;
-import com.cgzz.mapbox.jturf.util.simplify.SimplifyHelper;
+import com.cgzz.mapbox.jturf.util.pkg.clipping.PolygonClippingHelper;
+import com.cgzz.mapbox.jturf.util.pkg.clipping.polygonclipping.PolygonClipping;
+import com.cgzz.mapbox.jturf.util.transformation.SimplifyHelper;
+import com.cgzz.mapbox.jturf.util.transformation.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -81,7 +81,7 @@ public final class JTurfTransformation {
             return null;
         }
 
-        return (T)DeepCloneHelper.deepClone(geometry);
+        return (T) DeepCloneHelper.deepClone(geometry);
     }
 
     /**
