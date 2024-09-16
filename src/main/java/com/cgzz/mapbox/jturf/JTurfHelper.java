@@ -217,14 +217,36 @@ public final class JTurfHelper {
     }
 
     /**
-     * 比较两个坐标点是否一致
+     * 比较两个坐标点是否一致（二维）
      *
      * @param pt1 Point
      * @param pt2 Point
      * @return 一致返回true
      */
     public static boolean equals(Point pt1, Point pt2) {
-        return pt1 == pt2;
+        return equalsD2(pt1, pt2);
+    }
+
+    /**
+     * 比较两个坐标点是否一致（二维）
+     *
+     * @param pt1 Point
+     * @param pt2 Point
+     * @return 一致返回true
+     */
+    public static boolean equalsD2(Point pt1, Point pt2) {
+        return pt1.getX() == pt2.getX() && pt2.getY() == pt2.getY();
+    }
+
+    /**
+     * 比较两个坐标点是否一致（三维）
+     *
+     * @param pt1 Point
+     * @param pt2 Point
+     * @return 一致返回true
+     */
+    public static boolean equalsD3(Point pt1, Point pt2) {
+        return pt1.getX() == pt2.getX() && pt2.getY() == pt2.getY() && pt1.getZ() == pt2.getZ();
     }
 
     /**
@@ -293,7 +315,7 @@ public final class JTurfHelper {
         }
 
         for (int i = 0, size = p1.size(); i < size; i++) {
-            if (!equals(p1.get(i), p2.get(i))) {
+            if (!equalsD2(p1.get(i), p2.get(i))) {
                 return false;
             }
         }
@@ -357,7 +379,7 @@ public final class JTurfHelper {
      */
     public static boolean isPointInMultiPoint(Point pt, MultiPoint mp) {
         for (Point p : mp.coordinates()) {
-            if (equals(pt, p)) {
+            if (equalsD2(pt, p)) {
                 return true;
             }
         }
@@ -372,11 +394,13 @@ public final class JTurfHelper {
      * @return 如果mp1中的所有点均在mp2中，则返回true
      */
     public static boolean isMultiPointInMultiPoint(MultiPoint mp1, MultiPoint mp2) {
+        // FIXME turf-boolean-within/index.ts 有个BUG，忘记break，不影响结果判定
         for (Point p1 : mp1.coordinates()) {
             boolean anyMatch = false;
             for (Point p2 : mp2.coordinates()) {
-                if (equals(p1, p2)) {
+                if (equalsD2(p1, p2)) {
                     anyMatch = true;
+                    break;
                 }
             }
 
@@ -690,7 +714,7 @@ public final class JTurfHelper {
             return false;
         }
 
-        return equals(pointList.get(0), pointList.get(pointList.size() - 1));
+        return equalsD2(pointList.get(0), pointList.get(pointList.size() - 1));
     }
 
     /**
@@ -787,8 +811,8 @@ public final class JTurfHelper {
      * @param feature2 线段2
      * @return 如果斜率相等返回true
      */
-    public static boolean isParallel(Feature feature1, Feature feature2) {
-        return isParallel((LineString) feature1.geometry(), (LineString) feature2.geometry());
+    public static boolean isParallel(Feature<LineString> feature1, Feature<LineString> feature2) {
+        return isParallel(feature1.geometry(), feature2.geometry());
     }
 
 }

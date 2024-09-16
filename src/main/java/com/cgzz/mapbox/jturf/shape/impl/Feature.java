@@ -7,13 +7,13 @@ import com.cgzz.mapbox.jturf.shape.Geometry;
 import com.cgzz.mapbox.jturf.shape.GeometryType;
 import com.google.gson.JsonObject;
 
-public final class Feature extends AbstractGeometryProperties implements Geometry {
+public final class Feature<T extends Geometry> extends AbstractGeometryProperties implements Geometry {
 
     private final String id;
 
-    private final Geometry geometry;
+    private final T geometry;
 
-    Feature(String id, Geometry geometry, JsonObject properties) {
+    Feature(String id, T geometry, JsonObject properties) {
         super(properties);
 
         if (geometry == null) {
@@ -24,24 +24,29 @@ public final class Feature extends AbstractGeometryProperties implements Geometr
         this.geometry = geometry;
     }
 
-    public static Feature fromGeometry(Geometry geometry) {
+    public static <T extends Geometry> Feature<T> fromGeometry(T geometry) {
         return fromGeometry(geometry, new JsonObject(), null);
     }
 
-    public static Feature fromGeometry(Geometry geometry, JsonObject properties) {
+    public static <T extends Geometry> Feature<T> fromGeometry(T geometry, JsonObject properties) {
         return fromGeometry(geometry, properties == null ? new JsonObject() : properties, null);
     }
 
-    public static Feature fromGeometry(Geometry geometry, JsonObject properties, String id) {
+    public static <T extends Geometry> Feature<T> fromGeometry(T geometry, JsonObject properties, String id) {
         if (geometry instanceof Feature) {
             throw new JTurfException("feature can not save feature object");
         }
 
-        return new Feature(id, geometry, properties == null ? new JsonObject() : properties);
+        return new Feature<>(id, geometry, properties == null ? new JsonObject() : properties);
     }
 
-    public static Feature fromJson(String json) {
-        Feature feature = GeoJsonUtils.getGson().fromJson(json, Feature.class);
+    public static Feature<Geometry> fromJson(String json) {
+        return fromJson(json, Geometry.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends Geometry> Feature<T> fromJson(String json, Class<T> geometryClass) {
+        Feature<T> feature = GeoJsonUtils.getGson().fromJson(json, Feature.class);
 
         if (feature.geometry() instanceof Feature) {
             throw new JTurfException("feature can not save feature object");
@@ -51,18 +56,19 @@ public final class Feature extends AbstractGeometryProperties implements Geometr
             return feature;
         }
 
-        return new Feature(feature.id(), feature.geometry(), new JsonObject());
+        return new Feature<>(feature.id(), feature.geometry(), new JsonObject());
     }
 
-    public static Feature feature(Geometry g) {
-        return (Feature) g;
+    @SuppressWarnings("unchecked")
+    public static Feature<Geometry> feature(Geometry g) {
+        return (Feature<Geometry>) g;
     }
 
     public String id() {
         return id;
     }
 
-    public Geometry geometry() {
+    public T geometry() {
         return geometry;
     }
 
@@ -83,7 +89,7 @@ public final class Feature extends AbstractGeometryProperties implements Geometr
 
     @Override
     public String toJson() {
-        return null;
+        return GeoJsonUtils.getGson().toJson(this);
     }
 
     @Override
@@ -95,6 +101,7 @@ public final class Feature extends AbstractGeometryProperties implements Geometr
                 + "}";
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public boolean equals(Object obj) {
         if (obj == this) {

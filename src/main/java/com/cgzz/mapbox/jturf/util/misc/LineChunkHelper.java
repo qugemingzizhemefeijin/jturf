@@ -34,7 +34,7 @@ public final class LineChunkHelper {
      * @param reverse       反转坐标以在末尾开始第一个分块段
      * @return 线段集合
      */
-    public static FeatureCollection lineChunk(Geometry geometry, double segmentLength, Units units, boolean reverse) {
+    public static FeatureCollection<LineString> lineChunk(Geometry geometry, double segmentLength, Units units, boolean reverse) {
         if (geometry == null) {
             throw new JTurfException("geometry is required");
         }
@@ -54,7 +54,7 @@ public final class LineChunkHelper {
             u = units;
         }
 
-        List<Feature> results = new ArrayList<>();
+        List<Feature<LineString>> results = new ArrayList<>();
 
         // Flatten each feature to simple Line
         JTurfMeta.flattenEach(geometry, (f, featureIndex, multiFeatureIndex) -> {
@@ -86,7 +86,7 @@ public final class LineChunkHelper {
      * @param units         距离单位
      * @param callback      回调函数
      */
-    private static void sliceLineSegments(LineString line, double segmentLength, Units units, Consumer<Feature> callback) {
+    private static void sliceLineSegments(LineString line, double segmentLength, Units units, Consumer<Feature<LineString>> callback) {
         double lineLength = JTurfMeasurement.length(line, units);
 
         // If the line is shorter than the segment length then the orginal line is returned.
@@ -103,7 +103,7 @@ public final class LineChunkHelper {
         }
 
         for (double i = 0; i < numberOfSegments; i++) {
-            Feature outline = JTurfMisc.lineSliceAlong(line, segmentLength * i, segmentLength * (i + 1), units);
+            Feature<LineString> outline = JTurfMisc.lineSliceAlong(line, segmentLength * i, segmentLength * (i + 1), units);
             callback.accept(outline);
         }
     }

@@ -29,7 +29,7 @@ public final class LineSliceAlongHelper {
      * @param properties  属性信息，一般继承自line
      * @return 切片线段
      */
-    public static Feature lineSliceAlong(LineString line, double startDist, double stopDist, Units units, JsonObject properties) {
+    public static Feature<LineString> lineSliceAlong(LineString line, double startDist, double stopDist, Units units, JsonObject properties) {
         if (units == null) {
             units = Units.KILOMETERS;
         }

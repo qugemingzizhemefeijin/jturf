@@ -25,7 +25,7 @@ public final class GeomEachHelper {
      * @return 是否所有的对象均处理成功
      */
     public static <T extends Geometry> boolean geomEach(T geojson, GeometryEachCallback callback) {
-        FeatureCollection featureCollection = geojson instanceof FeatureCollection ? FeatureCollection.featureCollection(geojson) : null;
+        FeatureCollection<Geometry> featureCollection = geojson instanceof FeatureCollection ? FeatureCollection.featureCollection(geojson) : null;
         boolean isFeature = geojson.geometryType() == GeometryType.FEATURE;
         int stop = featureCollection != null ? featureCollection.geometries().size() : 1;
 
@@ -37,13 +37,13 @@ public final class GeomEachHelper {
             Geometry geometryMaybeCollection;
 
             if (featureCollection != null) {
-                Feature temp = featureCollection.geometries().get(i);
+                Feature<Geometry> temp = featureCollection.geometries().get(i);
 
                 geometryMaybeCollection = temp;
                 featurePropertie = temp.properties();
                 featureId = temp.id();
             } else if (isFeature) {
-                Feature temp = Feature.feature(geojson);
+                Feature<Geometry> temp = Feature.feature(geojson);
 
                 geometryMaybeCollection = temp.geometry();
                 featurePropertie = temp.properties();

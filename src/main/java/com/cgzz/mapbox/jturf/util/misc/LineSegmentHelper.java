@@ -23,12 +23,12 @@ public final class LineSegmentHelper {
      * @param geometry 支持 Line|MultiLine|MultiPolygon|Polygon
      * @return 返回的肯定是线段集合，可能会返回空
      */
-    public static FeatureCollection lineSegment(Geometry geometry) {
+    public static FeatureCollection<LineString> lineSegment(Geometry geometry) {
         if (geometry == null) {
             throw new JTurfException("geometry is required");
         }
 
-        List<Feature> results = new ArrayList<>();
+        List<Feature<LineString>> results = new ArrayList<>();
         JTurfMeta.flattenEach(geometry, (feature, featureIndex, multiFeatureIndex) -> {
             lineSegmentFeature(feature, results);
             return true;
@@ -43,7 +43,7 @@ public final class LineSegmentHelper {
      * @param feature  支持 Line|Polygon
      * @param results  待返回的线段集合
      */
-    private static void lineSegmentFeature(Feature feature, List<Feature> results) {
+    private static void lineSegmentFeature(Feature<? extends Geometry> feature, List<Feature<LineString>> results) {
         Geometry geometry = feature.geometry();
         GeometryType type = geometry.geometryType();
         List<List<Point>> coordinates = null;
@@ -62,7 +62,7 @@ public final class LineSegmentHelper {
 
         for (List<Point> coords : coordinates) {
             // 组合成N组线段
-            List<Feature> segments = createSegments(coords, feature.properties());
+            List<Feature<LineString>> segments = createSegments(coords, feature.properties());
             if (!segments.isEmpty()) {
                 results.addAll(segments);
             }
@@ -76,8 +76,8 @@ public final class LineSegmentHelper {
      * @param properties 处理组件的属性信息
      * @return List<Line>
      */
-    private static List<Feature> createSegments(List<Point> coords, JsonObject properties) {
-        List<Feature> segments = new ArrayList<>();
+    private static List<Feature<LineString>> createSegments(List<Point> coords, JsonObject properties) {
+        List<Feature<LineString>> segments = new ArrayList<>();
 
         for (int i = 1, size = coords.size(); i < size; i++) {
             Point previousCoords = coords.get(i - 1);

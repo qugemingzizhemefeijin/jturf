@@ -36,10 +36,11 @@ public final class CoordEachHelper {
      * @param excludeWrapCoord 如果是 POLYGON || MULTI_POLYGON 是否排除处理最后一个闭合点
      * @return 是否所有的点均处理成功
      */
+    @SuppressWarnings({"unchecked"})
     public static <T extends Geometry> boolean coordEach(T geojson, CoordEachCallback callback, boolean excludeWrapCoord) {
         int coordIndex = 0;
 
-        FeatureCollection featureCollection = geojson instanceof FeatureCollection ? FeatureCollection.featureCollection(geojson) : null;
+        FeatureCollection<Geometry> featureCollection = geojson instanceof FeatureCollection ? FeatureCollection.featureCollection(geojson) : null;
         boolean isFeature = geojson.geometryType() == GeometryType.FEATURE;
         int stop = featureCollection != null ? featureCollection.geometries().size() : 1;
 

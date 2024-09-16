@@ -31,7 +31,7 @@ public final class NearestPointOnLineHelper {
      * @param units 距离单位
      * @return 返回线段上最短距离的点
      */
-    public static Feature nearestPointOnLine(Geometry lines, Point pt, Units units) {
+    public static Feature<Point> nearestPointOnLine(Geometry lines, Point pt, Units units) {
         if (lines == null) {
             throw new JTurfException("lines is required");
         }
@@ -79,7 +79,7 @@ public final class NearestPointOnLineHelper {
                 Point perpendicularPt2 = JTurfMeasurement.destination(pt, heightDistance, direction - 90, units);
 
                 // 计算两个线的相交点
-                FeatureCollection intersect = JTurfMisc.lineIntersect(LineString.fromLngLats(perpendicularPt1, perpendicularPt2), LineString.fromLngLats(start, stop));
+                FeatureCollection<Point> intersect = JTurfMisc.lineIntersect(LineString.fromLngLats(perpendicularPt1, perpendicularPt2), LineString.fromLngLats(start, stop));
 
                 Point intersectPt = null;
                 double intersectDist = 0, intersectLocation = 0;
@@ -115,7 +115,7 @@ public final class NearestPointOnLineHelper {
             return true;
         }));
 
-        Feature p = Feature.fromGeometry(Point.fromLngLat(closestPt.value));
+        Feature<Point> p = Feature.fromGeometry(Point.fromLngLat(closestPt.value));
         p.addProperty("dist", closestDist.value);
         p.addProperty("index", closestIndex.value);
         p.addProperty("location", closestLocation.value);

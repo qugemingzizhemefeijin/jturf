@@ -151,7 +151,7 @@ public final class DeepCloneHelper {
      * @param feature 要克隆的Feature
      * @return 返回克隆后的Feature
      */
-    private static Feature deepClone(Feature feature) {
+    private static Feature<Geometry> deepClone(Feature<Geometry> feature) {
         Geometry oldGeometry = feature.geometry();
         Geometry newGeometry = deepClone(oldGeometry);
 
@@ -164,11 +164,11 @@ public final class DeepCloneHelper {
      * @param featureCollection 要克隆的FeatureCollection
      * @return 返回克隆后的FeatureCollection
      */
-    private static FeatureCollection deepClone(FeatureCollection featureCollection) {
-        List<Feature> oldFeatures = featureCollection.geometries();
-        List<Feature> newFeatures = new ArrayList<>(oldFeatures.size());
+    private static FeatureCollection<Geometry> deepClone(FeatureCollection<Geometry> featureCollection) {
+        List<Feature<Geometry>> oldFeatures = featureCollection.geometries();
+        List<Feature<Geometry>> newFeatures = new ArrayList<>(oldFeatures.size());
 
-        for (Feature feature : oldFeatures) {
+        for (Feature<Geometry> feature : oldFeatures) {
             newFeatures.add(deepClone(feature));
         }
 

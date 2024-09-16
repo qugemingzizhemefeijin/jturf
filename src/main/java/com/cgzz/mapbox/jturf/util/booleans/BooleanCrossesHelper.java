@@ -112,7 +112,7 @@ public final class BooleanCrossesHelper {
 
     private static boolean doLineStringsCross(LineString line1, LineString line2) {
         // 获取交叉点
-        FeatureCollection doLinesIntersect = JTurfMisc.lineIntersect(line1, line2);
+        FeatureCollection<Point> doLinesIntersect = JTurfMisc.lineIntersect(line1, line2);
         if (doLinesIntersect == null || doLinesIntersect.isEmpty()) {
             return false;
         }
@@ -135,8 +135,8 @@ public final class BooleanCrossesHelper {
     }
 
     private static boolean doLineStringAndPolygonCross(LineString line, Polygon polygon) {
-        Feature polygonToLine = JTurfFeatureConversion.polygonToLine(polygon);
-        FeatureCollection doLinesIntersect = JTurfMisc.lineIntersect(line, polygonToLine);
+        Feature<Geometry> polygonToLine = JTurfFeatureConversion.polygonToLine(polygon);
+        FeatureCollection<Point> doLinesIntersect = JTurfMisc.lineIntersect(line, polygonToLine);
 
         return doLinesIntersect != null && !doLinesIntersect.isEmpty();
     }

@@ -62,7 +62,7 @@ public final class SegmentEachHelper {
                 return true;
             })) {
                 return false;
-            };
+            }
 
             return true;
         });

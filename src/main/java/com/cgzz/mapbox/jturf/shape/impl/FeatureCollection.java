@@ -10,38 +10,40 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-public final class FeatureCollection implements CollectionContainer<Feature> {
+public final class FeatureCollection<T extends Geometry> implements CollectionContainer<Feature<T>> {
 
-    private final List<Feature> features;
+    private final List<Feature<T>> features;
 
-    FeatureCollection(List<Feature> features) {
+    FeatureCollection(List<Feature<T>> features) {
         if (features == null) {
             throw new NullPointerException("Null features");
         }
         this.features = features;
     }
 
-    public static FeatureCollection fromFeatures(Feature[] features) {
-        return new FeatureCollection(Arrays.asList(features));
+    public static <T extends Geometry> FeatureCollection<T> fromFeatures(Feature<T>[] features) {
+        return new FeatureCollection<>(Arrays.asList(features));
     }
 
-    public static FeatureCollection fromFeatures(List<Feature> features) {
-        return new FeatureCollection(features);
+    public static <T extends Geometry> FeatureCollection<T> fromFeatures(List<Feature<T>> features) {
+        return new FeatureCollection<>(features);
     }
 
-    public static FeatureCollection fromFeature(Feature feature) {
-        List<Feature> featureList = new ArrayList<>(1);
+    public static <T extends Geometry> FeatureCollection<T> fromFeature(Feature<T> feature) {
+        List<Feature<T>> featureList = new ArrayList<>(1);
         featureList.add(feature);
 
-        return new FeatureCollection(featureList);
+        return new FeatureCollection<>(featureList);
     }
 
-    public static FeatureCollection fromJson(String json) {
+    @SuppressWarnings("unchecked")
+    public static FeatureCollection<Geometry> fromJson(String json) {
         return GeoJsonUtils.getGson().fromJson(json, FeatureCollection.class);
     }
 
-    public static FeatureCollection featureCollection(Geometry geometry) {
-        return (FeatureCollection) geometry;
+    @SuppressWarnings("unchecked")
+    public static FeatureCollection<Geometry> featureCollection(Geometry geometry) {
+        return (FeatureCollection<Geometry>) geometry;
     }
 
     @Override
@@ -50,7 +52,7 @@ public final class FeatureCollection implements CollectionContainer<Feature> {
     }
 
     @Override
-    public List<Feature> geometries() {
+    public List<Feature<T>> geometries() {
         return features;
     }
 
@@ -60,12 +62,12 @@ public final class FeatureCollection implements CollectionContainer<Feature> {
     }
 
     @Override
-    public Iterator<Feature> iterator() {
+    public Iterator<Feature<T>> iterator() {
         return features.iterator();
     }
 
     @Override
-    public Feature get(int index) {
+    public Feature<T> get(int index) {
         return features.get(index);
     }
 
@@ -78,7 +80,7 @@ public final class FeatureCollection implements CollectionContainer<Feature> {
     public String toViewCoordsString() {
         StringBuilder buf = new StringBuilder();
         buf.append("├───── ").append(geometryType()).append("─────┤").append("\n");
-        for (Feature feature : features) {
+        for (Feature<T> feature : features) {
             buf.append(feature.toViewCoordsString());
         }
         return buf.toString();
@@ -96,6 +98,7 @@ public final class FeatureCollection implements CollectionContainer<Feature> {
                 + "}";
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public boolean equals(Object obj) {
         if (obj == this) {

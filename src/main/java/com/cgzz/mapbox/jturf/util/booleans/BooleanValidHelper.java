@@ -124,7 +124,7 @@ public final class BooleanValidHelper {
         }
 
         if (idx > 0) {
-            FeatureCollection lineIntersectPoints = JTurfMisc.lineIntersect(fstPolygon, Polygon.fromLngLats(Collections.singletonList(pointList.get(idx))));
+            FeatureCollection<Point> lineIntersectPoints = JTurfMisc.lineIntersect(fstPolygon, Polygon.fromLngLats(Collections.singletonList(pointList.get(idx))));
             if (lineIntersectPoints != null && lineIntersectPoints.size() > 1) {
                 return false;
             }

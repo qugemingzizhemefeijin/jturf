@@ -10,7 +10,6 @@ import com.cgzz.mapbox.jturf.shape.impl.Point;
 
 import java.util.List;
 
-@SuppressWarnings("all")
 public final class CoordsEachHelper {
 
     private CoordsEachHelper() {
@@ -24,6 +23,7 @@ public final class CoordsEachHelper {
      * @param callback 处理函数
      * @return 是否所有的点均处理成功
      */
+    @SuppressWarnings("unchecked")
     public static <T extends Geometry> boolean coordsEach(T geometry, CoordsEachCallback callback) {
         CollectionContainer<Geometry> geometryCollection = geometry instanceof CollectionContainer ? ((CollectionContainer) geometry) : null;
         int stop = geometryCollection != null ? geometryCollection.geometries().size() : 1;

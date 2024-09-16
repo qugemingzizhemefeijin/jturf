@@ -1,7 +1,7 @@
 package com.cgzz.mapbox.jturf.geojson.adapter.impl;
 
-import com.cgzz.mapbox.jturf.shape.impl.Feature;
 import com.cgzz.mapbox.jturf.shape.Geometry;
+import com.cgzz.mapbox.jturf.shape.impl.Feature;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.TypeAdapter;
@@ -11,7 +11,7 @@ import com.google.gson.stream.JsonWriter;
 
 import java.io.IOException;
 
-public final class FeatureGsonTypeAdapter extends TypeAdapter<Feature> {
+public final class FeatureGsonTypeAdapter extends TypeAdapter<Feature<Geometry>> {
 
     private volatile TypeAdapter<String> stringTypeAdapter;
     private volatile TypeAdapter<Geometry> geometryTypeAdapter;
@@ -77,7 +77,7 @@ public final class FeatureGsonTypeAdapter extends TypeAdapter<Feature> {
     }
 
     @Override
-    public Feature read(JsonReader jsonReader) throws IOException {
+    public Feature<Geometry> read(JsonReader jsonReader) throws IOException {
         if (jsonReader.peek() == JsonToken.NULL) {
             jsonReader.nextNull();
             return null;

@@ -33,7 +33,7 @@ public final class LineArcHelper {
      * @param properties 返回的Feature的属性信息，一般继承自center
      * @return 返回弧度的线条
      */
-    public static Feature lineArc(Point center, double radius, double bearing1, double bearing2, Integer steps, Units units, JsonObject properties) {
+    public static Feature<LineString> lineArc(Point center, double radius, double bearing1, double bearing2, Integer steps, Units units, JsonObject properties) {
         if (steps == null) {
             steps = 64;
         }

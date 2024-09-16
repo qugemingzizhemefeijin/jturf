@@ -69,6 +69,7 @@ public final class Polygon implements CoordinateContainer<List<List<Point>>> {
         return new Polygon(coordinates);
     }
 
+    @SafeVarargs
     public static Polygon fromOuterInner(List<Point> outer, List<Point>... inner) {
         if (inner == null) {
             corrective(outer);

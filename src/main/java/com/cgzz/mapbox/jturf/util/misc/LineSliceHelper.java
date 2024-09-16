@@ -26,13 +26,14 @@ public final class LineSliceHelper {
      * @param properties  属性信息，一般继承自line
      * @return 切片线
      */
-    public static Feature lineSlice(Point startPt, Point stopPt, LineString line, JsonObject properties) {
+    @SuppressWarnings("unchecked")
+    public static Feature<LineString> lineSlice(Point startPt, Point stopPt, LineString line, JsonObject properties) {
         List<Point> coords = line.coordinates();
 
-        Feature startVertex = JTurfMisc.nearestPointOnLine(line, startPt);
-        Feature stopVertex = JTurfMisc.nearestPointOnLine(line, stopPt);
+        Feature<Point> startVertex = JTurfMisc.nearestPointOnLine(line, startPt);
+        Feature<Point> stopVertex = JTurfMisc.nearestPointOnLine(line, stopPt);
 
-        Feature[] ends;
+        Feature<Point>[] ends;
         if (startVertex.getPropertyAsNumber("index").intValue() <= stopVertex.getPropertyAsNumber("index").intValue()) {
             ends = new Feature[]{startVertex, stopVertex};
         } else {
@@ -40,11 +41,11 @@ public final class LineSliceHelper {
         }
 
         List<Point> clipCoords = new ArrayList<>();
-        clipCoords.add((Point)ends[0].geometry());
+        clipCoords.add(ends[0].geometry());
         for (int i = ends[0].getPropertyAsNumber("index").intValue() + 1; i < ends[1].getPropertyAsNumber("index").intValue(); i++) {
             clipCoords.add(coords.get(i));
         }
-        clipCoords.add((Point)ends[1].geometry());
+        clipCoords.add(ends[1].geometry());
 
         return Feature.fromGeometry(LineString.fromLngLats(clipCoords), properties);
     }

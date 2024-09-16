@@ -30,7 +30,7 @@ public final class LineIntersectHelper {
      * @param geometry2 图形2，支持 Line、Polygon
      * @return 返回相交点集合
      */
-    public static FeatureCollection lineIntersect(Geometry geometry1, Geometry geometry2) {
+    public static FeatureCollection<Point> lineIntersect(Geometry geometry1, Geometry geometry2) {
         if (geometry1 == null) {
             throw new JTurfException("geometry1 is required");
         }
@@ -66,11 +66,11 @@ public final class LineIntersectHelper {
         }
 
         // 处理复杂的几何图形
-        List<Feature> results = new ArrayList<>();
+        List<Feature<Point>> results = new ArrayList<>();
         Set<String> unique = new HashSet<>();
 
         RTree<LineString, Rectangle> rtree = RTreeHelper.initRTree(geometry2);
-        for (Feature feature : JTurfMisc.lineSegment(geometry1).geometries()) {
+        for (Feature<LineString> feature : JTurfMisc.lineSegment(geometry1).geometries()) {
             LineString segment = LineString.lineString(feature.geometry());
 
             Observable<Entry<LineString, Rectangle>> entries = rtree.search(RTreeHelper.createRectangle(segment));

@@ -41,6 +41,7 @@ public final class GeoJsonEquality {
         return compare(g1, g2, PRECISION, direction);
     }
 
+    @SuppressWarnings("unchecked")
     public static boolean compare(Geometry g1, Geometry g2, int precision, boolean direction) {
         g1 = JTurfMeta.getGeom(g1);
         g2 = JTurfMeta.getGeom(g2);
@@ -58,7 +59,7 @@ public final class GeoJsonEquality {
             case POLYGON:
                 return comparePolygon((Polygon) g1, (Polygon) g2, precision, direction);
             case FEATURE_COLLECTION:
-                return compareFeatureCollection((FeatureCollection) g1, (FeatureCollection) g2, precision, direction);
+                return compareFeatureCollection((FeatureCollection<Geometry>) g1, (FeatureCollection<Geometry>) g2, precision, direction);
             case MULTI_POINT:
                 return comparePoints(((MultiPoint) g1).coordinates(), ((MultiPoint) g2).coordinates(), 0, false, precision, false);
             case MULTI_LINE_STRING:
@@ -79,7 +80,7 @@ public final class GeoJsonEquality {
      * @param g2 图形2
      * @return true代表一致或无法比较, false代表不一致
      */
-    @SuppressWarnings({"all"})
+    @SuppressWarnings({"unchecked", "all"})
     private static boolean sameLength(Geometry g1, Geometry g2) {
         if (g1 instanceof CoordinateContainer) {
             Object o1 = ((CoordinateContainer) g1).coordinates();
@@ -210,7 +211,7 @@ public final class GeoJsonEquality {
      * @param direction 是否需要方向一致
      * @return 一致返回true
      */
-    private static boolean compareFeature(Feature feature1, Feature feature2, int precision, boolean direction) {
+    private static boolean compareFeature(Feature<Geometry> feature1, Feature<Geometry> feature2, int precision, boolean direction) {
         if (!Objects.equals(feature1.id(), feature2.id())
                 || !compareFeatureProperties(feature1.properties(), feature2.properties())) {
             return false;
@@ -228,12 +229,12 @@ public final class GeoJsonEquality {
      * @param direction          是否需要方向一致
      * @return 一致返回true
      */
-    private static boolean compareFeatureCollection(FeatureCollection featureCollection1, FeatureCollection featureCollection2, int precision, boolean direction) {
-        List<Feature> features1 = featureCollection1.geometries(), features2 = featureCollection2.geometries();
+    private static boolean compareFeatureCollection(FeatureCollection<Geometry> featureCollection1, FeatureCollection<Geometry> featureCollection2, int precision, boolean direction) {
+        List<Feature<Geometry>> features1 = featureCollection1.geometries(), features2 = featureCollection2.geometries();
 
-        for (Feature feature1 : features1) {
+        for (Feature<Geometry> feature1 : features1) {
             boolean b = false;
-            for (Feature feature : features2) {
+            for (Feature<Geometry> feature : features2) {
                 if (compareFeature(feature1, feature, precision, direction)) {
                     b = true;
                     break;

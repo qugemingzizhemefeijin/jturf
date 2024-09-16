@@ -19,7 +19,7 @@ public class JTurfClassification {
      * @param points      点集合
      * @return Feature 返回距其最近的点
      */
-    public static Feature nearestPoint(Point targetPoint, List<Point> points) {
+    public static Feature<Point> nearestPoint(Point targetPoint, List<Point> points) {
         if (targetPoint == null) {
             throw new IllegalArgumentException("targetPoint is required");
         }
@@ -35,7 +35,7 @@ public class JTurfClassification {
                 minDist = distanceToPoint;
             }
         }
-        Feature nearest = Feature.fromGeometry(JTurfTransformation.clone(points.get(bestFeatureIndex)));
+        Feature<Point> nearest = Feature.fromGeometry(JTurfTransformation.clone(points.get(bestFeatureIndex)));
         nearest.addProperty("featureIndex", 0);
         nearest.addProperty("distanceToPoint", minDist);
 
@@ -49,7 +49,7 @@ public class JTurfClassification {
      * @param multiPoint  点集合
      * @return Point 返回距其最近的点
      */
-    public static Feature nearestPoint(Point targetPoint, MultiPoint multiPoint) {
+    public static Feature<Point> nearestPoint(Point targetPoint, MultiPoint multiPoint) {
         return nearestPoint(targetPoint, multiPoint.coordinates());
     }
 

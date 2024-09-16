@@ -7,6 +7,7 @@ import com.cgzz.mapbox.jturf.JTurfTransformation;
 import com.cgzz.mapbox.jturf.enums.Units;
 import com.cgzz.mapbox.jturf.exception.JTurfException;
 import com.cgzz.mapbox.jturf.shape.impl.Feature;
+import com.cgzz.mapbox.jturf.shape.impl.LineString;
 import com.cgzz.mapbox.jturf.shape.impl.Point;
 import com.cgzz.mapbox.jturf.shape.impl.Polygon;
 
@@ -48,7 +49,7 @@ public final class SectorHelper {
             return JTurfTransformation.circle(center, radius, steps, units);
         }
 
-        Feature arc = JTurfMisc.lineArc(center, radius, bearing1, bearing2);
+        Feature<LineString> arc = JTurfMisc.lineArc(center, radius, bearing1, bearing2);
 
         List<Point> sliceCoords = new ArrayList<>();
         sliceCoords.add(center);

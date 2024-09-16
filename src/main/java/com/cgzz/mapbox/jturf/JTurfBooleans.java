@@ -84,8 +84,8 @@ public final class JTurfBooleans {
             throw new JTurfException("line2 is required");
         }
 
-        FeatureCollection segments1 = JTurfMisc.lineSegment(JTurfCoordinateMutation.cleanCoords(line1));
-        FeatureCollection segments2 = JTurfMisc.lineSegment(JTurfCoordinateMutation.cleanCoords(line2));
+        FeatureCollection<LineString> segments1 = JTurfMisc.lineSegment(JTurfCoordinateMutation.cleanCoords(line1));
+        FeatureCollection<LineString> segments2 = JTurfMisc.lineSegment(JTurfCoordinateMutation.cleanCoords(line2));
 
         for (int i = 0, size1 = segments1.size(), size2 = segments2.size(); i < size1; i++) {
             if (i >= size2) {

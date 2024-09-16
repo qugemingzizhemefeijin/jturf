@@ -11,7 +11,6 @@ import com.cgzz.mapbox.jturf.shape.impl.FeatureCollection;
 import com.cgzz.mapbox.jturf.shape.impl.LineString;
 import com.cgzz.mapbox.jturf.shape.impl.MultiPoint;
 import com.cgzz.mapbox.jturf.shape.impl.Point;
-import com.cgzz.mapbox.jturf.util.booleans.GeoJsonEquality;
 
 import java.util.List;
 
@@ -84,7 +83,7 @@ public final class BooleanOverlapHelper {
             case MULTI_POLYGON:
                 JTurfMeta.segmentEach(geometry1, (currentSegment1, featureIndex1, multiFeatureIndex1, geometryIndex1, segmentIndex1) -> {
                     JTurfMeta.segmentEach(geometry2, (currentSegment2, featureIndex2, multiFeatureIndex2, geometryIndex2, segmentIndex2) -> {
-                        FeatureCollection intersectLines = JTurfMisc.lineIntersect(currentSegment1, currentSegment2);
+                        FeatureCollection<Point> intersectLines = JTurfMisc.lineIntersect(currentSegment1, currentSegment2);
                         if (intersectLines != null && intersectLines.size() > 0) {
                             overlap.value++;
                         }

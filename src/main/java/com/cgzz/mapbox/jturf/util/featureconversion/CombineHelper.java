@@ -21,7 +21,7 @@ public class CombineHelper {
      * @param featureCollection 多边形集合
      * @return 返回只包含 MultiPoint、MultiString、MultiPolygon的集合，可能为空
      */
-    public static FeatureCollection combine(FeatureCollection featureCollection) {
+    public static FeatureCollection<Geometry> combine(FeatureCollection<Geometry> featureCollection) {
         if (featureCollection == null) {
             return null;
         }
@@ -37,7 +37,7 @@ public class CombineHelper {
      * @param geometryList 多边形集合
      * @return 返回只包含 MultiPoint、MultiString、MultiPolygon的集合，可能为空
      */
-    public static FeatureCollection combine(List<Geometry> geometryList) {
+    public static FeatureCollection<Geometry> combine(List<Geometry> geometryList) {
         if (geometryList == null || geometryList.isEmpty()) {
             return null;
         }
@@ -71,7 +71,7 @@ public class CombineHelper {
             }
         }
 
-        List<Feature> combineList = new ArrayList<>(3);
+        List<Feature<Geometry>> combineList = new ArrayList<>(3);
         if (!multiPointList.isEmpty()) {
             combineList.add(Feature.fromGeometry(MultiPoint.fromLngLats(multiPointList)));
         }

@@ -25,7 +25,7 @@ public class JTurfFeatureConversion {
      * @param polygon 多边形
      * @return Feature 根据传入的多边形的环数 内部可能是 LineString 或 MultiLineString
      */
-    public static Feature polygonToLine(Polygon polygon) {
+    public static Feature<Geometry> polygonToLine(Polygon polygon) {
         return polygonToLine(polygon, null);
     }
 
@@ -38,7 +38,7 @@ public class JTurfFeatureConversion {
      * @param properties 附加属性
      * @return Feature 根据传入的多边形的环数 内部可能是 LineString 或 MultiLineString
      */
-    public static Feature polygonToLine(Polygon polygon, JsonObject properties) {
+    public static Feature<Geometry> polygonToLine(Polygon polygon, JsonObject properties) {
         if (polygon == null) {
             throw new JTurfException("polygon is required");
         }
@@ -53,7 +53,7 @@ public class JTurfFeatureConversion {
      * @param multiPolygon 组合多边形
      * @return FeatureCollection 根据传入的多边形的环数内部可能是 LineString 或 MultiLineString
      */
-    public static FeatureCollection polygonToLine(MultiPolygon multiPolygon) {
+    public static FeatureCollection<Geometry> polygonToLine(MultiPolygon multiPolygon) {
         return polygonToLine(multiPolygon, null);
     }
 
@@ -66,7 +66,7 @@ public class JTurfFeatureConversion {
      * @param properties   附加属性
      * @return FeatureCollection 根据传入的多边形的环数内部可能是 LineString 或 MultiLineString
      */
-    public static FeatureCollection polygonToLine(MultiPolygon multiPolygon, JsonObject properties) {
+    public static FeatureCollection<Geometry> polygonToLine(MultiPolygon multiPolygon, JsonObject properties) {
         if (multiPolygon == null) {
             throw new JTurfException("polygon is required");
         }
@@ -82,8 +82,8 @@ public class JTurfFeatureConversion {
      * @param geometry 多边形
      * @return 所有多几何对象都被展平为单一要素
      */
-    public static FeatureCollection flatten(Geometry geometry) {
-        List<Feature> results = new ArrayList<>();
+    public static FeatureCollection<? extends Geometry> flatten(Geometry geometry) {
+        List<Feature<Geometry>> results = new ArrayList<>();
 
         FlattenEachHelper.flattenEach(geometry, (feature, featureIndex, multiFeatureIndex) -> {
             results.add(feature);
@@ -121,7 +121,7 @@ public class JTurfFeatureConversion {
      * @param geometryList 多边形集合
      * @return 返回只包含 MultiPoint、MultiString、MultiPolygon的集合，可能为空
      */
-    public static FeatureCollection combine(List<Geometry> geometryList) {
+    public static FeatureCollection<Geometry> combine(List<Geometry> geometryList) {
         return CombineHelper.combine(geometryList);
     }
 
@@ -133,7 +133,7 @@ public class JTurfFeatureConversion {
      * @param featureCollection 多边形集合
      * @return 返回只包含 MultiPoint、MultiString、MultiPolygon的集合，可能为空
      */
-    public static FeatureCollection combine(FeatureCollection featureCollection) {
+    public static FeatureCollection<Geometry> combine(FeatureCollection<Geometry> featureCollection) {
         return CombineHelper.combine(featureCollection);
     }
 

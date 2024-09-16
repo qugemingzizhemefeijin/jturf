@@ -21,7 +21,7 @@ public final class JTurfMisc {
      * @param geometry 图形，支持 POLYGON、LING_STRING、MULTI_LINE_STRING、MULTI_POLYGON
      * @return 返回自相交点集合
      */
-    public static FeatureCollection kinks(Geometry geometry) {
+    public static FeatureCollection<Point> kinks(Geometry geometry) {
         return KinksHelper.kinks(geometry);
     }
 
@@ -31,7 +31,7 @@ public final class JTurfMisc {
      * @param geometry 支持 LineString|MultiLine|MultiPolygon|Polygon
      * @return 返回线段集合
      */
-    public static FeatureCollection lineSegment(Geometry geometry) {
+    public static FeatureCollection<LineString> lineSegment(Geometry geometry) {
         return LineSegmentHelper.lineSegment(geometry);
     }
 
@@ -42,7 +42,7 @@ public final class JTurfMisc {
      * @param geometry2 图形2，支持 LineString、Polygon、MultiLineString、MultiPolygon
      * @return 返回相交点集合
      */
-    public static FeatureCollection lineIntersect(Geometry geometry1, Geometry geometry2) {
+    public static FeatureCollection<Point> lineIntersect(Geometry geometry1, Geometry geometry2) {
         return LineIntersectHelper.lineIntersect(geometry1, geometry2);
     }
 
@@ -76,7 +76,7 @@ public final class JTurfMisc {
      * @param pt    点
      * @return 返回线段上最短距离的点
      */
-    public static Feature nearestPointOnLine(Geometry lines, Point pt) {
+    public static Feature<Point> nearestPointOnLine(Geometry lines, Point pt) {
         return nearestPointOnLine(lines, pt, Units.KILOMETERS);
     }
 
@@ -88,7 +88,7 @@ public final class JTurfMisc {
      * @param units 距离单位
      * @return 返回线段上最短距离的点
      */
-    public static Feature nearestPointOnLine(Geometry lines, Point pt, Units units) {
+    public static Feature<Point> nearestPointOnLine(Geometry lines, Point pt, Units units) {
         return NearestPointOnLineHelper.nearestPointOnLine(lines, pt, units);
     }
 
@@ -99,7 +99,7 @@ public final class JTurfMisc {
      * @param pt    点
      * @return 返回线段上最短距离的点
      */
-    public static Feature nearestPointOnLine(Geometry lines, Feature pt) {
+    public static Feature<Point> nearestPointOnLine(Geometry lines, Feature<Point> pt) {
         return nearestPointOnLine(lines, pt, Units.KILOMETERS);
     }
 
@@ -110,7 +110,7 @@ public final class JTurfMisc {
      * @param pt    点
      * @return 返回线段上最短距离的点
      */
-    public static Feature nearestPointOnLine(Geometry lines, Feature pt, Units units) {
+    public static Feature<Point> nearestPointOnLine(Geometry lines, Feature<Point> pt, Units units) {
         Geometry geometry = pt.geometry();
         if (geometry.geometryType() != GeometryType.POINT) {
             throw new JTurfException("pt type must Point");
@@ -132,7 +132,7 @@ public final class JTurfMisc {
      * @param bearing2 方位角2 圆弧第二半径的角度
      * @return 返回弧度的线条
      */
-    public static Feature lineArc(Point center, double radius, double bearing1, double bearing2) {
+    public static Feature<LineString> lineArc(Point center, double radius, double bearing1, double bearing2) {
         return lineArc(center, radius, bearing1, bearing2, null, null);
     }
 
@@ -149,7 +149,7 @@ public final class JTurfMisc {
      * @param units    单位，支持 KILOMETERS、MILES、DEGREES、RADIANS，不传入默认为 KILOMETERS
      * @return 返回弧度的线条
      */
-    public static Feature lineArc(Point center, double radius, double bearing1, double bearing2, Integer steps, Units units) {
+    public static Feature<LineString> lineArc(Point center, double radius, double bearing1, double bearing2, Integer steps, Units units) {
         return LineArcHelper.lineArc(center, radius, bearing1, bearing2, steps, units, null);
     }
 
@@ -166,7 +166,7 @@ public final class JTurfMisc {
      * @param bearing2 方位角2 圆弧第二半径的角度
      * @return 返回弧度的线条
      */
-    public static Feature lineArc(Feature center, double radius, double bearing1, double bearing2) {
+    public static Feature<LineString> lineArc(Feature<Point> center, double radius, double bearing1, double bearing2) {
         return lineArc(center, radius, bearing1, bearing2, null, null);
     }
 
@@ -183,13 +183,11 @@ public final class JTurfMisc {
      * @param units    单位，支持 KILOMETERS、MILES、DEGREES、RADIANS，不传入默认为 KILOMETERS
      * @return 返回弧度的线条
      */
-    public static Feature lineArc(Feature center, double radius, double bearing1, double bearing2, Integer steps, Units units) {
+    public static Feature<LineString> lineArc(Feature<Point> center, double radius, double bearing1, double bearing2, Integer steps, Units units) {
         if (center.geometry().geometryType() == GeometryType.POINT) {
             throw new JTurfException("center must Point type");
         }
-        Point p = Point.point(center.geometry());
-
-        return LineArcHelper.lineArc(p, radius, bearing1, bearing2, steps, units, center.properties());
+        return LineArcHelper.lineArc(center.geometry(), radius, bearing1, bearing2, steps, units, center.properties());
     }
 
     /**
@@ -202,7 +200,7 @@ public final class JTurfMisc {
      * @param stopDist  沿线到终点的停靠点距离（默认 KILOMETERS）
      * @return 切片线段
      */
-    public static Feature lineSliceAlong(LineString line, double startDist, double stopDist) {
+    public static Feature<LineString> lineSliceAlong(LineString line, double startDist, double stopDist) {
         return lineSliceAlong(line, startDist, stopDist, null);
     }
 
@@ -217,7 +215,7 @@ public final class JTurfMisc {
      * @param units     距离单位，支持 KILOMETERS、MILES、DEGREES、RADIANS，不传入默认为 KILOMETERS
      * @return 切片线段
      */
-    public static Feature lineSliceAlong(LineString line, double startDist, double stopDist, Units units) {
+    public static Feature<LineString> lineSliceAlong(LineString line, double startDist, double stopDist, Units units) {
         return LineSliceAlongHelper.lineSliceAlong(line, startDist, stopDist, units, null);
     }
 
@@ -231,7 +229,7 @@ public final class JTurfMisc {
      * @param stopDist  沿线到终点的停靠点距离（默认 KILOMETERS）
      * @return 切片线段
      */
-    public static Feature lineSliceAlong(Feature feature, double startDist, double stopDist) {
+    public static Feature<LineString> lineSliceAlong(Feature<LineString> feature, double startDist, double stopDist) {
         return lineSliceAlong(feature, startDist, stopDist, null);
     }
 
@@ -246,12 +244,12 @@ public final class JTurfMisc {
      * @param units     距离单位，支持 KILOMETERS、MILES、DEGREES、RADIANS，不传入默认为 KILOMETERS
      * @return 切片线段
      */
-    public static Feature lineSliceAlong(Feature feature, double startDist, double stopDist, Units units) {
+    public static Feature<LineString> lineSliceAlong(Feature<LineString> feature, double startDist, double stopDist, Units units) {
         if (feature.geometry().geometryType() != GeometryType.LINE_STRING) {
             throw new JTurfException("feature must LineString type");
         }
 
-        return LineSliceAlongHelper.lineSliceAlong(LineString.lineString(feature.geometry()), startDist, stopDist, units, feature.properties());
+        return LineSliceAlongHelper.lineSliceAlong(feature.geometry(), startDist, stopDist, units, feature.properties());
     }
 
     /**
@@ -263,7 +261,7 @@ public final class JTurfMisc {
      * @param segmentLength 每个段的长度，默认距离单位 KILOMETERS
      * @return 线段集合
      */
-    public static FeatureCollection lineChunk(Geometry geometry, double segmentLength) {
+    public static FeatureCollection<LineString> lineChunk(Geometry geometry, double segmentLength) {
         return lineChunk(geometry, segmentLength, null, false);
     }
 
@@ -277,7 +275,7 @@ public final class JTurfMisc {
      * @param units         距离单位，支持 KILOMETERS、MILES、DEGREES、RADIANS，不传入默认为 KILOMETERS
      * @return 线段集合
      */
-    public static FeatureCollection lineChunk(Geometry geometry, double segmentLength, Units units) {
+    public static FeatureCollection<LineString> lineChunk(Geometry geometry, double segmentLength, Units units) {
         return lineChunk(geometry, segmentLength, units, false);
     }
 
@@ -292,7 +290,7 @@ public final class JTurfMisc {
      * @param reverse       反转坐标以在末尾开始第一个分块段
      * @return 线段集合
      */
-    public static FeatureCollection lineChunk(Geometry geometry, double segmentLength, Units units, boolean reverse) {
+    public static FeatureCollection<LineString> lineChunk(Geometry geometry, double segmentLength, Units units, boolean reverse) {
         return LineChunkHelper.lineChunk(geometry, segmentLength, units, reverse);
     }
 
@@ -306,12 +304,12 @@ public final class JTurfMisc {
      * @param feature 被截取的线段
      * @return 切片线
      */
-    public static Feature lineSlice(Point startPt, Point stopPt, Feature feature) {
+    public static Feature<LineString> lineSlice(Point startPt, Point stopPt, Feature<LineString> feature) {
         if (feature.geometry().geometryType() != GeometryType.LINE_STRING) {
             throw new JTurfException("feature must LineString");
         }
 
-        return LineSliceHelper.lineSlice(startPt, stopPt, (LineString)feature.geometry(), feature.properties());
+        return LineSliceHelper.lineSlice(startPt, stopPt, feature.geometry(), feature.properties());
     }
 
     /**
@@ -324,7 +322,7 @@ public final class JTurfMisc {
      * @param line    被截取的线段
      * @return 切片线
      */
-    public static Feature lineSlice(Point startPt, Point stopPt, LineString line) {
+    public static Feature<LineString> lineSlice(Point startPt, Point stopPt, LineString line) {
         return LineSliceHelper.lineSlice(startPt, stopPt, line, null);
     }
 

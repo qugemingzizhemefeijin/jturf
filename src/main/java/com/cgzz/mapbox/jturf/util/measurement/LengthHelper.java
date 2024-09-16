@@ -22,6 +22,7 @@ public final class LengthHelper {
      * @param units    距离单位
      * @return 以指定单位表示的输入面的总周长
      */
+    @SuppressWarnings("unchecked")
     public static double length(Geometry geometry, Units units) {
         geometry = JTurfMeta.getGeom(geometry);
 
@@ -36,7 +37,7 @@ public final class LengthHelper {
                 return lengthListList(((MultiPolygon) geometry).coordinates(), units);
             case FEATURE_COLLECTION: {
                 double total = 0;
-                for (Feature feature : ((FeatureCollection) geometry).geometries()) {
+                for (Feature<Geometry> feature : ((FeatureCollection<Geometry>) geometry).geometries()) {
                     total += length(feature.geometry(), units);
                 }
                 return total;

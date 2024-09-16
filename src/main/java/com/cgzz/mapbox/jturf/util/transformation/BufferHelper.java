@@ -83,7 +83,7 @@ public final class BufferHelper {
     private static Geometry bufferFeature(Geometry geometry, int radius, Units units, int steps) {
         JsonObject properties = null;
         if (geometry instanceof Feature) {
-            Feature feature = Feature.feature(geometry);
+            Feature<Geometry> feature = Feature.feature(geometry);
             properties = feature.properties();
             geometry = feature.geometry();
         }

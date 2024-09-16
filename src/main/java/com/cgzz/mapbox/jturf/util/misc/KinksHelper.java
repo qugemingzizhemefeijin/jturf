@@ -20,7 +20,7 @@ public final class KinksHelper {
      * @param geometry 图形，支持 POLYGON、LINE、MULTI_LINE、MULTI_POLYGON（Feature也不也需要这个类型）
      * @return 返回自相交点集合
      */
-    public static FeatureCollection kinks(Geometry geometry) {
+    public static FeatureCollection<Point> kinks(Geometry geometry) {
         geometry = JTurfMeta.getGeom(geometry);
 
         switch (geometry.geometryType()) {
@@ -37,12 +37,12 @@ public final class KinksHelper {
         return null;
     }
 
-    private static FeatureCollection kinksMulti(List<List<Point>> coordinates) {
+    private static FeatureCollection<Point> kinksMulti(List<List<Point>> coordinates) {
         if (coordinates == null || coordinates.isEmpty()) {
             return null;
         }
 
-        List<Feature> pointList = new ArrayList<>();
+        List<Feature<Point>> pointList = new ArrayList<>();
         for (List<Point> c : coordinates) {
             if (c == null || c.isEmpty()) {
                 continue;
@@ -54,19 +54,19 @@ public final class KinksHelper {
         return pointList.isEmpty() ? null : FeatureCollection.fromFeatures(pointList);
     }
 
-    private static FeatureCollection kinks(List<Point> coordinates) {
+    private static FeatureCollection<Point> kinks(List<Point> coordinates) {
         if (coordinates == null || coordinates.isEmpty()) {
             return null;
         }
 
-        List<Feature> pointList = new ArrayList<>();
+        List<Feature<Point>> pointList = new ArrayList<>();
 
         kinks(coordinates, pointList);
 
         return pointList.isEmpty() ? null : FeatureCollection.fromFeatures(pointList);
     }
 
-    private static void kinks(List<Point> coordinates, List<Feature> pointList) {
+    private static void kinks(List<Point> coordinates, List<Feature<Point>> pointList) {
         int len = coordinates.size();
         for (int i = 0; i < len - 1; i++) {
             for (int k = i; k < len - 1; k++) {

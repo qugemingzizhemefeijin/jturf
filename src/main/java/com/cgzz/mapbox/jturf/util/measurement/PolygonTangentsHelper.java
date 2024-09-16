@@ -118,7 +118,7 @@ public final class PolygonTangentsHelper {
         // otherwise points lying inside reflex angles on concave polys can have issues
         double[] bbox = JTurfMeasurement.bbox(geometry).bbox();
         if (pt.getX() > bbox[0] && pt.getX() < bbox[2] && pt.getY() > bbox[1] && pt.getY() < bbox[3]) {
-            return (Point)JTurfClassification.nearestPoint(pt, JTurfFeatureConversion.explode(geometry)).geometry();
+            return JTurfClassification.nearestPoint(pt, JTurfFeatureConversion.explode(geometry)).geometry();
         }
         return null;
     }

@@ -39,7 +39,7 @@ public final class AreaHelper {
                 }
                 break;
             case FEATURE_COLLECTION:
-                for (Feature feature : FeatureCollection.featureCollection(geometry).geometries()) {
+                for (Feature<Geometry> feature : FeatureCollection.featureCollection(geometry).geometries()) {
                     total += area(feature.geometry());
                 }
         }

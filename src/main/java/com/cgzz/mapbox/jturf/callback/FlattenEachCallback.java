@@ -1,5 +1,6 @@
 package com.cgzz.mapbox.jturf.callback;
 
+import com.cgzz.mapbox.jturf.shape.Geometry;
 import com.cgzz.mapbox.jturf.shape.impl.Feature;
 
 @FunctionalInterface
@@ -12,6 +13,6 @@ public interface FlattenEachCallback {
      * @param multiFeatureIndex  如果是组合组件，则为其所处在组合组件中的索引位置
      * @return 处理是否成功，当返回false时，循环即被中断
      */
-    boolean accept(Feature feature, int featureIndex, int multiFeatureIndex);
+    boolean accept(Feature<Geometry> feature, int featureIndex, int multiFeatureIndex);
 
 }

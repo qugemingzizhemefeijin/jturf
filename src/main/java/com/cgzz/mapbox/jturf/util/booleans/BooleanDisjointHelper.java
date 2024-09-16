@@ -48,7 +48,7 @@ public final class BooleanDisjointHelper {
      * @param feature2 图形2，只支持 Line、POINT、POLYGON
      * @return 如果不相交则返回true
      */
-    private static boolean disjoint(Feature feature1, Feature feature2) {
+    private static boolean disjoint(Feature<Geometry> feature1, Feature<Geometry> feature2) {
         Geometry geometry1 = feature1.geometry();
         Geometry geometry2 = feature2.geometry();
 
@@ -93,7 +93,7 @@ public final class BooleanDisjointHelper {
     }
 
     private static boolean isLineOnLine(LineString line1, LineString line2) {
-        FeatureCollection doLinesIntersect = JTurfMisc.lineIntersect(line1, line2);
+        FeatureCollection<Point> doLinesIntersect = JTurfMisc.lineIntersect(line1, line2);
         return doLinesIntersect != null && !doLinesIntersect.isEmpty();
     }
 
@@ -105,7 +105,7 @@ public final class BooleanDisjointHelper {
             }
         }
 
-        FeatureCollection doLinesIntersect = JTurfMisc.lineIntersect(line, JTurfFeatureConversion.polygonToLine(polygon));
+        FeatureCollection<Point> doLinesIntersect = JTurfMisc.lineIntersect(line, JTurfFeatureConversion.polygonToLine(polygon));
         return doLinesIntersect != null && !doLinesIntersect.isEmpty();
     }
 
@@ -121,7 +121,7 @@ public final class BooleanDisjointHelper {
             }
         }
 
-        FeatureCollection doLinesIntersect = JTurfMisc.lineIntersect(JTurfFeatureConversion.polygonToLine(polygon1),
+        FeatureCollection<Point> doLinesIntersect = JTurfMisc.lineIntersect(JTurfFeatureConversion.polygonToLine(polygon1),
                 JTurfFeatureConversion.polygonToLine(polygon2));
         return doLinesIntersect != null && !doLinesIntersect.isEmpty();
     }

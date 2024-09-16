@@ -22,7 +22,7 @@ public final class PolygonToLineHelper {
      * @param properties 附属的属性
      * @return Feature的内部类型为LineString
      */
-    public static Feature polygonToLine(Polygon poly, JsonObject properties) {
+    public static Feature<Geometry> polygonToLine(Polygon poly, JsonObject properties) {
         return Feature.fromGeometry(coordsToLine(poly.coordinates()), properties);
     }
 
@@ -35,9 +35,9 @@ public final class PolygonToLineHelper {
      * @param properties 附属的属性
      * @return Feature的内部类型为LineString
      */
-    public static FeatureCollection polygonToLine(MultiPolygon multiPoly, JsonObject properties) {
+    public static FeatureCollection<Geometry> polygonToLine(MultiPolygon multiPoly, JsonObject properties) {
         List<List<List<Point>>> coords = multiPoly.coordinates();
-        List<Feature> lines = new ArrayList<>(coords.size());
+        List<Feature<Geometry>> lines = new ArrayList<>(coords.size());
 
         for (List<List<Point>> coord : coords) {
             lines.add(Feature.fromGeometry(coordsToLine(coord), properties));
