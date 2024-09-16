@@ -1,7 +1,10 @@
 package com.cgzz.mapbox.test;
 
 import com.cgzz.mapbox.jturf.shape.impl.Feature;
+import com.cgzz.mapbox.jturf.shape.impl.FeatureCollection;
 import com.cgzz.mapbox.jturf.shape.impl.Polygon;
+
+import java.util.Collections;
 
 public class GeoJsonTest {
 
@@ -11,11 +14,17 @@ public class GeoJsonTest {
         // System.out.println(poly1.toJson());
 
         String json = Feature.fromGeometry(poly1).toJson();
+        // System.out.println(json);
+
+        FeatureCollection<Polygon> features = FeatureCollection.fromFeatures(Collections.singletonList(Feature.fromJson(json, Polygon.class)));
+        System.out.println(features);
+
+        json = features.toJson();
         System.out.println(json);
 
-        Feature<Polygon> feature = Feature.fromJson(json, Polygon.class);
-        System.out.println(feature);
-        System.out.println(feature.geometry());
+        features = FeatureCollection.fromJson(json, Polygon.class);
+
+        System.out.println(features.get(0).geometry());
 
 //        System.out.println(Point.fromJson("{\"type\":\"Point\",\"coordinates\":[-77.0,44.0,100.0]}").toJson());
 //

@@ -42,6 +42,11 @@ public final class FeatureCollection<T extends Geometry> implements CollectionCo
     }
 
     @SuppressWarnings("unchecked")
+    public static <T extends Geometry> FeatureCollection<T> fromJson(String json, Class<T> geometryClass) {
+        return GeoJsonUtils.getGson().fromJson(json, FeatureCollection.class);
+    }
+
+    @SuppressWarnings("unchecked")
     public static FeatureCollection<Geometry> featureCollection(Geometry geometry) {
         return (FeatureCollection<Geometry>) geometry;
     }
