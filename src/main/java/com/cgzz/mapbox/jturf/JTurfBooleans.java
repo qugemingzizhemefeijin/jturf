@@ -1,12 +1,12 @@
 package com.cgzz.mapbox.jturf;
 
 import com.cgzz.mapbox.jturf.exception.JTurfException;
+import com.cgzz.mapbox.jturf.models.BooleanHolder;
 import com.cgzz.mapbox.jturf.shape.Geometry;
 import com.cgzz.mapbox.jturf.shape.impl.FeatureCollection;
 import com.cgzz.mapbox.jturf.shape.impl.LineString;
 import com.cgzz.mapbox.jturf.shape.impl.Point;
 import com.cgzz.mapbox.jturf.util.booleans.*;
-import org.omg.CORBA.BooleanHolder;
 
 import java.util.List;
 
@@ -154,38 +154,7 @@ public final class JTurfBooleans {
      * @return boolean
      */
     public static boolean booleanPointOnLine(Point point, LineString lineString, boolean ignoreEndVertices, Number epsilon) {
-        if (point == null) {
-            throw new JTurfException("point is required");
-        }
-        if (lineString == null) {
-            throw new JTurfException("line is required");
-        }
-
-        List<Point> pointList = lineString.coordinates();
-        if (pointList == null || pointList.isEmpty()) {
-            return false;
-        }
-
-        for (int i = 0, size = pointList.size(); i < size - 1; i++) {
-            int ignoreBoundary = 0;
-            if (ignoreEndVertices) {
-                if (i == 0) {
-                    ignoreBoundary = 1; // start
-                }
-                if (i == size - 2) {
-                    ignoreBoundary = 2; // end
-                }
-                if (i == 0 && i + 1 == size - 1) {
-                    ignoreBoundary = 3; // both
-                }
-            }
-
-            if (JTurfHelper.isPointOnLineSegment(pointList.get(i), pointList.get(i + 1), point, ignoreBoundary, epsilon)) {
-                return true;
-            }
-        }
-
-        return false;
+        return BooleanPointOnLineHelper.booleanPointOnLine(point, lineString, ignoreEndVertices, epsilon);
     }
 
     /**

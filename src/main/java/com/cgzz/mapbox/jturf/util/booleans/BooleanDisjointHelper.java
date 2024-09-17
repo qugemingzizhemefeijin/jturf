@@ -79,7 +79,7 @@ public final class BooleanDisjointHelper {
             case POLYGON:
                 switch (t2) {
                     case POINT:
-                        return !JTurfBooleans.booleanPointInPolygon(Point.point(geometry1), Polygon.polygon(geometry1));
+                        return !JTurfBooleans.booleanPointInPolygon(Point.point(geometry2), Polygon.polygon(geometry1));
                     case LINE_STRING:
                         return !isLineInPoly(LineString.lineString(geometry2), Polygon.polygon(geometry1));
                     case POLYGON:

@@ -121,15 +121,15 @@ public final class GeoJsonEquality {
         boolean b = JTurfHelper.round(g1.getX(), precision) == JTurfHelper.round(g2.getX(), precision)
                 && JTurfHelper.round(g1.getY(), precision) == JTurfHelper.round(g2.getY(), precision);
 
-        // 判断是否有z坐标
         if (b) {
+            // 判断是否有z坐标
             double z1 = g1.altitude(), z2 = g2.altitude();
+            // 都没有z坐标则直接返回true
+            if (Double.isNaN(z1) && Double.isNaN(z2)) {
+                return true;
+            }
             if (z1 == z2) {
-                if (Double.isNaN(z1)) {
-                    return true;
-                } else {
-                    return JTurfHelper.round(z1, precision) == JTurfHelper.round(z2, precision);
-                }
+                return JTurfHelper.round(z1, precision) == JTurfHelper.round(z2, precision);
             } else {
                 return false;
             }
