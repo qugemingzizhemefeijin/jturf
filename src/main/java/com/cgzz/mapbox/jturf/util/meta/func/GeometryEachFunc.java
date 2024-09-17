@@ -1,10 +1,10 @@
-package com.cgzz.mapbox.jturf.callback;
+package com.cgzz.mapbox.jturf.util.meta.func;
 
 import com.cgzz.mapbox.jturf.shape.Geometry;
 import com.google.gson.JsonObject;
 
 @FunctionalInterface
-public interface GeometryEachCallback {
+public interface GeometryEachFunc {
 
     /**
      * 循环处理组件的Points信息

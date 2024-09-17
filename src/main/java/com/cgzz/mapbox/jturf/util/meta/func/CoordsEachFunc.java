@@ -1,4 +1,4 @@
-package com.cgzz.mapbox.jturf.callback;
+package com.cgzz.mapbox.jturf.util.meta.func;
 
 import com.cgzz.mapbox.jturf.shape.Geometry;
 import com.cgzz.mapbox.jturf.shape.impl.Point;
@@ -6,7 +6,7 @@ import com.cgzz.mapbox.jturf.shape.impl.Point;
 import java.util.List;
 
 @FunctionalInterface
-public interface CoordsEachCallback {
+public interface CoordsEachFunc {
 
     /**
      * 循环处理组件的Points信息

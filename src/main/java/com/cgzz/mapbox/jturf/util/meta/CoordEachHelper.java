@@ -1,6 +1,5 @@
 package com.cgzz.mapbox.jturf.util.meta;
 
-import com.cgzz.mapbox.jturf.callback.CoordEachCallback;
 import com.cgzz.mapbox.jturf.shape.CoordinateContainer;
 import com.cgzz.mapbox.jturf.shape.Geometry;
 import com.cgzz.mapbox.jturf.shape.GeometryType;
@@ -8,6 +7,7 @@ import com.cgzz.mapbox.jturf.shape.impl.Feature;
 import com.cgzz.mapbox.jturf.shape.impl.FeatureCollection;
 import com.cgzz.mapbox.jturf.shape.impl.GeometryCollection;
 import com.cgzz.mapbox.jturf.shape.impl.Point;
+import com.cgzz.mapbox.jturf.util.meta.func.CoordEachFunc;
 
 import java.util.List;
 
@@ -21,23 +21,23 @@ public final class CoordEachHelper {
      * 循环处理组件点信息
      *
      * @param geometry 图形组件
-     * @param callback 处理函数
+     * @param func     处理函数
      * @return 是否所有的点均处理成功
      */
-    public static <T extends Geometry> boolean coordEach(T geometry, CoordEachCallback callback) {
-        return coordEach(geometry, callback, false);
+    public static <T extends Geometry> boolean coordEach(T geometry, CoordEachFunc func) {
+        return coordEach(geometry, func, false);
     }
 
     /**
      * 循环处理组件点信息
      *
      * @param geojson          图形组件
-     * @param callback         处理函数
+     * @param func             处理函数
      * @param excludeWrapCoord 如果是 POLYGON || MULTI_POLYGON 是否排除处理最后一个闭合点
      * @return 是否所有的点均处理成功
      */
     @SuppressWarnings({"unchecked"})
-    public static <T extends Geometry> boolean coordEach(T geojson, CoordEachCallback callback, boolean excludeWrapCoord) {
+    public static <T extends Geometry> boolean coordEach(T geojson, CoordEachFunc func, boolean excludeWrapCoord) {
         int coordIndex = 0;
 
         FeatureCollection<Geometry> featureCollection = geojson instanceof FeatureCollection ? FeatureCollection.featureCollection(geojson) : null;
@@ -64,7 +64,7 @@ public final class CoordEachHelper {
 
                 switch (geomType) {
                     case POINT: {
-                        if (!callback.accept(Point.point(geometry), coordIndex, featureIndex, multiFeatureIndex, geometryIndex)) {
+                        if (!func.accept(Point.point(geometry), coordIndex, featureIndex, multiFeatureIndex, geometryIndex)) {
                             return false;
                         }
                         coordIndex++;
@@ -74,7 +74,7 @@ public final class CoordEachHelper {
                     case MULTI_POINT: {
                         List<Point> coords = ((CoordinateContainer<List<Point>>) geometry).coordinates();
                         for (Point coord : coords) {
-                            if (!callback.accept(coord, coordIndex, featureIndex, multiFeatureIndex, geometryIndex)) {
+                            if (!func.accept(coord, coordIndex, featureIndex, multiFeatureIndex, geometryIndex)) {
                                 return false;
                             }
                             coordIndex++;
@@ -89,7 +89,7 @@ public final class CoordEachHelper {
                         List<List<Point>> coords = ((CoordinateContainer<List<List<Point>>>) geometry).coordinates();
                         for (List<Point> c : coords) {
                             for (int k = 0, s2 = c.size(); k < s2 - wrapShrink; k++) {
-                                if (!callback.accept(c.get(k), coordIndex, featureIndex, multiFeatureIndex, geometryIndex)) {
+                                if (!func.accept(c.get(k), coordIndex, featureIndex, multiFeatureIndex, geometryIndex)) {
                                     return false;
                                 }
                                 coordIndex++;
@@ -109,7 +109,7 @@ public final class CoordEachHelper {
                             geometryIndex = 0;
                             for (List<Point> c : coordinatese) {
                                 for (int l = 0, ls = c.size(); l < ls - wrapShrink; l++) {
-                                    if (!callback.accept(c.get(l), coordIndex, featureIndex, multiFeatureIndex, geometryIndex)) {
+                                    if (!func.accept(c.get(l), coordIndex, featureIndex, multiFeatureIndex, geometryIndex)) {
                                         return false;
                                     }
                                     coordIndex++;
@@ -123,7 +123,7 @@ public final class CoordEachHelper {
                     case GEOMETRY_COLLECTION: {
                         List<Geometry> geometries = GeometryCollection.geometryCollection(geometry).geometries();
                         for (Geometry value : geometries) {
-                            if (!coordEach(value, callback, excludeWrapCoord)) {
+                            if (!coordEach(value, func, excludeWrapCoord)) {
                                 return false;
                             }
                         }

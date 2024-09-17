@@ -1,9 +1,9 @@
-package com.cgzz.mapbox.jturf.callback;
+package com.cgzz.mapbox.jturf.util.meta.func;
 
 import com.cgzz.mapbox.jturf.shape.impl.LineString;
 
 @FunctionalInterface
-public interface SegmentReduceCallback<R> {
+public interface SegmentReduceFunc<R> {
 
     /**
      * 迭代计算组件的数值

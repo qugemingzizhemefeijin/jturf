@@ -1,6 +1,6 @@
 package com.cgzz.mapbox.jturf.util.meta;
 
-import com.cgzz.mapbox.jturf.callback.GeometryEachCallback;
+import com.cgzz.mapbox.jturf.util.meta.func.GeometryEachFunc;
 import com.cgzz.mapbox.jturf.exception.JTurfException;
 import com.cgzz.mapbox.jturf.shape.Geometry;
 import com.cgzz.mapbox.jturf.shape.GeometryType;
@@ -21,10 +21,10 @@ public final class GeomEachHelper {
      * 循环处理Geometry对象
      *
      * @param geojson  图形组件
-     * @param callback 处理函数
+     * @param func     处理函数
      * @return 是否所有的对象均处理成功
      */
-    public static <T extends Geometry> boolean geomEach(T geojson, GeometryEachCallback callback) {
+    public static <T extends Geometry> boolean geomEach(T geojson, GeometryEachFunc func) {
         FeatureCollection<Geometry> featureCollection = geojson instanceof FeatureCollection ? FeatureCollection.featureCollection(geojson) : null;
         boolean isFeature = geojson.geometryType() == GeometryType.FEATURE;
         int stop = featureCollection != null ? featureCollection.geometries().size() : 1;
@@ -60,7 +60,7 @@ public final class GeomEachHelper {
 
                 // Handle null Geometry
                 if (geometry == null) {
-                    if (!callback.accept(null, featureIndex, featurePropertie, featureId)) {
+                    if (!func.accept(null, featureIndex, featurePropertie, featureId)) {
                         return false;
                     }
                     continue;
@@ -74,14 +74,14 @@ public final class GeomEachHelper {
                     case POLYGON:
                     case MULTI_LINE_STRING:
                     case MULTI_POLYGON:
-                        if (!callback.accept(geometry, featureIndex, featurePropertie, featureId)) {
+                        if (!func.accept(geometry, featureIndex, featurePropertie, featureId)) {
                             return false;
                         }
                         break;
                     case GEOMETRY_COLLECTION: {
                         List<Geometry> geometries = GeometryCollection.geometryCollection(geometry).geometries();
                         for (Geometry value : geometries) {
-                            if (!callback.accept(value, featureIndex, featurePropertie, featureId)) {
+                            if (!func.accept(value, featureIndex, featurePropertie, featureId)) {
                                 return false;
                             }
                         }

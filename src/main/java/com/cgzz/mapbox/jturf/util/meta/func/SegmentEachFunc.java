@@ -1,9 +1,9 @@
-package com.cgzz.mapbox.jturf.callback;
+package com.cgzz.mapbox.jturf.util.meta.func;
 
 import com.cgzz.mapbox.jturf.shape.impl.LineString;
 
 @FunctionalInterface
-public interface SegmentEachCallback {
+public interface SegmentEachFunc {
 
     /**
      * 循环迭代组件内部的相邻线段

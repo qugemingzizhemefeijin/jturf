@@ -1,10 +1,10 @@
-package com.cgzz.mapbox.jturf.callback;
+package com.cgzz.mapbox.jturf.util.meta.func;
 
 import com.cgzz.mapbox.jturf.shape.Geometry;
 import com.cgzz.mapbox.jturf.shape.impl.Feature;
 
 @FunctionalInterface
-public interface FlattenEachCallback {
+public interface FlattenEachFunc {
 
     /**
      * 处理元素循环的回调

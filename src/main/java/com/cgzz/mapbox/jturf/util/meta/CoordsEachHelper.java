@@ -1,6 +1,6 @@
 package com.cgzz.mapbox.jturf.util.meta;
 
-import com.cgzz.mapbox.jturf.callback.CoordsEachCallback;
+import com.cgzz.mapbox.jturf.util.meta.func.CoordsEachFunc;
 import com.cgzz.mapbox.jturf.shape.CollectionContainer;
 import com.cgzz.mapbox.jturf.shape.CoordinateContainer;
 import com.cgzz.mapbox.jturf.shape.Geometry;
@@ -20,11 +20,11 @@ public final class CoordsEachHelper {
      * 循环处理组件点集合信息（注意：此函数不能处理Point类型）
      *
      * @param geometry 图形组件
-     * @param callback 处理函数
+     * @param func     处理函数
      * @return 是否所有的点均处理成功
      */
     @SuppressWarnings("unchecked")
-    public static <T extends Geometry> boolean coordsEach(T geometry, CoordsEachCallback callback) {
+    public static <T extends Geometry> boolean coordsEach(T geometry, CoordsEachFunc func) {
         CollectionContainer<Geometry> geometryCollection = geometry instanceof CollectionContainer ? ((CollectionContainer) geometry) : null;
         int stop = geometryCollection != null ? geometryCollection.geometries().size() : 1;
 
@@ -38,14 +38,14 @@ public final class CoordsEachHelper {
             switch (gType) {
                 case LINE_STRING:
                 case MULTI_POINT:
-                    return callback.accept(g, ((CoordinateContainer<List<Point>>) geometry).coordinates(), 0, geomIndex);
+                    return func.accept(g, ((CoordinateContainer<List<Point>>) geometry).coordinates(), 0, geomIndex);
                 case MULTI_LINE_STRING:
                 case POLYGON:
                     boolean multiIdx = gType == GeometryType.MULTI_LINE_STRING;
                     List<List<Point>> coordinates = ((CoordinateContainer<List<List<Point>>>) geometry).coordinates();
                     for (int i = 0, isize = coordinates.size(); i < isize; i++) {
                         List<Point> coordinate = coordinates.get(i);
-                        if (!callback.accept(g, coordinate, multiIdx ? i : 0, geomIndex)) {
+                        if (!func.accept(g, coordinate, multiIdx ? i : 0, geomIndex)) {
                             return false;
                         }
                     }
@@ -54,7 +54,7 @@ public final class CoordsEachHelper {
                     List<List<List<Point>>> coordinatesList = ((CoordinateContainer<List<List<List<Point>>>>) geometry).coordinates();
                     for (int i = 0, isize = coordinatesList.size(); i < isize; i++) {
                         for (List<Point> coordinate : coordinatesList.get(i)) {
-                            if (!callback.accept(g, coordinate, i, geomIndex)) {
+                            if (!func.accept(g, coordinate, i, geomIndex)) {
                                 return false;
                             }
                         }
@@ -64,7 +64,7 @@ public final class CoordsEachHelper {
                 case FEATURE_COLLECTION:
                     CollectionContainer<Geometry> newGeometryCollection = (CollectionContainer<Geometry>) g;
                     for (Geometry newGeometry : newGeometryCollection.geometries()) {
-                        if (!coordsEach(newGeometry, callback)) {
+                        if (!coordsEach(newGeometry, func)) {
                             return false;
                         }
                     }

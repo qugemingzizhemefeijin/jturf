@@ -1,10 +1,10 @@
-package com.cgzz.mapbox.jturf.callback;
+package com.cgzz.mapbox.jturf.util.meta.func;
 
 import com.cgzz.mapbox.jturf.shape.Geometry;
 import com.google.gson.JsonObject;
 
 @FunctionalInterface
-public interface GeometryReduceCallback<R> {
+public interface GeometryReduceFunc<R> {
 
     /**
      * 迭代计算组件的数值
