@@ -26,6 +26,10 @@ public class GeoJsonTest {
 
         System.out.println(features.get(0).geometry());
 
+        for (Feature<Polygon> pl : features) {
+
+        }
+
 //        System.out.println(Point.fromJson("{\"type\":\"Point\",\"coordinates\":[-77.0,44.0,100.0]}").toJson());
 //
 //        Double d = SegmentReduceHelper.segmentReduce(poly1, (previousValue, currentSegment, featureIndex, multiFeatureIndex, geometryIndex, segmentIndex) -> {

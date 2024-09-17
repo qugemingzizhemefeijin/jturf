@@ -81,6 +81,19 @@ public final class FeatureCollection<T extends Geometry> implements CollectionCo
         return features.isEmpty();
     }
 
+    public List<T> toItemList() {
+        if (isEmpty()) {
+            return null;
+        }
+
+        List<T> toList = new ArrayList<>();
+        for(Feature<T> feature : features) {
+            toList.add(feature.geometry());
+        }
+
+        return toList;
+    }
+
     @Override
     public String toViewCoordsString() {
         StringBuilder buf = new StringBuilder();

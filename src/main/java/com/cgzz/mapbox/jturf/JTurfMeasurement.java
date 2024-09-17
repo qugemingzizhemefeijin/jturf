@@ -125,6 +125,16 @@ public final class JTurfMeasurement {
      * 计算面积
      *
      * @param geometry 支持POLYGON、MULTI_POLYGON
+     * @return 面积（以平方米为单位）
+     */
+    public static double area(Geometry geometry) {
+        return AreaHelper.area(geometry);
+    }
+
+    /**
+     * 计算面积
+     *
+     * @param geometry 支持POLYGON、MULTI_POLYGON
      * @param units    支持公里、英里、米
      * @return 面积（指定单位）
      */

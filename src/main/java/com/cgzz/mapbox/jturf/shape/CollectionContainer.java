@@ -3,7 +3,7 @@ package com.cgzz.mapbox.jturf.shape;
 import java.util.Iterator;
 import java.util.List;
 
-public interface CollectionContainer<V extends Geometry> extends Geometry {
+public interface CollectionContainer<V extends Geometry> extends Geometry, Iterable<V> {
 
     List<V> geometries();
 
