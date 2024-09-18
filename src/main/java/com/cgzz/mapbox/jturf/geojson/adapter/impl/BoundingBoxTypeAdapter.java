@@ -54,7 +54,7 @@ public final class BoundingBoxTypeAdapter extends TypeAdapter<BoundingBox> {
         in.endArray();
 
         if (rawCoordinates.size() == 6) {
-            return BoundingBox.fromCoordinates(
+            return BoundingBox.fromLngLats(
                     rawCoordinates.get(0),
                     rawCoordinates.get(1),
                     rawCoordinates.get(2),
@@ -63,7 +63,7 @@ public final class BoundingBoxTypeAdapter extends TypeAdapter<BoundingBox> {
                     rawCoordinates.get(5));
         }
         if (rawCoordinates.size() == 4) {
-            return BoundingBox.fromCoordinates(
+            return BoundingBox.fromLngLats(
                     rawCoordinates.get(0),
                     rawCoordinates.get(1),
                     rawCoordinates.get(2),

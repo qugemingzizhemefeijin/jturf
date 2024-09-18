@@ -13,9 +13,13 @@ import java.util.List;
 public final class JTurfMeasurement {
 
     /**
-     * 地球半径（以米为单位）
+     * 地球半径（以米为单位）。<br>
+     * ‌openlayers使用的地球半径是6371008.8，而arcgis使用的是6378137。‌这两个数值代表了不同的地球模型所采用的地球半径。<br>
+     * 6371008.8通常与WGS84模型相关联，而6378137则可能与其他地球模型有关。<br>
+     * WGS84是一个广泛使用的地理坐标系统，它为全球定位系统（GPS）和其他地理信息系统提供了精确的地理位置数据。<br>
+     * 不同的软件或服务可能会采用不同的地球模型和参数，以适应其特定的应用需求和精度要求。因此，选择使用哪个半径值取决于具体的应用场景和所需的精度‌
      */
-    public static double EARTH_RADIUS = 6378137;
+    public static double EARTH_RADIUS = 6371008.8;
 
     private JTurfMeasurement() {
         throw new AssertionError("No Instances.");
@@ -435,14 +439,14 @@ public final class JTurfMeasurement {
         if (horizontalDistance >= verticalDistance) {
             double verticalMidpoint = (south + north) / 2;
 
-            return BoundingBox.fromCoordinates(west,
+            return BoundingBox.fromLngLats(west,
                     verticalMidpoint - (east - west) / 2,
                     east,
                     verticalMidpoint + (east - west) / 2);
         } else {
             double horizontalMidpoint = (west + east) / 2;
 
-            return BoundingBox.fromCoordinates(horizontalMidpoint - (north - south) / 2,
+            return BoundingBox.fromLngLats(horizontalMidpoint - (north - south) / 2,
                     south,
                     horizontalMidpoint + (north - south) / 2,
                     north);
@@ -561,11 +565,11 @@ public final class JTurfMeasurement {
      * <p>
      * 接受任意数量的点 ，并返回一个包含所有顶点的矩形多边形。
      *
-     * @param multiPoint 多点集合
+     * @param geometry 多点集合
      * @return 边界框的多边形表示形式
      */
-    public static Polygon envelope(MultiPoint multiPoint) {
-        return bboxPolygon(bbox(multiPoint));
+    public static Polygon envelope(Geometry geometry) {
+        return bboxPolygon(bbox(geometry));
     }
 
     /**
@@ -577,7 +581,7 @@ public final class JTurfMeasurement {
      * @param polygon 多边形
      * @return 包含两个切点的点集合
      */
-    public static List<Point> polygonTangents(Point point, Polygon polygon) {
+    public static FeatureCollection<Point> polygonTangents(Point point, Polygon polygon) {
         if (point == null) {
             throw new JTurfException("point is required");
         }
@@ -597,7 +601,7 @@ public final class JTurfMeasurement {
      * @param multiPolygon 组合多边形
      * @return 包含两个切点的点集合
      */
-    public static List<Point> polygonTangents(Point point, MultiPolygon multiPolygon) {
+    public static FeatureCollection<Point> polygonTangents(Point point, MultiPolygon multiPolygon) {
         if (point == null) {
             throw new JTurfException("point is required");
         }

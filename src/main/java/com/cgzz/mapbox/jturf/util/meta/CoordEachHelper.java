@@ -1,5 +1,6 @@
 package com.cgzz.mapbox.jturf.util.meta;
 
+import com.cgzz.mapbox.jturf.JTurfMeta;
 import com.cgzz.mapbox.jturf.shape.CoordinateContainer;
 import com.cgzz.mapbox.jturf.shape.Geometry;
 import com.cgzz.mapbox.jturf.shape.GeometryType;
@@ -53,6 +54,7 @@ public final class CoordEachHelper {
                 int multiFeatureIndex = 0;
                 int geometryIndex = 0;
                 Geometry geometry = geometryCollection != null ? geometryCollection.geometries().get(geomIndex) : geometryMaybeCollection;
+                geometry = JTurfMeta.getGeom(geometry);
 
                 // Handles null Geometry -- Skips this geometry
                 if (geometry == null) {

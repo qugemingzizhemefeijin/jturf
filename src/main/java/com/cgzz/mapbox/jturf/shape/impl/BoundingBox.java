@@ -32,20 +32,24 @@ public final class BoundingBox implements GeoJson, Serializable {
         return new BoundingBox(southwest, northeast);
     }
 
-    public static BoundingBox fromCoordinates(double west, double south, double east, double north) {
+    public static BoundingBox fromLngLats(double west, double south, double east, double north) {
         return new BoundingBox(Point.fromLngLat(west, south), Point.fromLngLat(east, north));
     }
 
-    public static BoundingBox fromCoordinates(double west, double south, double southwestAltitude, double east, double north, double northEastAltitude) {
+    public static BoundingBox fromLngLats(double west, double south, double southwestAltitude, double east, double north, double northEastAltitude) {
         return new BoundingBox(Point.fromLngLat(west, south, southwestAltitude), Point.fromLngLat(east, north, northEastAltitude));
     }
 
     public static BoundingBox fromLngLats(double[] bbox) {
-        if (bbox == null || bbox.length != 4) {
-            throw new IllegalArgumentException("bbox can not null, and length not eq 4");
+        if (bbox == null || (bbox.length != 4 && bbox.length != 6)) {
+            throw new IllegalArgumentException("bbox can not null, and length not eq 4 or 6");
         }
 
-        return new BoundingBox(Point.fromLngLat(bbox[0], bbox[1]), Point.fromLngLat(bbox[2], bbox[3]));
+        if (bbox.length == 4) {
+            return new BoundingBox(Point.fromLngLat(bbox[0], bbox[1]), Point.fromLngLat(bbox[2], bbox[3]));
+        } else {
+            return new BoundingBox(Point.fromLngLat(bbox[0], bbox[1], bbox[2]), Point.fromLngLat(bbox[3], bbox[4], bbox[5]));
+        }
     }
 
     public static BoundingBox fromJson(String json) {

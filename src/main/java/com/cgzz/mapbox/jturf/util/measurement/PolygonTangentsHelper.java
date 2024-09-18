@@ -4,9 +4,7 @@ import com.cgzz.mapbox.jturf.JTurfClassification;
 import com.cgzz.mapbox.jturf.JTurfFeatureConversion;
 import com.cgzz.mapbox.jturf.JTurfMeasurement;
 import com.cgzz.mapbox.jturf.shape.Geometry;
-import com.cgzz.mapbox.jturf.shape.impl.MultiPolygon;
-import com.cgzz.mapbox.jturf.shape.impl.Point;
-import com.cgzz.mapbox.jturf.shape.impl.Polygon;
+import com.cgzz.mapbox.jturf.shape.impl.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +15,7 @@ public final class PolygonTangentsHelper {
         throw new AssertionError("No Instances.");
     }
 
-    public static List<Point> polygonTangents(Point pt, Polygon polygon) {
+    public static FeatureCollection<Point> polygonTangents(Point pt, Polygon polygon) {
         Point nearest = nearestPoint(pt, polygon);
         List<Point> polyCoords = polygon.coordinates().get(0);
 
@@ -37,16 +35,16 @@ public final class PolygonTangentsHelper {
         rtan = out[0];
         ltan = out[1];
 
-        List<Point> retList = new ArrayList<>(2);
-        retList.add(rtan);
-        retList.add(ltan);
+        List<Feature<Point>> retList = new ArrayList<>(2);
+        retList.add(Feature.fromGeometry(rtan));
+        retList.add(Feature.fromGeometry(ltan));
 
-        return retList;
+        return FeatureCollection.fromFeatures(retList);
     }
 
     // 这个方法看起来是有问题的。。。。以后再优化吧。
-    public static List<Point> polygonTangents(Point pt, MultiPolygon multiPolygon) {
-        Point nearest = nearestPoint(pt, multiPolygon);
+    public static FeatureCollection<Point> polygonTangents(Point pt, MultiPolygon multiPolygon) {
+        // Point nearest = nearestPoint(pt, multiPolygon);
         List<List<Point>> polyCoords = multiPolygon.coordinates().get(0);
 
         Point rtan = polyCoords.get(0).get(0);
@@ -63,11 +61,11 @@ public final class PolygonTangentsHelper {
             ltan = out[1];
         }
 
-        List<Point> retList = new ArrayList<>(2);
-        retList.add(rtan);
-        retList.add(ltan);
+        List<Feature<Point>> retList = new ArrayList<>(2);
+        retList.add(Feature.fromGeometry(rtan));
+        retList.add(Feature.fromGeometry(ltan));
 
-        return retList;
+        return FeatureCollection.fromFeatures(retList);
     }
 
     private static Point[] processPolygon(List<Point> polygonCoords, Point ptCoords, double eprev, Point rtan, Point ltan) {

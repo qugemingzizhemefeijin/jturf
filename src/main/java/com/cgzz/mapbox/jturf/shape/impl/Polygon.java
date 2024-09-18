@@ -135,8 +135,8 @@ public final class Polygon implements CoordinateContainer<List<List<Point>>> {
             throw new JTurfException("coordinates can not be null");
         }
         int len = outer.length;
-        if (len < 6) {
-            throw new JTurfException("coordinates length at least 6");
+        if (len < 4) {
+            throw new JTurfException("coordinates length at least 4");
         }
 
         // 判断尾巴是否与头部相同

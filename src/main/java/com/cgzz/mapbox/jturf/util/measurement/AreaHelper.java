@@ -60,7 +60,7 @@ public final class AreaHelper {
             return total;
         }
 
-        total += ringArea(coordinates.get(0));
+        total += Math.abs(ringArea(coordinates.get(0)));
 
         for (int i = 1, size = coordinates.size(); i < size; i++) {
             total -= Math.abs(ringArea(coordinates.get(i)));
@@ -100,6 +100,8 @@ public final class AreaHelper {
                 p3 = coordinates.get(upperIndex);
                 total += (JTurfHelper.angleToRadians(p3.longitude()) - JTurfHelper.angleToRadians(p1.longitude())) * Math.sin(JTurfHelper.angleToRadians(p2.latitude()));
             }
+
+            // FIXME 这里在6.5.0的源码中，显示使用的是 6378137 ，但是实际js却使用的是 6371008.8
             total = total * JTurfMeasurement.EARTH_RADIUS * JTurfMeasurement.EARTH_RADIUS / 2;
         }
         return total;
