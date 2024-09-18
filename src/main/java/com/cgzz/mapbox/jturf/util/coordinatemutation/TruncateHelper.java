@@ -38,7 +38,7 @@ public class TruncateHelper {
         double factor = Math.pow(10, precision);
         int coords = coordinates;
 
-        JTurfMeta.coordEach(geometry, (p, coordIndex, featureIndex, multiFeatureIndex, geometryIndex) -> {
+        JTurfMeta.coordEach(newGeometry, (p, coordIndex, featureIndex, multiFeatureIndex, geometryIndex) -> {
             if (coords == 1) {
                 p.setCoords(calc(p.longitude(), factor), Double.NaN, Double.NaN);
             } else if (coords == 2) {

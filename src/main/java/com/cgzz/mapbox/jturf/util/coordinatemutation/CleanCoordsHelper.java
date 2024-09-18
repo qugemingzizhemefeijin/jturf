@@ -7,7 +7,9 @@ import com.cgzz.mapbox.jturf.shape.GeometryType;
 import com.cgzz.mapbox.jturf.shape.impl.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 清除重复坐标点工具类
@@ -31,9 +33,10 @@ public final class CleanCoordsHelper {
         if (type == GeometryType.POINT) {
             return geometry;
         } else if (type == GeometryType.FEATURE) {
-            Geometry t = cleanCoords(Feature.feature(geometry).geometry(), mutate);
+            Feature<Geometry> feature = Feature.feature(geometry);
+            Geometry t = cleanCoords(feature.geometry(), mutate);
             if (!mutate) {
-                return (T) Feature.fromGeometry(t);
+                return (T) Feature.fromGeometry(t, feature.properties());
             } else {
                 return geometry;
             }
@@ -51,6 +54,9 @@ public final class CleanCoordsHelper {
             }
             case MULTI_POLYGON: {
                 return (T) cleanCoords(MultiPolygon.multiPolygon(geometry), mutate);
+            }
+            case MULTI_POINT: {
+                return (T) cleanCoords(MultiPoint.multiPoint(geometry), mutate);
             }
             default:
                 throw new JTurfException(type + " geometry not supported");
@@ -156,6 +162,31 @@ public final class CleanCoordsHelper {
         }
 
         MultiPolygon newGeometry = JTurfHelper.getGeometryByMutate(geometry, mutate);
+        newGeometry.coordinates(coordinates);
+
+        return newGeometry;
+    }
+
+    /**
+     * 清除MultiPoint的重复坐标点
+     *
+     * @param geometry 要处理的MultiPoint对象
+     * @param mutate   是否影响原图形坐标
+     * @return 返回处理后的MultiPoint
+     */
+    private static MultiPoint cleanCoords(MultiPoint geometry, boolean mutate) {
+        List<Point> pointList = geometry.coordinates();
+
+        Set<Point> existing = new HashSet<>(pointList.size());
+        List<Point> coordinates = new ArrayList<>(pointList.size());
+
+        for (Point p : pointList) {
+            if (existing.add(p)) {
+                coordinates.add(p);
+            }
+        }
+
+        MultiPoint newGeometry = JTurfHelper.getGeometryByMutate(geometry, mutate);
         newGeometry.coordinates(coordinates);
 
         return newGeometry;

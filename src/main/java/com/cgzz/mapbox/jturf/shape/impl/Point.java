@@ -146,7 +146,15 @@ public final class Point implements CoordinateContainer<Point>, Serializable, Co
         }
         if (obj instanceof Point) {
             Point that = (Point) obj;
-            return this.longitude == that.longitude && this.latitude == that.latitude && this.altitude == that.altitude;
+
+            boolean z1 = this.hasAltitude(), z2 = that.hasAltitude();
+            if (z1 == z2) {
+                if (z1) {
+                    return this.longitude == that.longitude && this.latitude == that.latitude && this.altitude == that.altitude;
+                } else {
+                    return this.longitude == that.longitude && this.latitude == that.latitude;
+                }
+            }
         }
         return false;
     }

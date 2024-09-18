@@ -27,7 +27,7 @@ public class FlipHelper {
             newGeometry = geometry;
         }
 
-        JTurfMeta.coordEach(geometry, (p, coordIndex, featureIndex, multiFeatureIndex, geometryIndex) -> {
+        JTurfMeta.coordEach(newGeometry, (p, coordIndex, featureIndex, multiFeatureIndex, geometryIndex) -> {
             // 翻转
             p.setCoords(p.latitude(), p.longitude());
 

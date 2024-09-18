@@ -63,7 +63,7 @@ public final class JTurfCoordinateMutation {
      * @return 返回处理后的图形组件
      */
     public static <T extends Geometry> T truncate(T geometry, Integer precision, Integer coordinates) {
-        return truncate(geometry, 6, coordinates, false);
+        return truncate(geometry, precision, coordinates, false);
     }
 
     /**
