@@ -82,7 +82,7 @@ public class JTurfFeatureConversion {
      * @param geometry 多边形
      * @return 所有多几何对象都被展平为单一要素
      */
-    public static FeatureCollection<? extends Geometry> flatten(Geometry geometry) {
+    public static FeatureCollection<Geometry> flatten(Geometry geometry) {
         List<Feature<Geometry>> results = new ArrayList<>();
 
         FlattenEachHelper.flattenEach(geometry, (feature, featureIndex, multiFeatureIndex) -> {
