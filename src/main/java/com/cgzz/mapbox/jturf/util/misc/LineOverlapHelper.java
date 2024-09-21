@@ -1,10 +1,16 @@
 package com.cgzz.mapbox.jturf.util.misc;
 
-import com.cgzz.mapbox.jturf.*;
+import com.cgzz.mapbox.jturf.JTurfBooleans;
+import com.cgzz.mapbox.jturf.JTurfHelper;
+import com.cgzz.mapbox.jturf.JTurfMeta;
+import com.cgzz.mapbox.jturf.JTurfMisc;
 import com.cgzz.mapbox.jturf.enums.Units;
 import com.cgzz.mapbox.jturf.exception.JTurfException;
+import com.cgzz.mapbox.jturf.models.ObjectHolder;
 import com.cgzz.mapbox.jturf.shape.Geometry;
 import com.cgzz.mapbox.jturf.shape.GeometryType;
+import com.cgzz.mapbox.jturf.shape.impl.Feature;
+import com.cgzz.mapbox.jturf.shape.impl.FeatureCollection;
 import com.cgzz.mapbox.jturf.shape.impl.LineString;
 import com.cgzz.mapbox.jturf.shape.impl.Point;
 import com.cgzz.mapbox.jturf.util.pkg.RTreeHelper;
@@ -31,7 +37,7 @@ public final class LineOverlapHelper {
      * @param tolerance 匹配重叠线段的容差距离（以公里为单位）
      * @return 返回两个图形之间重叠的线段集合
      */
-    public static List<LineString> lineOverlap(Geometry geometry1, Geometry geometry2, Integer tolerance) {
+    public static FeatureCollection<LineString> lineOverlap(Geometry geometry1, Geometry geometry2, Integer tolerance) {
         if (geometry1 == null) {
             throw new JTurfException("geometry1 is required");
         }
@@ -62,8 +68,8 @@ public final class LineOverlapHelper {
         // 构建R树
         RTree<LineString, Rectangle> rtree = RTreeHelper.initRTree(geometry1);
 
-        List<LineString> result = new ArrayList<>();
-        List<Point> overlapSegment = new ArrayList<>(); // 线段点集合
+        List<Feature<LineString>> result = new ArrayList<>();
+        ObjectHolder<List<Point>> overlapSegment = new ObjectHolder<>(new ArrayList<>()); // 线段点集合
 
         JTurfMeta.segmentEach(geometry2, (segment, featureIndex, multiFeatureIndex, geometryIndex, segmentIndex) -> {
             boolean doesOverlaps = false;
@@ -88,51 +94,51 @@ public final class LineOverlapHelper {
                     doesOverlaps = true;
 
                     // 重叠已存在 - 仅附加线段的最后一个坐标
-                    if (overlapSegment.size() > 0) {
-                        concatSegment(overlapSegment, segment);
+                    if (overlapSegment.value.size() > 0) {
+                        concatSegment(overlapSegment.value, segment);
                     } else {
-                        overlapSegment.addAll(segment.coordinates());
+                        overlapSegment.value = segment.coordinates();
                     }
                 } else if (disparity == 0
                         ? (JTurfBooleans.booleanPointOnLine(coordsSegment.get(0), match)
                         && JTurfBooleans.booleanPointOnLine(coordsSegment.get(1), match))
-                        : (JTurfMeasurement.distance(coordsMatch.get(0), (Point)JTurfMisc.nearestPointOnLine(match, coordsSegment.get(0), units).geometry(), units) <= tolerance
-                        && JTurfMeasurement.distance(coordsMatch.get(1), (Point)JTurfMisc.nearestPointOnLine(match, coordsSegment.get(1), units).geometry(), units) <= tolerance)) {
+                        : (JTurfMisc.nearestPointOnLine(match, coordsSegment.get(0), units).getPropertyAsNumber("dist").intValue() <= disparity
+                        && JTurfMisc.nearestPointOnLine(match, coordsSegment.get(1), units).getPropertyAsNumber("dist").intValue() <= disparity)) {
                     doesOverlaps = true;
-                    if (overlapSegment.size() > 0) {
-                        concatSegment(overlapSegment, segment);
+                    if (overlapSegment.value.size() > 0) {
+                        concatSegment(overlapSegment.value, segment);
                     } else {
-                        overlapSegment.addAll(segment.coordinates());
+                        overlapSegment.value = segment.coordinates();
                     }
                 } else if (disparity == 0
                         ? (JTurfBooleans.booleanPointOnLine(coordsMatch.get(0), segment)
                         && JTurfBooleans.booleanPointOnLine(coordsMatch.get(1), segment))
-                        : (JTurfMeasurement.distance(coordsMatch.get(0), (Point)JTurfMisc.nearestPointOnLine(segment, coordsMatch.get(0), units).geometry(), units) <= tolerance
-                        && JTurfMeasurement.distance(coordsMatch.get(1), (Point)JTurfMisc.nearestPointOnLine(segment, coordsMatch.get(1), units).geometry(), units) <= tolerance)) {
+                        : (JTurfMisc.nearestPointOnLine(segment, coordsMatch.get(0), units).getPropertyAsNumber("dist").intValue() <= disparity
+                        && JTurfMisc.nearestPointOnLine(segment, coordsMatch.get(1), units).getPropertyAsNumber("dist").intValue() <= disparity)) {
                     // 不要定义（doesOverlap = true），因为同一段中可能会出现更多匹配项
-                    if (overlapSegment.size() > 0) {
-                        concatSegment(overlapSegment, match);
+                    if (overlapSegment.value.size() > 0) {
+                        concatSegment(overlapSegment.value, match);
                     } else {
-                        overlapSegment.addAll(match.coordinates());
+                        overlapSegment.value = match.coordinates();
                     }
                 }
             }
 
             // Segment 不重叠 - 向结果添加重叠并重置
-            if (!doesOverlaps && overlapSegment.size() > 0) {
-                result.add(LineString.fromLngLatsShallowCopy(overlapSegment));
-                overlapSegment.clear();
+            if (!doesOverlaps && overlapSegment.value.size() > 0) {
+                result.add(Feature.fromGeometry(LineString.fromLngLatsShallowCopy(overlapSegment.value)));
+                overlapSegment.value.clear();
             }
 
             return true;
         });
 
         // 添加最后一个段（如果存在）
-        if (overlapSegment.size() > 0) {
-            result.add(LineString.fromLngLatsShallowCopy(overlapSegment));
+        if (overlapSegment.value.size() > 0) {
+            result.add(Feature.fromGeometry(LineString.fromLngLatsShallowCopy(overlapSegment.value)));
         }
 
-        return result;
+        return FeatureCollection.fromFeatures(result);
     }
 
     private static void concatSegment(List<Point> lineCoords, LineString segment) {

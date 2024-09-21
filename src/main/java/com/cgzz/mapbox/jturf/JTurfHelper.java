@@ -235,7 +235,7 @@ public final class JTurfHelper {
      * @return 一致返回true
      */
     public static boolean equalsD2(Point pt1, Point pt2) {
-        return pt1.getX() == pt2.getX() && pt2.getY() == pt2.getY();
+        return pt1.getX() == pt2.getX() && pt1.getY() == pt2.getY();
     }
 
     /**

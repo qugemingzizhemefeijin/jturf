@@ -69,7 +69,7 @@ public final class BooleanOverlapHelper {
             case MULTI_LINE_STRING:
                 JTurfMeta.segmentEach(geometry1, (currentSegment1, featureIndex1, multiFeatureIndex1, geometryIndex1, segmentIndex1) -> {
                     JTurfMeta.segmentEach(geometry2, (currentSegment2, featureIndex2, multiFeatureIndex2, geometryIndex2, segmentIndex2) -> {
-                        List<LineString> overlapLines = JTurfMisc.lineOverlap(currentSegment1, currentSegment2);
+                        FeatureCollection<LineString> overlapLines = JTurfMisc.lineOverlap(currentSegment1, currentSegment2);
                         if (overlapLines.size() > 0) {
                             overlap.value++;
                         }

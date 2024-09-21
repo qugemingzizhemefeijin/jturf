@@ -62,7 +62,7 @@ public final class LineSegmentHelper {
 
         for (List<Point> coords : coordinates) {
             // 组合成N组线段
-            List<Feature<LineString>> segments = createSegments(coords, feature.properties());
+            List<Feature<LineString>> segments = createSegments(coords, feature.properties(), results.size());
             if (!segments.isEmpty()) {
                 results.addAll(segments);
             }
@@ -74,16 +74,18 @@ public final class LineSegmentHelper {
      *
      * @param coords     传入的坐标组
      * @param properties 处理组件的属性信息
+     * @param startId    ID的起始值
      * @return List<Line>
      */
-    private static List<Feature<LineString>> createSegments(List<Point> coords, JsonObject properties) {
+    private static List<Feature<LineString>> createSegments(List<Point> coords, JsonObject properties, int startId) {
         List<Feature<LineString>> segments = new ArrayList<>();
 
         for (int i = 1, size = coords.size(); i < size; i++) {
             Point previousCoords = coords.get(i - 1);
             Point currentCoords = coords.get(i);
 
-            segments.add(Feature.fromGeometry(LineString.fromLngLats(previousCoords, currentCoords), properties));
+            segments.add(Feature.fromGeometry(LineString.fromLngLats(previousCoords, currentCoords), properties, String.valueOf(startId)));
+            startId++;
         }
 
         return segments;

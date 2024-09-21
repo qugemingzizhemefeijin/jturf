@@ -7,8 +7,6 @@ import com.cgzz.mapbox.jturf.shape.GeometryType;
 import com.cgzz.mapbox.jturf.shape.impl.*;
 import com.cgzz.mapbox.jturf.util.misc.*;
 
-import java.util.List;
-
 public final class JTurfMisc {
 
     private JTurfMisc() {
@@ -53,7 +51,7 @@ public final class JTurfMisc {
      * @param geometry2 图形1，支持 Line、MultiLine、Polygon、MultiPolygon
      * @return 返回两个图形之间重叠的线段集合
      */
-    public static List<LineString> lineOverlap(Geometry geometry1, Geometry geometry2) {
+    public static FeatureCollection<LineString> lineOverlap(Geometry geometry1, Geometry geometry2) {
         return lineOverlap(geometry1, geometry2, 0);
     }
 
@@ -65,7 +63,7 @@ public final class JTurfMisc {
      * @param tolerance 匹配重叠线段的容差距离（以公里为单位）
      * @return 返回两个图形之间重叠的线段集合
      */
-    public static List<LineString> lineOverlap(Geometry geometry1, Geometry geometry2, Integer tolerance) {
+    public static FeatureCollection<LineString> lineOverlap(Geometry geometry1, Geometry geometry2, Integer tolerance) {
         return LineOverlapHelper.lineOverlap(geometry1, geometry2, tolerance);
     }
 
@@ -184,9 +182,6 @@ public final class JTurfMisc {
      * @return 返回弧度的线条
      */
     public static Feature<LineString> lineArc(Feature<Point> center, double radius, double bearing1, double bearing2, Integer steps, Units units) {
-        if (center.geometry().geometryType() == GeometryType.POINT) {
-            throw new JTurfException("center must Point type");
-        }
         return LineArcHelper.lineArc(center.geometry(), radius, bearing1, bearing2, steps, units, center.properties());
     }
 
@@ -245,10 +240,6 @@ public final class JTurfMisc {
      * @return 切片线段
      */
     public static Feature<LineString> lineSliceAlong(Feature<LineString> feature, double startDist, double stopDist, Units units) {
-        if (feature.geometry().geometryType() != GeometryType.LINE_STRING) {
-            throw new JTurfException("feature must LineString type");
-        }
-
         return LineSliceAlongHelper.lineSliceAlong(feature.geometry(), startDist, stopDist, units, feature.properties());
     }
 
