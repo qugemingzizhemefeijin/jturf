@@ -36,12 +36,6 @@
             <version>${gson.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.mapbox.mapboxsdk</groupId>
-            <artifactId>mapbox-sdk-turf</artifactId>
-            <version>${mapbox.sdk.turf.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
