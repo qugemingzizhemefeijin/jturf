@@ -4,10 +4,7 @@ import com.cgzz.mapbox.jturf.enums.Orientation;
 import com.cgzz.mapbox.jturf.enums.Units;
 import com.cgzz.mapbox.jturf.exception.JTurfException;
 import com.cgzz.mapbox.jturf.shape.Geometry;
-import com.cgzz.mapbox.jturf.shape.impl.BoundingBox;
-import com.cgzz.mapbox.jturf.shape.impl.LineString;
-import com.cgzz.mapbox.jturf.shape.impl.Point;
-import com.cgzz.mapbox.jturf.shape.impl.Polygon;
+import com.cgzz.mapbox.jturf.shape.impl.*;
 import com.cgzz.mapbox.jturf.util.pkg.clipping.PolygonClippingHelper;
 import com.cgzz.mapbox.jturf.util.pkg.clipping.polygonclipping.PolygonClipping;
 import com.cgzz.mapbox.jturf.util.transformation.SimplifyHelper;
@@ -376,7 +373,7 @@ public final class JTurfTransformation {
      * @param geometry 仅支持Polygon、MultiPolygon
      * @return 三角形Polygon集合
      */
-    public static List<Polygon> tesselate(Geometry geometry) {
+    public static FeatureCollection<Polygon> tesselate(Geometry geometry) {
         if (geometry == null) {
             throw new JTurfException("geometry is required");
         }

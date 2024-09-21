@@ -261,13 +261,18 @@ public final class GeoJsonEquality {
      * @return 一致返回true
      */
     private static boolean comparePoints(List<Point> points1, List<Point> points2, int startIndex, boolean isPolygon, int precision, boolean direction) {
+        if (points1.size() != points2.size()) {
+            return false;
+        }
         if (isPolygon && !comparePoint(points1.get(0), points2.get(0), precision)) {
             // fix start index of both to same point
             points2 = fixStartIndex(points2, points1, precision);
-            if (points2 == null) {
+            if (points2 == null || points2.isEmpty()) {
                 return false;
             }
         }
+
+        // FIXME 此处点太多的话可能会造成栈溢出
 
         // for line startIndex =0 and for polygon startIndex =1 (line肯定是一个方向的，只有polygon的方向可能不一致)
         boolean sameDirection = comparePoint(points1.get(startIndex), points2.get(startIndex), precision);

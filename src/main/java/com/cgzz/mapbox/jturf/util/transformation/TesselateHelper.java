@@ -5,9 +5,7 @@ import com.cgzz.mapbox.jturf.exception.JTurfException;
 import com.cgzz.mapbox.jturf.models.TesselateResult;
 import com.cgzz.mapbox.jturf.shape.Geometry;
 import com.cgzz.mapbox.jturf.shape.GeometryType;
-import com.cgzz.mapbox.jturf.shape.impl.MultiPolygon;
-import com.cgzz.mapbox.jturf.shape.impl.Point;
-import com.cgzz.mapbox.jturf.shape.impl.Polygon;
+import com.cgzz.mapbox.jturf.shape.impl.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,14 +17,14 @@ public final class TesselateHelper {
         throw new AssertionError("No Instances.");
     }
 
-    public static List<Polygon> tesselate(Geometry geometry) {
+    public static FeatureCollection<Polygon> tesselate(Geometry geometry) {
         geometry = JTurfMeta.getGeom(geometry);
         GeometryType type = geometry.geometryType();
         if (type != GeometryType.POLYGON && type != GeometryType.MULTI_POLYGON) {
             throw new JTurfException("input must be a Polygon or MultiPolygon");
         }
 
-        List<Polygon> fc;
+        List<Feature<Polygon>> fc;
         if (type == GeometryType.POLYGON) {
             fc = processPolygon(Polygon.polygon(geometry).coordinates());
         } else {
@@ -36,10 +34,10 @@ public final class TesselateHelper {
             }
         }
 
-        return fc;
+        return FeatureCollection.fromFeatures(fc);
     }
 
-    private static List<Polygon> processPolygon(List<List<Point>> coordinates) {
+    private static List<Feature<Polygon>> processPolygon(List<List<Point>> coordinates) {
         TesselateResult data = flattenCoords(coordinates);
         List<Double> vertices = data.getVertices();
         int dim = 2;
@@ -52,7 +50,7 @@ public final class TesselateHelper {
         }
 
         int size = points.size();
-        List<Polygon> polygonList = new ArrayList<>(size / 3);
+        List<Feature<Polygon>> polygonList = new ArrayList<>(size / 3);
         for (int i = 0; i < size; i += 3) {
             List<Point> coords = new ArrayList<>(4);
             coords.add(points.get(i));
@@ -60,7 +58,7 @@ public final class TesselateHelper {
             coords.add(points.get(i + 2));
             coords.add(points.get(i));
 
-            polygonList.add(Polygon.fromLngLats(Collections.singletonList(coords)));
+            polygonList.add(Feature.fromGeometry(Polygon.fromLngLats(Collections.singletonList(coords))));
         }
 
         return polygonList;

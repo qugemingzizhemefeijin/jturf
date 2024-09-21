@@ -107,6 +107,8 @@ public final class BufferHelper {
         // JSTS buffer operation
         double distance = JTurfHelper.radiansToLength(JTurfHelper.lengthToRadians(radius, units), Units.METERS);
 
+        // FIXME 此处计算与Turf有一些误差，将来可以替换为Turf的原生方法
+
         // 这里可以直接做一层中转，以后可以实现GeoJSON，就不需要这么麻烦咯。。。
         com.vividsolutions.jts.geom.Geometry buffered = BufferOp.bufferOp(transformation(geometry, projection), distance, steps);
 

@@ -80,18 +80,18 @@ public final class TailClipHelper {
     /**
      * Sutherland-Hodgeman polygon clipping algorithm
      */
-    public static List<Point> polygonclip(List<Point> points, BoundingBox bbox) {
+    public static List<Point> polygonClip(List<Point> points, BoundingBox bbox) {
         // clip against each side of the clip rectangle
         List<Point> result = null;
         for (int edge = 1; edge <= 8; edge *= 2) {
             result = new ArrayList<>();
             int size = points.size();
             Point prev = points.get(size - 1);
-            boolean prevInside = !((bitCode(prev, bbox) & edge) > 0);
+            boolean prevInside = (bitCode(prev, bbox) & edge) == 0;
 
             for (int i = 0; i < size; i++) {
                 Point p = points.get(i);
-                boolean inside = !((bitCode(p, bbox) & edge) > 0);
+                boolean inside = (bitCode(p, bbox) & edge) == 0;
 
                 // if segment goes through the clip window, add an intersection
                 if (inside != prevInside) {
@@ -148,15 +148,15 @@ public final class TailClipHelper {
      */
     public static int bitCode(Point point, BoundingBox bbox) {
         int code = 0;
-        if (point.longitude() < bbox.west()) { // left
+        if (point.longitude() < bbox.get(0)) { // left
             code |= 1;
-        } else if (point.longitude() > bbox.east()) { // right
+        } else if (point.longitude() > bbox.get(2)) { // right
             code |= 2;
         }
 
-        if (point.latitude() < bbox.south()) { // bottom
+        if (point.latitude() < bbox.get(1)) { // bottom
             code |= 4;
-        } else if (point.latitude() > bbox.north()) { // top
+        } else if (point.latitude() > bbox.get(3)) { // top
             code |= 8;
         }
 
@@ -173,7 +173,7 @@ public final class TailClipHelper {
         List<List<Point>> outRings = new ArrayList<>();
 
         for (List<Point> ring : rings) {
-            List<Point> clipped = polygonclip(ring, bbox);
+            List<Point> clipped = polygonClip(ring, bbox);
             if (clipped != null && !clipped.isEmpty()) {
                 if (!JTurfHelper.validatePolygonEndToEnd(clipped)) {
                     clipped.add(clipped.get(0));
@@ -183,7 +183,6 @@ public final class TailClipHelper {
                 }
             }
         }
-
 
         return outRings;
     }
