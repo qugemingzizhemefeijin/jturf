@@ -47,12 +47,12 @@ public final class JTurfMeta {
      * @param func     处理函数
      * @return 是否所有的点均处理成功
      */
-    public static <T extends Geometry> boolean coordsEach(T geometry, CoordsEachFunc func) {
+    public static <T extends Geometry> boolean coordListEach(T geometry, CoordListEachFunc func) {
         if (geometry == null) {
             return false;
         }
 
-        return CoordsEachHelper.coordsEach(geometry, func);
+        return CoordListEachHelper.coordListEach(geometry, func);
     }
 
     /**

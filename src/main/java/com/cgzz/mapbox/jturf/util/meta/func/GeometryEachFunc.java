@@ -8,7 +8,7 @@ public interface GeometryEachFunc {
 
     /**
      * 循环处理组件的Points信息
-     * @param currentGeometry   当前的图形组件
+     * @param currentGeometry   当前的图形组件（此处或获取到Feature和FeatureCollection内的元素）
      * @param featureIndex      当前组件在父组件中的索引
      * @param featureProperties Feature中记录的属性信息
      * @param featureId         Feature的ID

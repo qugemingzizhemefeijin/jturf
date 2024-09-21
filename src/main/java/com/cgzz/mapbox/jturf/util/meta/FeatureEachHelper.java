@@ -31,7 +31,7 @@ public final class FeatureEachHelper {
      */
     public static <T extends Geometry> boolean featureEach(FeatureCollection<T> featureCollection, FeatureEachFunc<T> func) {
         for (int i = 0, size = featureCollection.size(); i < size; i++) {
-            if (func.accept(featureCollection.get(i), 0)) {
+            if (!func.accept(featureCollection.get(i), i)) {
                 return false;
             }
         }

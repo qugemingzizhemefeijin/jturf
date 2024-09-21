@@ -82,7 +82,7 @@ public final class RewindHelper {
             case POLYGON:
             case MULTI_LINE_STRING:
             case MULTI_POLYGON:
-                JTurfMeta.coordsEach(geometry, (geo, pointList, multiIndex, geomIndex) -> {
+                JTurfMeta.coordListEach(geometry, (geo, pointList, multiIndex, geomIndex) -> {
                     rewindCoords(pointList, reverse);
                     return true;
                 });

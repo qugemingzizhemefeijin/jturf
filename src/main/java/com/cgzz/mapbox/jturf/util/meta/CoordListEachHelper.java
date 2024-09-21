@@ -1,6 +1,6 @@
 package com.cgzz.mapbox.jturf.util.meta;
 
-import com.cgzz.mapbox.jturf.util.meta.func.CoordsEachFunc;
+import com.cgzz.mapbox.jturf.util.meta.func.CoordListEachFunc;
 import com.cgzz.mapbox.jturf.shape.CollectionContainer;
 import com.cgzz.mapbox.jturf.shape.CoordinateContainer;
 import com.cgzz.mapbox.jturf.shape.Geometry;
@@ -10,9 +10,9 @@ import com.cgzz.mapbox.jturf.shape.impl.Point;
 
 import java.util.List;
 
-public final class CoordsEachHelper {
+public final class CoordListEachHelper {
 
-    private CoordsEachHelper() {
+    private CoordListEachHelper() {
         throw new AssertionError("No Instances.");
     }
 
@@ -24,7 +24,7 @@ public final class CoordsEachHelper {
      * @return 是否所有的点均处理成功
      */
     @SuppressWarnings("unchecked")
-    public static <T extends Geometry> boolean coordsEach(T geometry, CoordsEachFunc func) {
+    public static <T extends Geometry> boolean coordListEach(T geometry, CoordListEachFunc func) {
         CollectionContainer<Geometry> geometryCollection = geometry instanceof CollectionContainer ? ((CollectionContainer) geometry) : null;
         int stop = geometryCollection != null ? geometryCollection.geometries().size() : 1;
 
@@ -38,11 +38,11 @@ public final class CoordsEachHelper {
             switch (gType) {
                 case LINE_STRING:
                 case MULTI_POINT:
-                    return func.accept(g, ((CoordinateContainer<List<Point>>) geometry).coordinates(), 0, geomIndex);
+                    return func.accept(g, ((CoordinateContainer<List<Point>>) g).coordinates(), 0, geomIndex);
                 case MULTI_LINE_STRING:
                 case POLYGON:
                     boolean multiIdx = gType == GeometryType.MULTI_LINE_STRING;
-                    List<List<Point>> coordinates = ((CoordinateContainer<List<List<Point>>>) geometry).coordinates();
+                    List<List<Point>> coordinates = ((CoordinateContainer<List<List<Point>>>) g).coordinates();
                     for (int i = 0, isize = coordinates.size(); i < isize; i++) {
                         List<Point> coordinate = coordinates.get(i);
                         if (!func.accept(g, coordinate, multiIdx ? i : 0, geomIndex)) {
@@ -51,7 +51,7 @@ public final class CoordsEachHelper {
                     }
                     break;
                 case MULTI_POLYGON:
-                    List<List<List<Point>>> coordinatesList = ((CoordinateContainer<List<List<List<Point>>>>) geometry).coordinates();
+                    List<List<List<Point>>> coordinatesList = ((CoordinateContainer<List<List<List<Point>>>>) g).coordinates();
                     for (int i = 0, isize = coordinatesList.size(); i < isize; i++) {
                         for (List<Point> coordinate : coordinatesList.get(i)) {
                             if (!func.accept(g, coordinate, i, geomIndex)) {
@@ -64,7 +64,7 @@ public final class CoordsEachHelper {
                 case FEATURE_COLLECTION:
                     CollectionContainer<Geometry> newGeometryCollection = (CollectionContainer<Geometry>) g;
                     for (Geometry newGeometry : newGeometryCollection.geometries()) {
-                        if (!coordsEach(newGeometry, func)) {
+                        if (!coordListEach(newGeometry, func)) {
                             return false;
                         }
                     }

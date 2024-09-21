@@ -1,5 +1,6 @@
 package com.cgzz.mapbox.jturf.util.meta;
 
+import com.cgzz.mapbox.jturf.JTurfMeta;
 import com.cgzz.mapbox.jturf.util.meta.func.GeometryEachFunc;
 import com.cgzz.mapbox.jturf.exception.JTurfException;
 import com.cgzz.mapbox.jturf.shape.Geometry;
@@ -57,6 +58,7 @@ public final class GeomEachHelper {
 
             for (int g = 0; g < stopG; g++) {
                 Geometry geometry = geometryCollection != null ? geometryCollection.geometries().get(g) : geometryMaybeCollection;
+                geometry = JTurfMeta.getGeom(geometry);
 
                 // Handle null Geometry
                 if (geometry == null) {

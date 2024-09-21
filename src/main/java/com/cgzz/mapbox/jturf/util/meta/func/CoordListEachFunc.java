@@ -6,11 +6,11 @@ import com.cgzz.mapbox.jturf.shape.impl.Point;
 import java.util.List;
 
 @FunctionalInterface
-public interface CoordsEachFunc {
+public interface CoordListEachFunc {
 
     /**
      * 循环处理组件的Points信息
-     * @param geometry   当前的图形组件
+     * @param geometry   当前的图形组件（非任何图形包装类型）
      * @param pointList  当前的集合点
      * @param multiIndex 组合点循环位置，MULTI_LINE和MULTI_POLYGON的上层位置
      * @param geomIndex  GEOMETRY_COLLECTION的位置

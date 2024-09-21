@@ -21,7 +21,8 @@ public final class FeatureCollection<T extends Geometry> implements CollectionCo
         this.features = features;
     }
 
-    public static <T extends Geometry> FeatureCollection<T> fromFeatures(Feature<T>[] features) {
+    @SafeVarargs
+    public static <T extends Geometry> FeatureCollection<T> fromFeatures(Feature<T>... features) {
         return new FeatureCollection<>(Arrays.asList(features));
     }
 
@@ -82,10 +83,6 @@ public final class FeatureCollection<T extends Geometry> implements CollectionCo
     }
 
     public List<T> toItemList() {
-        if (isEmpty()) {
-            return null;
-        }
-
         List<T> toList = new ArrayList<>();
         for(Feature<T> feature : features) {
             toList.add(feature.geometry());

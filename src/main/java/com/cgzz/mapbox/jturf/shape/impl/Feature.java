@@ -28,6 +28,10 @@ public final class Feature<T extends Geometry> extends AbstractGeometryPropertie
         return fromGeometry(geometry, new JsonObject(), null);
     }
 
+    public static <T extends Geometry> Feature<T> fromGeometry(T geometry, String id) {
+        return fromGeometry(geometry, new JsonObject(), id);
+    }
+
     public static <T extends Geometry> Feature<T> fromGeometry(T geometry, JsonObject properties) {
         return fromGeometry(geometry, properties == null ? new JsonObject() : properties, null);
     }
