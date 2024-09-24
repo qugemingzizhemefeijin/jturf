@@ -3,9 +3,7 @@ package com.cgzz.mapbox.jturf;
 import com.cgzz.mapbox.jturf.exception.JTurfException;
 import com.cgzz.mapbox.jturf.models.BooleanHolder;
 import com.cgzz.mapbox.jturf.shape.Geometry;
-import com.cgzz.mapbox.jturf.shape.impl.FeatureCollection;
-import com.cgzz.mapbox.jturf.shape.impl.LineString;
-import com.cgzz.mapbox.jturf.shape.impl.Point;
+import com.cgzz.mapbox.jturf.shape.impl.*;
 import com.cgzz.mapbox.jturf.util.booleans.*;
 
 import java.util.List;
@@ -262,6 +260,44 @@ public final class JTurfBooleans {
         });
 
         return bool.value;
+    }
+
+    /**
+     * 判断是否为凹多边形
+     *
+     * @param polygon 要判断的多边形
+     * @return 如果为凹多边形则返回true
+     */
+    public static boolean booleanConcave(Feature<Polygon> polygon) {
+        return booleanConcave(polygon.geometry());
+    }
+
+    /**
+     * 判断是否为凹多边形
+     *
+     * @param polygon 要判断的多边形
+     * @return 如果为凹多边形则返回true
+     */
+    public static boolean booleanConcave(Polygon polygon) {
+        boolean sign = false;
+
+        List<Point> outer = polygon.coordinates().get(0);
+        int n = outer.size() - 1;
+        for (int i = 0; i < n; i++) {
+            Point p1 = outer.get((i + 2) % n), p2 = outer.get((i + 1) % n), p3 = outer.get(i);
+
+            double dx1 = p1.getX() - p2.getX();
+            double dy1 = p1.getY() - p2.getY();
+            double dx2 = p3.getX() - p2.getX();
+            double dy2 = p3.getY() - p2.getY();
+            double crossProduct = dx1 * dy2 - dy1 * dx2;
+            if (i == 0) {
+                sign = crossProduct > 0;
+            } else if (sign != crossProduct > 0) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

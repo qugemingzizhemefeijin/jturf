@@ -139,4 +139,11 @@ public class JTurfBooleansTest {
         assertTrue(JTurfBooleans.booleanIntersects(poly, point));
     }
 
+    @Test
+    public void booleanConcaveTest() {
+        Polygon polygon = Polygon.fromJson("{\"type\":\"Polygon\",\"coordinates\":[[[0,0],[0,1],[1,1],[1,0],[0,0]]]}");
+
+        assertFalse(JTurfBooleans.booleanConcave(polygon));
+    }
+
 }
