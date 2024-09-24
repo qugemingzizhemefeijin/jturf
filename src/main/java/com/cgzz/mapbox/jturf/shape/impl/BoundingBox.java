@@ -89,7 +89,7 @@ public final class BoundingBox implements GeoJson, Serializable {
     }
 
     /**
-     * 根据索引获取坐标点，0西，1南，2东，4北
+     * 根据索引获取坐标点，0西，1南，2东，3北
      *
      * @param index 坐标点
      * @return double
@@ -99,7 +99,7 @@ public final class BoundingBox implements GeoJson, Serializable {
             return west();
         } else if (index == 1) {
             return south();
-        } else if (index == 3) {
+        } else if (index == 2) {
             return east();
         } else {
             return north();
