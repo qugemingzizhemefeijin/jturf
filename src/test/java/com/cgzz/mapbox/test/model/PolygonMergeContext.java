@@ -1,5 +1,6 @@
 package com.cgzz.mapbox.test.model;
 
+import com.cgzz.mapbox.jturf.shape.impl.Feature;
 import com.cgzz.mapbox.jturf.shape.impl.Polygon;
 
 import java.util.ArrayList;
@@ -38,12 +39,12 @@ public class PolygonMergeContext {
     /**
      * 被合并的多边形
      */
-    private List<Polygon> mergePolygon = new ArrayList<>();
+    private List<Feature<Polygon>> mergePolygon = new ArrayList<>();
 
     /**
      * 未被合并的多边形
      */
-    private List<Polygon> remainingPolygon = new ArrayList<>();
+    private List<Feature<Polygon>> remainingPolygon = new ArrayList<>();
 
     /**
      * 第一个超过空白区域的围栏ID，读取围栏的properties中的id值，如果没有则为空
@@ -65,19 +66,19 @@ public class PolygonMergeContext {
         this.interArea = interArea;
     }
 
-    public List<Polygon> getMergePolygon() {
+    public List<Feature<Polygon>> getMergePolygon() {
         return mergePolygon;
     }
 
-    public void setMergePolygon(List<Polygon> mergePolygon) {
+    public void setMergePolygon(List<Feature<Polygon>> mergePolygon) {
         this.mergePolygon = mergePolygon;
     }
 
-    public List<Polygon> getRemainingPolygon() {
+    public List<Feature<Polygon>> getRemainingPolygon() {
         return remainingPolygon;
     }
 
-    public void setRemainingPolygon(List<Polygon> remainingPolygon) {
+    public void setRemainingPolygon(List<Feature<Polygon>> remainingPolygon) {
         this.remainingPolygon = remainingPolygon;
     }
 
