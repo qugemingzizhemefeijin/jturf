@@ -120,7 +120,7 @@ public final class JTurfBooleans {
     }
 
     /**
-     * 如果点位于直线上，则返回 true。默认不忽略忽略线段的起始和终止顶点.
+     * 如果点位于直线上，则返回 true。默认不忽略线段的起始和终止顶点.
      *
      * @param point       要判断的点
      * @param lineString  线
@@ -281,7 +281,12 @@ public final class JTurfBooleans {
     public static boolean booleanConcave(Polygon polygon) {
         boolean sign = false;
 
+        // Taken from https://stackoverflow.com/a/1881201 & https://stackoverflow.com/a/25304159
         List<Point> outer = polygon.coordinates().get(0);
+        if (outer == null || outer.size() <= 4) {
+            return false;
+        }
+
         int n = outer.size() - 1;
         for (int i = 0; i < n; i++) {
             Point p1 = outer.get((i + 2) % n), p2 = outer.get((i + 1) % n), p3 = outer.get(i);
@@ -298,6 +303,17 @@ public final class JTurfBooleans {
             }
         }
         return false;
+    }
+
+    /**
+     * 判断是否接触
+     *
+     * @param geometry1 图形1
+     * @param geometry2 图形2
+     * @return 如果两个几何图形的公共点都不与两个几何图形的内部相交，返回 true。
+     */
+    public static boolean booleanTouches(Geometry geometry1, Geometry geometry2) {
+        return BooleanTouchesHelper.booleanTouches(geometry1, geometry2);
     }
 
 }

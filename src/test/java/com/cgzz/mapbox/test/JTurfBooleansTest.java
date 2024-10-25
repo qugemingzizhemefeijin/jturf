@@ -146,4 +146,12 @@ public class JTurfBooleansTest {
         assertFalse(JTurfBooleans.booleanConcave(polygon));
     }
 
+    @Test
+    public void booleanTouchesTest() {
+        LineString line = LineString.fromJson("{\"type\":\"LineString\",\"coordinates\":[[1,1],[1,2],[1,3],[1,4]]}");
+        Point point = Point.fromLngLat(1, 1);
+
+        assertTrue(JTurfBooleans.booleanTouches(point, line));
+    }
+
 }
