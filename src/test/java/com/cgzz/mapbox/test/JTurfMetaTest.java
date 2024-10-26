@@ -4,10 +4,13 @@ import com.cgzz.mapbox.jturf.JTurfMeta;
 import com.cgzz.mapbox.jturf.models.IntHolder;
 import com.cgzz.mapbox.jturf.shape.Geometry;
 import com.cgzz.mapbox.jturf.shape.impl.*;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import org.junit.Test;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
@@ -153,6 +156,22 @@ public class JTurfMetaTest {
         });
 
         assertEquals(buf.toString(), "barworld");
+    }
+
+    @Test
+    public void propReduceTest() {
+        FeatureCollection<Point> features = FeatureCollection.fromJson("{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{\"foo\":\"bar\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[26,37]}},{\"type\":\"Feature\",\"properties\":{\"hello\":\"world\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[36,53]}}]}", Point.class);
+
+        JsonObject prop = JTurfMeta.propReduce(features, (previousValue, currentProperties, featureIndex) -> {
+            for (Map.Entry<String, JsonElement> me : currentProperties.entrySet()) {
+                previousValue.add(me.getKey(), me.getValue());
+            }
+
+            return previousValue;
+        });
+
+        assertEquals(prop.get("foo").getAsString(), "bar");
+        assertEquals(prop.get("hello").getAsString(), "world");
     }
 
 }
