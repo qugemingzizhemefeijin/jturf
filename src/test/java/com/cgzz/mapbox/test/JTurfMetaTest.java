@@ -137,4 +137,22 @@ public class JTurfMetaTest {
         assertEquals(ids, originIds);
     }
 
+    @Test
+    public void propEachTest() {
+        FeatureCollection<Point> features = FeatureCollection.fromJson("{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{\"foo\":\"bar\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[26,37]}},{\"type\":\"Feature\",\"properties\":{\"hello\":\"world\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[36,53]}}]}", Point.class);
+
+        StringBuilder buf = new StringBuilder();
+        JTurfMeta.propEach(features, (currentProperties, featureIndex) -> {
+            if (featureIndex == 0) {
+                buf.append(currentProperties.get("foo").getAsString());
+            } else {
+                buf.append(currentProperties.get("hello").getAsString());
+            }
+
+            return true;
+        });
+
+        assertEquals(buf.toString(), "barworld");
+    }
+
 }

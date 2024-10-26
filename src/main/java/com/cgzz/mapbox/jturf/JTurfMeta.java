@@ -121,4 +121,24 @@ public final class JTurfMeta {
         return FeatureEachHelper.featureEach(featureCollection, func);
     }
 
+    /**
+     * 迭代 FeatureCollection 对象中的属性，类似于 Array.forEach()
+     *
+     * @param featureCollection 要迭代的元素
+     * @param func              调处理函数
+     */
+    public static <T extends Geometry> void propEach(FeatureCollection<T> featureCollection, PropEachFunc func) {
+        PropEachHelper.propEach(featureCollection, func);
+    }
+
+    /**
+     * 迭代任何 Feature 对象中的属性，类似于 Array.forEach()
+     *
+     * @param feature 要迭代的元素
+     * @param func    回调处理函数
+     */
+    public static <T extends Geometry> void propEach(Feature<T> feature, PropEachFunc func) {
+        PropEachHelper.propEach(feature, func);
+    }
+
 }
