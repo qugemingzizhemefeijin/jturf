@@ -4,9 +4,18 @@ import com.cgzz.mapbox.jturf.shape.Geometry;
 import com.cgzz.mapbox.jturf.shape.GeometryType;
 import com.cgzz.mapbox.jturf.shape.impl.Feature;
 import com.cgzz.mapbox.jturf.shape.impl.FeatureCollection;
+import com.cgzz.mapbox.jturf.shape.impl.Point;
 import com.cgzz.mapbox.jturf.util.meta.*;
 import com.cgzz.mapbox.jturf.util.meta.func.*;
+import com.cgzz.mapbox.jturf.util.pkg.skmeans.Skmeans;
+import com.cgzz.mapbox.jturf.util.pkg.skmeans.SkmeansRes;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public final class JTurfMeta {
 
@@ -183,6 +192,36 @@ public final class JTurfMeta {
      */
     public static <T extends Geometry> JsonObject propReduce(Feature<T> feature, PropReduceFunc func, JsonObject initialValue) {
         return PropReduceHelper.propReduce(feature, func, initialValue);
+    }
+
+    /**
+     * 从任何 GeoJSON 对象获取所有坐标。
+     *
+     * @param geometry 要迭代的元素
+     * @return 返回坐标集合
+     */
+    public static List<Point> coordAll(Geometry geometry) {
+        List<Point> coords = new ArrayList<>();
+        coordEach(geometry, (coord, coordIndex, featureIndex, multiFeatureIndex, geometryIndex) -> {
+            coords.add(coord);
+            return true;
+        });
+        return coords;
+    }
+
+    /**
+     * 从任何 GeoJSON 对象获取所有坐标。
+     *
+     * @param geometry 要迭代的元素
+     * @return 返回坐标集合
+     */
+    public static List<double[]> coordAllToArray(Geometry geometry) {
+        List<double[]> coords = new ArrayList<>();
+        coordEach(geometry, (coord, coordIndex, featureIndex, multiFeatureIndex, geometryIndex) -> {
+            coords.add(coord.getCoords());
+            return true;
+        });
+        return coords;
     }
 
 }

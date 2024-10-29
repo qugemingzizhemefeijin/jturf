@@ -174,4 +174,19 @@ public class JTurfMetaTest {
         assertEquals(prop.get("hello").getAsString(), "world");
     }
 
+    @Test
+    public void coordAllTest() {
+        Feature<Point> p1 = Feature.fromJson("{\"type\":\"Feature\",\"properties\":{\"marker-symbol\":\"circle\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[0,0]}}", Point.class);
+        Feature<Point> p2 = Feature.fromJson("{\"type\":\"Feature\",\"properties\":{\"marker-symbol\":\"star\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[2,4]}}", Point.class);
+        Feature<Point> p3 = Feature.fromJson("{\"type\":\"Feature\",\"properties\":{\"marker-symbol\":\"star\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[3,6]}}", Point.class);
+        Feature<Point> p4 = Feature.fromJson("{\"type\":\"Feature\",\"properties\":{\"marker-symbol\":\"square\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[5,1]}}", Point.class);
+        Feature<Point> p5 = Feature.fromJson("{\"type\":\"Feature\",\"properties\":{\"marker-symbol\":\"circle\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[4,2]}}", Point.class);
+
+        FeatureCollection<Point> geojson = FeatureCollection.fromFeatures(p1, p2, p3, p4, p5);
+
+        List<Point> pointList = JTurfMeta.coordAll(geojson);
+
+        assertEquals(pointList, geojson.toItemList());
+    }
+
 }

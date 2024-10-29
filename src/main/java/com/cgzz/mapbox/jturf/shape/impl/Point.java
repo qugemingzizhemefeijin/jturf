@@ -119,7 +119,11 @@ public final class Point implements CoordinateContainer<Point>, Serializable, Co
     }
 
     public double[] getCoords() {
-        return new double[]{longitude, latitude, altitude};
+        if (hasAltitude()) {
+            return new double[]{longitude, latitude, altitude};
+        } else {
+            return new double[]{longitude, latitude};
+        }
     }
 
     public void setCoords(Point p) {
