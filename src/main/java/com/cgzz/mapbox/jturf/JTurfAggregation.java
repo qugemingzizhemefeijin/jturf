@@ -6,6 +6,7 @@ import com.cgzz.mapbox.jturf.util.pkg.skmeans.Skmeans;
 import com.cgzz.mapbox.jturf.util.pkg.skmeans.SkmeansRes;
 import com.google.gson.JsonArray;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,21 +66,24 @@ public final class JTurfAggregation {
         List<double[]> data = JTurfMeta.coordAllToArray(points);
 
         // create seed to avoid skmeans to drift
-        List<double[]> initialCentroids = data.subList(0, Math.min(data.size(), numberOfClusters));
+        List<double[]> initialCentroids = new ArrayList<>(numberOfClusters);
+        for (int i = 0; i < numberOfClusters; i++) {
+            initialCentroids.add(data.get(i).clone());
+        }
 
         // create skmeans clusters
         SkmeansRes skmeansResult = Skmeans.skmeans(data, numberOfClusters, initialCentroids, null, null);
 
         // store centroids {clusterId: [number, number]}
-        Map<String, double[]> centroids = new HashMap<>();
+        Map<Integer, double[]> centroids = new HashMap<>();
         List<double[]> cs = skmeansResult.getCentroids();
         for (int i = 0, size = cs.size(); i < size; i++) {
-            centroids.put(String.valueOf(i), cs.get(i));
+            centroids.put(i, cs.get(i));
         }
 
         // add associated cluster number
         JTurfMeta.featureEach(points, (point, index) -> {
-            String clusterId = String.valueOf(skmeansResult.getIdxs()[index]);
+            int clusterId = skmeansResult.getIdxs()[index];
             point.addProperty("cluster", clusterId);
 
             JsonArray array = new JsonArray();

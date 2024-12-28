@@ -1,5 +1,7 @@
 package com.cgzz.mapbox.test;
 
+import com.cgzz.mapbox.jturf.JTurfAggregation;
+import com.cgzz.mapbox.jturf.JTurfBooleans;
 import com.cgzz.mapbox.jturf.JTurfMeta;
 import com.cgzz.mapbox.jturf.models.IntHolder;
 import com.cgzz.mapbox.jturf.shape.Geometry;
@@ -14,6 +16,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class JTurfMetaTest {
 
@@ -187,6 +190,48 @@ public class JTurfMetaTest {
         List<Point> pointList = JTurfMeta.coordAll(geojson);
 
         assertEquals(pointList, geojson.toItemList());
+    }
+
+    @Test
+    public void getCluster1Test() {
+        Feature<Point> p1 = Feature.fromJson("{\"type\":\"Feature\",\"properties\":{\"marker-symbol\":\"circle\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[0,0]}}", Point.class);
+        Feature<Point> p2 = Feature.fromJson("{\"type\":\"Feature\",\"properties\":{\"marker-symbol\":\"star\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[2,4]}}", Point.class);
+        Feature<Point> p3 = Feature.fromJson("{\"type\":\"Feature\",\"properties\":{\"marker-symbol\":\"star\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[3,6]}}", Point.class);
+        Feature<Point> p4 = Feature.fromJson("{\"type\":\"Feature\",\"properties\":{\"marker-symbol\":\"square\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[5,1]}}", Point.class);
+        Feature<Point> p5 = Feature.fromJson("{\"type\":\"Feature\",\"properties\":{\"marker-symbol\":\"circle\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[4,2]}}", Point.class);
+
+        FeatureCollection<Point> geojson = FeatureCollection.fromFeatures(p1, p2, p3, p4, p5);
+
+        FeatureCollection<Point> clustered = JTurfAggregation.clustersKmeans(geojson);
+
+        FeatureCollection<Point> cluster = JTurfMeta.getCluster(clustered, "cluster", 0);
+
+        FeatureCollection<Point> same = FeatureCollection.fromJson("{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{\"marker-symbol\":\"circle\",\"cluster\":0,\"centroid\":[0,0]},\"geometry\":{\"type\":\"Point\",\"coordinates\":[0,0]}}]}", Point.class);
+
+        assertTrue(JTurfBooleans.booleanEqual(cluster, same));
+    }
+
+    @Test
+    public void getCluster2Test() {
+        Feature<Point> p1 = Feature.fromJson("{\"type\":\"Feature\",\"properties\":{\"marker-symbol\":\"circle\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[0,0]}}", Point.class);
+        Feature<Point> p2 = Feature.fromJson("{\"type\":\"Feature\",\"properties\":{\"marker-symbol\":\"star\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[2,4]}}", Point.class);
+        Feature<Point> p3 = Feature.fromJson("{\"type\":\"Feature\",\"properties\":{\"marker-symbol\":\"star\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[3,6]}}", Point.class);
+        Feature<Point> p4 = Feature.fromJson("{\"type\":\"Feature\",\"properties\":{\"marker-symbol\":\"square\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[5,1]}}", Point.class);
+        Feature<Point> p5 = Feature.fromJson("{\"type\":\"Feature\",\"properties\":{\"marker-symbol\":\"circle\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[4,2]}}", Point.class);
+
+        FeatureCollection<Point> geojson = FeatureCollection.fromFeatures(p1, p2, p3, p4, p5);
+
+        FeatureCollection<Point> clustered = JTurfAggregation.clustersKmeans(geojson);
+
+        FeatureCollection<Point> cluster = JTurfMeta.getCluster(clustered, "marker-symbol", "circle");
+        FeatureCollection<Point> same = FeatureCollection.fromJson("{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{\"marker-symbol\":\"circle\",\"cluster\":0,\"centroid\":[0,0]},\"geometry\":{\"type\":\"Point\",\"coordinates\":[0,0]}},{\"type\":\"Feature\",\"properties\":{\"marker-symbol\":\"circle\",\"cluster\":1,\"centroid\":[3.5,3.25]},\"geometry\":{\"type\":\"Point\",\"coordinates\":[4,2]}}]}", Point.class);
+
+        assertTrue(JTurfBooleans.booleanEqual(cluster, same));
+
+        cluster = JTurfMeta.getCluster(clustered, "marker-symbol", "square");
+        same = FeatureCollection.fromJson("{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{\"marker-symbol\":\"square\",\"cluster\":1,\"centroid\":[3.5,3.25]},\"geometry\":{\"type\":\"Point\",\"coordinates\":[5,1]}}]}", Point.class);
+
+        assertTrue(JTurfBooleans.booleanEqual(cluster, same));
     }
 
 }

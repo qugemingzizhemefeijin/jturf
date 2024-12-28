@@ -78,7 +78,7 @@ public final class Skmeans {
             double[][] old = new double[k][vlen];
             for (int j = 0; j < k; j++) {
                 // Multidimensional or unidimensional
-                sum[j] = init(2, 0, sum[j]);
+                sum[j] = init(vlen, 0, sum[j]);
                 old[j] = ks.get(j);
             }
 
@@ -94,6 +94,7 @@ public final class Skmeans {
 
                 // Accumulate value on the centroid for current vector
                 for (int h = 0; h < vlen; h++) {
+                    //System.out.println(vsum[h] + "-" + vect[h]);
                     vsum[h] += vect[h];
                 }
             }

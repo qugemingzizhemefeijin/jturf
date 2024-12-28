@@ -7,13 +7,9 @@ import com.cgzz.mapbox.jturf.shape.impl.FeatureCollection;
 import com.cgzz.mapbox.jturf.shape.impl.Point;
 import com.cgzz.mapbox.jturf.util.meta.*;
 import com.cgzz.mapbox.jturf.util.meta.func.*;
-import com.cgzz.mapbox.jturf.util.pkg.skmeans.Skmeans;
-import com.cgzz.mapbox.jturf.util.pkg.skmeans.SkmeansRes;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -222,6 +218,51 @@ public final class JTurfMeta {
             return true;
         });
         return coords;
+    }
+
+    /**
+     * Get Cluster
+     *
+     * @param geojson 一组坐标点
+     * @param filter  用于 GeoJSON 属性的筛选器以获取 Cluster
+     * @return 按 GeoJSON 属性筛选的单个集群
+     */
+    public static FeatureCollection<Point> getCluster(FeatureCollection<Point> geojson, String filter) {
+        return GetClusterHelper.getCluster(geojson, filter);
+    }
+
+    /**
+     * Get Cluster
+     *
+     * @param geojson   一组坐标点
+     * @param filter    用于 GeoJSON 属性的筛选器以获取 Cluster
+     * @param filterVal 筛选的属性值
+     * @return 按 GeoJSON 属性筛选的单个集群
+     */
+    public static FeatureCollection<Point> getCluster(FeatureCollection<Point> geojson, String filter, Object filterVal) {
+        return GetClusterHelper.getCluster(geojson, filter, filterVal);
+    }
+
+    /**
+     * Get Cluster
+     *
+     * @param geojson 一组坐标点
+     * @param filter  用于 GeoJSON 属性的筛选器以获取 Cluster
+     * @return 按 GeoJSON 属性筛选的单个集群
+     */
+    public static FeatureCollection<Point> getCluster(FeatureCollection<Point> geojson, String[] filter) {
+        return GetClusterHelper.getCluster(geojson, filter);
+    }
+
+    /**
+     * Get Cluster
+     *
+     * @param geojson 一组坐标点
+     * @param filter  用于 GeoJSON 属性的筛选器以获取 Cluster
+     * @return 按 GeoJSON 属性筛选的单个集群
+     */
+    public static FeatureCollection<Point> getCluster(FeatureCollection<Point> geojson, Map<String, Object> filter) {
+        return GetClusterHelper.getCluster(geojson, filter);
     }
 
 }
