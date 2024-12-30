@@ -7,6 +7,7 @@ import com.cgzz.mapbox.jturf.shape.Geometry;
 import com.cgzz.mapbox.jturf.shape.GeometryType;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public final class MultiPoint implements CoordinateContainer<List<Point>> {
@@ -18,6 +19,10 @@ public final class MultiPoint implements CoordinateContainer<List<Point>> {
             throw new JTurfException("Null coordinates");
         }
         this.coordinates = coordinates;
+    }
+
+    public static MultiPoint fromLngLats(Point... points) {
+        return new MultiPoint(Arrays.asList(points));
     }
 
     public static MultiPoint fromLngLats(List<Point> points) {
