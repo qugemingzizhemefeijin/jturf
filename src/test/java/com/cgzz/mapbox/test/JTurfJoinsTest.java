@@ -2,10 +2,7 @@ package com.cgzz.mapbox.test;
 
 import com.cgzz.mapbox.jturf.JTurfBooleans;
 import com.cgzz.mapbox.jturf.JTurfJoins;
-import com.cgzz.mapbox.jturf.shape.impl.Feature;
-import com.cgzz.mapbox.jturf.shape.impl.FeatureCollection;
-import com.cgzz.mapbox.jturf.shape.impl.MultiPoint;
-import com.cgzz.mapbox.jturf.shape.impl.Point;
+import com.cgzz.mapbox.jturf.shape.impl.*;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;
@@ -52,6 +49,25 @@ public class JTurfJoinsTest {
         FeatureCollection<MultiPoint> same = FeatureCollection.fromJson("{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{},\"geometry\":{\"type\":\"MultiPoint\",\"coordinates\":[[-46.6318,-23.5523],[-46.643,-23.557]]}}]}", MultiPoint.class);
 
         assertTrue(JTurfBooleans.booleanEqual(ptsWithin, same));
+    }
+
+    @Test
+    public void tagTest() {
+        FeatureCollection<Point> points = FeatureCollection.fromFeatures(
+                Feature.fromGeometry(Point.fromLngLat(-77, 44)),
+                Feature.fromGeometry(Point.fromLngLat(-77, 38))
+        );
+
+        Feature<Polygon> poly1 = Feature.fromJson("{\"type\":\"Feature\",\"properties\":{\"pop\":3000},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[-81,41],[-81,47],[-72,47],[-72,41],[-81,41]]]}}", Polygon.class);
+        Feature<Polygon> poly2 = Feature.fromJson("{\"type\":\"Feature\",\"properties\":{\"pop\":1000},\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[-81,35],[-81,41],[-72,41],[-72,35],[-81,35]]]}}", Polygon.class);
+
+        FeatureCollection<Polygon> polygons = FeatureCollection.fromFeatures(poly1, poly2);
+
+        FeatureCollection<Point> tagged = JTurfJoins.tag(points, polygons, "pop", "population");
+
+        FeatureCollection<Point> same = FeatureCollection.fromJson("{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{\"population\":3000},\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77,44]}},{\"type\":\"Feature\",\"properties\":{\"population\":1000},\"geometry\":{\"type\":\"Point\",\"coordinates\":[-77,38]}}]}", Point.class);
+
+        assertTrue(JTurfBooleans.booleanEqual(tagged, same));
     }
 
 }

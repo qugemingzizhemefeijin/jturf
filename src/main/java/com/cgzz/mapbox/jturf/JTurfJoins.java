@@ -6,6 +6,7 @@ import com.cgzz.mapbox.jturf.shape.impl.FeatureCollection;
 import com.cgzz.mapbox.jturf.shape.impl.MultiPoint;
 import com.cgzz.mapbox.jturf.shape.impl.Point;
 import com.cgzz.mapbox.jturf.util.joins.PointsWithinPolygonHelper;
+import com.cgzz.mapbox.jturf.util.joins.TagHelper;
 
 public final class JTurfJoins {
 
@@ -77,6 +78,19 @@ public final class JTurfJoins {
      */
     public static FeatureCollection<MultiPoint> multiPointsWithinPolygon(FeatureCollection<MultiPoint> points, Geometry polygons) {
         return PointsWithinPolygonHelper.multiPointsWithinPolygon(points, polygons);
+    }
+
+    /**
+     * 接受一组 Point 和一组 Polygon | MultiPolygon，如果点在多边形内，则执行空间连接。
+     *
+     * @param points   一组点
+     * @param polygons 一组Polygon 或 MultiPolygon
+     * @param field    添加到连接的 Point 上
+     * @param outField 用于存储 多边形 的连接属性
+     * @return 具有 outField 属性的点包含 polygons 中的 field 属性值
+     */
+    public static <T extends Geometry> FeatureCollection<Point> tag(FeatureCollection<Point> points, FeatureCollection<T> polygons, String field, String outField) {
+        return TagHelper.tag(points, polygons, field, outField);
     }
 
 }

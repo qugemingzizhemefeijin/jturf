@@ -16,6 +16,21 @@ public abstract class AbstractGeometryProperties {
         return properties;
     }
 
+    public int propertySize() {
+        if (properties == null) {
+            return 0;
+        }
+        return properties.size();
+    }
+
+    public boolean propertyEmpty() {
+        return propertySize() == 0;
+    }
+
+    public boolean propertyNotEmpty() {
+        return propertySize() > 0;
+    }
+
     private JsonObject getOrCreate() {
         if (properties == null) {
             properties = new JsonObject();
