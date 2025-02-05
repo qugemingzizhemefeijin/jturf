@@ -17,27 +17,6 @@ public final class JTurfTools {
         throw new AssertionError("No Instance.");
     }
 
-    public static void main(String[] args) {
-        Point centerPoint = Point.fromLngLat(116.43984, 39.98337);
-
-        Polygon polygon = Polygon.fromLngLats(new double[][]{{116.36187,39.946293},{116.36241,39.93815},{116.37451,39.938313},{116.379364,39.938656},{116.386505,39.939125},{116.38626,39.938515},{116.38605,39.93738},{116.38635,39.933945},{116.391685,39.934174},{116.3975,39.934166},{116.39803,39.935028},{116.39972,39.93501},{116.399956,39.934723},{116.40289,39.934765},{116.40266,39.9398},{116.4024,39.94649},{116.401505,39.947002},{116.40048,39.947075},{116.400246,39.955627},{116.40202,39.95568},{116.401634,39.96345},{116.40101,39.963474},{116.39293,39.96294},{116.39112,39.96184},{116.388916,39.961792},{116.388336,39.961758},{116.38825,39.962803},{116.38751,39.96289},{116.38743,39.962784},{116.38742,39.962677},{116.3858,39.9627},{116.385864,39.95967},{116.38572,39.957775},{116.38507,39.95674},{116.38504,39.95603},{116.38483,39.95508},{116.37841,39.95472},{116.37538,39.953903},{116.37182,39.952393},{116.362854,39.9497},{116.36261,39.949375},{116.36187,39.946293}});
-
-        Polygon interPolygon = calcCircleAndPolygonIntersection(centerPoint, 5000, polygon);
-
-        System.out.println(interPolygon.coordinates().get(0).size());
-
-        // 检查交集是否正常
-        if (interPolygon.coordinates().get(0).size() < 4 || JTurfTools.isKinds(interPolygon)) {
-            System.out.println("围栏坐标不合法");
-
-            // 获取自相交点
-            FeatureCollection<Point> kinksPoints = JTurfMisc.kinks(interPolygon);
-            System.out.println(kinksPoints);
-        }
-
-        System.out.println(interPolygon.toViewCoordsString());
-    }
-
     /**
      * 计算指定圆是否与传入的坐标的交集
      *
