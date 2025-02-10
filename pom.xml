@@ -6,7 +6,7 @@
 
     <groupId>com.cgzz.mapbox</groupId>
     <artifactId>jturf</artifactId>
-    <version>0.0.1</version>
+    <version>0.1.1</version>
 
     <properties>
         <jts.version>1.13</jts.version>
