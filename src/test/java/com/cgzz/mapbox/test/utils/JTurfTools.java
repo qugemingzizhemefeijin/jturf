@@ -67,7 +67,7 @@ public final class JTurfTools {
             return new PolygonMergeInformation(currPolygon, null);
         }
         // 多边形圆，计算后的多边形只会在此之内
-        Polygon circle = JTurfTransformation.circle(centerPoint, radius, 100, Units.METERS);
+        Polygon circle = JTurfTransformation.circle(centerPoint, radius, 50, Units.METERS);
 
         // 当前主多边形的面积
         double currMainArea = JTurfMeasurement.area(currPolygon);
@@ -113,7 +113,7 @@ public final class JTurfTools {
     private static Polygon createPolygonAfterRepair(List<Point> pointList) {
         Polygon polygon = Polygon.fromOuterInner(pointList);
         // 1.去重坐标
-        polygon = JTurfCoordinateMutation.truncate(polygon, 10, 2, true);
+        polygon = JTurfCoordinateMutation.truncate(polygon, 10, 3, true);
 
         List<Point> pList = polygon.coordinates().stream().flatMap(Collection::stream).collect(Collectors.toList());
         // 2.将相距太近的点合并
@@ -614,6 +614,8 @@ public final class JTurfTools {
      */
     private static List<Point> turfToPointList(Geometry geometry) {
         if (geometry instanceof MultiPolygon) {
+            // 这里展开也可能有问题，后面有时间再改吧
+
             // 将多维坐标展开
             return completionLastPoint(MultiPolygon.multiPolygon(geometry)
                     .coordinates()
@@ -624,7 +626,19 @@ public final class JTurfTools {
                     .flatMap(Collection::stream)
                     .collect(Collectors.toList()));
         } else {
-            return completionLastPoint(Polygon.polygon(geometry)
+            Polygon p =  Polygon.polygon(geometry);
+            if (p.coordinates().size() > 1) {
+                List<Point> maxPoints = p.coordinates().get(0);
+                for (int i = 1; i < p.coordinates().size(); i++) {
+                    List<Point> points = p.coordinates().get(i);
+                    if (points.size() > maxPoints.size()) {
+                        maxPoints = points;
+                    }
+                }
+                p.coordinates().clear();
+                p.coordinates().add(maxPoints);
+            }
+            return completionLastPoint(p
                     .coordinates()
                     .stream()
                     .flatMap(Collection::stream)
