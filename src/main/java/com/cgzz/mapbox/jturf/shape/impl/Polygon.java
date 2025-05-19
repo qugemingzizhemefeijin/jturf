@@ -187,8 +187,8 @@ public final class Polygon implements CoordinateContainer<List<List<Point>>> {
         return GeoJsonUtils.getGson().fromJson(json, Polygon.class);
     }
 
-    public static Polygon polygon(Geometry g) {
-        return (Polygon) g;
+    public static Polygon polygon(Geometry geometry) {
+        return (Polygon) geometry;
     }
 
     private static void isLinearRing(LineString lineString) {
