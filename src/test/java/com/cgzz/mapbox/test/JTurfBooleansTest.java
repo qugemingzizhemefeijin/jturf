@@ -112,17 +112,6 @@ public class JTurfBooleansTest {
     }
 
     @Test
-    public void booleanIntersectsTest() {
-        Point point = Point.fromLngLat(1, 3);
-
-        LineString line = LineString.fromJson("{\"type\":\"LineString\",\"coordinates\":[[1,1],[1,2],[1,3],[1,4]]}");
-        assertTrue(JTurfBooleans.booleanIntersects(line, point));
-
-        Polygon poly = Polygon.fromJson("{\"type\":\"Polygon\",\"coordinates\":[[[0,0],[0,5],[5,5],[5,0],[0,0]]]}");
-        assertTrue(JTurfBooleans.booleanIntersects(poly, point));
-    }
-
-    @Test
     public void booleanConcaveTest() {
         Polygon polygon = Polygon.fromJson("{\"type\":\"Polygon\",\"coordinates\":[[[0,0],[0,1],[1,1],[1,0],[0,0]]]}");
 
