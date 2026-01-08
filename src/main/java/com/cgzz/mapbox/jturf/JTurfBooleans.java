@@ -227,16 +227,6 @@ public final class JTurfBooleans {
     }
 
     /**
-     * 检查图形是否是有效的
-     *
-     * @param geometry 图形
-     * @return 如果图形有效则返回true
-     */
-    public static boolean booleanValid(Geometry geometry) {
-        return BooleanValidHelper.booleanValid(geometry);
-    }
-
-    /**
      * 判断两个图形是否有交集（就是循环迭代图形，并对 booleanDisjoint 取反）
      *
      * @param geometry1 图形1

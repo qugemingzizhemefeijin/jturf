@@ -1,6 +1,6 @@
 package com.cgzz.mapbox.test;
 
-import com.cgzz.mapbox.jturf.JTurfBooleans;
+import com.cgzz.mapbox.jturf.JTurfOther;
 import com.cgzz.mapbox.jturf.shape.impl.LineString;
 import org.junit.Test;
 
@@ -15,8 +15,8 @@ public class JTurfOtherTest {
         LineString line2 = LineString.fromJson("{\"type\":\"LineString\",\"coordinates\":[[1,1],[1,1]]}");
         line2.coordinates(null);
 
-        assertTrue(JTurfBooleans.booleanValid(line1));
-        assertFalse(JTurfBooleans.booleanValid(line2));
+        assertTrue(JTurfOther.booleanValid(line1));
+        assertFalse(JTurfOther.booleanValid(line2));
     }
 
 }

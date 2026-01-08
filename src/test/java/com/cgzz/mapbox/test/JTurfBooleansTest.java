@@ -2,13 +2,9 @@ package com.cgzz.mapbox.test;
 
 import com.cgzz.mapbox.jturf.JTurfBooleans;
 import com.cgzz.mapbox.jturf.shape.impl.LineString;
-import com.cgzz.mapbox.jturf.shape.impl.MultiLineString;
 import com.cgzz.mapbox.jturf.shape.impl.Point;
 import com.cgzz.mapbox.jturf.shape.impl.Polygon;
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -113,19 +109,6 @@ public class JTurfBooleansTest {
         LineString line = LineString.fromJson("{\"type\":\"LineString\",\"coordinates\":[[1,1],[1,2],[1,3],[1,4]]}");
         Point point = Point.fromLngLat(1,2);
         assertTrue(JTurfBooleans.booleanContains(line, point));
-    }
-
-    @Test
-    public void booleanValidTest() {
-        LineString line = LineString.fromJson("{\"type\":\"LineString\",\"coordinates\":[[1,1],[1,2],[1,3],[1,4]]}");
-
-        List<List<Point>> points = new ArrayList<>();
-        points.add(null);
-
-        MultiLineString multiLine = MultiLineString.fromLngLats(points);
-
-        assertTrue(JTurfBooleans.booleanValid(line));
-        assertFalse(JTurfBooleans.booleanValid(multiLine));
     }
 
     @Test
