@@ -8,4 +8,8 @@ public class JTurfException extends RuntimeException {
         super(message);
     }
 
+    public JTurfException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
 }

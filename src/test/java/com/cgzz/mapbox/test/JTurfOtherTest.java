@@ -1,13 +1,15 @@
 package com.cgzz.mapbox.test;
 
+import com.cgzz.mapbox.jturf.JTurfBooleans;
 import com.cgzz.mapbox.jturf.JTurfOther;
-import com.cgzz.mapbox.jturf.shape.impl.LineString;
-import com.cgzz.mapbox.jturf.shape.impl.Point;
-import com.cgzz.mapbox.jturf.shape.impl.Polygon;
+import com.cgzz.mapbox.jturf.shape.Geometry;
+import com.cgzz.mapbox.jturf.shape.impl.*;
+import com.google.gson.JsonObject;
 import org.junit.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import java.util.Objects;
+
+import static org.junit.Assert.*;
 
 public class JTurfOtherTest {
 
@@ -30,6 +32,26 @@ public class JTurfOtherTest {
 
         assertTrue(JTurfOther.booleanValid(line1));
         assertFalse(JTurfOther.booleanValid(line2));
+    }
+
+    @Test
+    public void centerMeanTest() {
+        FeatureCollection<Geometry> features = FeatureCollection.fromJson("{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"properties\":{\"value\":10},\"geometry\":{\"type\":\"Point\",\"coordinates\":[-97.522259,35.4691]}},{\"type\":\"Feature\",\"properties\":{\"value\":3},\"geometry\":{\"type\":\"Point\",\"coordinates\":[-97.502754,35.463455]}},{\"type\":\"Feature\",\"properties\":{\"value\":5},\"geometry\":{\"type\":\"Point\",\"coordinates\":[-97.508269,35.463245]}}]}");
+
+        JsonObject options = new JsonObject();
+        options.addProperty("weight", "value");
+        options.addProperty("id", "123");
+
+        JsonObject properties = new JsonObject();
+        properties.addProperty("aaa", "123");
+        options.add("properties", properties);
+
+        Feature<Point> mean = JTurfOther.centerMean(features, options);
+        Feature<Point> same = Feature.fromJson("{\"type\":\"Feature\",\"id\":\"123\",\"properties\":{\"aaa\":\"123\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[-97.51512205555557,35.46653277777778]}}", Point.class);
+
+        assertTrue(JTurfBooleans.booleanEqual(mean, same));
+        assertEquals(mean.id(), same.id());
+        assertEquals(mean.properties(), properties);
     }
 
 }
